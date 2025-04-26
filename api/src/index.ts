@@ -1,11 +1,16 @@
 // Global imports
-import express from "express";
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
-import cookieParser from "cookie-parser";
+import express from "express";
 
 // Local imports
-import { authRouter } from "./routes/index.js";
+import {
+  accountRouter,
+  authRouter,
+  categoryRouter,
+  expenseRouter,
+} from "./routes/index.js";
 import prisma from "./util/prisma.js";
 
 // Load environment variables from .env file
@@ -20,6 +25,9 @@ app.use(cookieParser());
 
 // routes
 app.use("/api/auth", authRouter);
+app.use("/api/expense", expenseRouter);
+app.use("/api/category", categoryRouter);
+app.use("/api/account", accountRouter);
 
 // prisma connection
 await prisma.$connect();

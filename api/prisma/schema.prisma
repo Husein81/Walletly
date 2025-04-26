@@ -8,50 +8,58 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
+  id        String   @id @default(uuid())
   name      String
-  email     String    @unique
+  email     String   @unique
   password  String
-  role      UserRole  @default(USER)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  accounts  Account[]
-  expenses  Expense[]
+  role      UserRole @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Expenses   Expense[]
+  Accounts   Account[]
+  Categories Category[]
 }
 
 model Account {
   id        String   @id @default(uuid())
-  userId    String
   name      String
   balance   Float
   imageUrl  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
+
+  userId String
+  user   User?  @relation(fields: [userId], references: [id])
 }
 
 model Expense {
   id          String      @id @default(uuid())
-  userId      String
   description String
   amount      Float
   type        ExpenseType
   date        DateTime
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
-  categoryId  String?
-  category    Category?   @relation(fields: [categoryId], references: [id])
-  user        User        @relation(fields: [userId], references: [id])
+
+  userId String
+  user   User?  @relation(fields: [userId], references: [id])
+
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id])
 }
 
 model Category {
-  id          String    @id @default(uuid())
+  id          String   @id @default(uuid())
   name        String
   imageUrl    String
   description String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  expenses    Expense[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userId   String?
+  user     User?     @relation(fields: [userId], references: [id])
+  expenses Expense[]
 }
 
 enum UserRole {

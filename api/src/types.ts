@@ -36,6 +36,7 @@ export const expenseSchema = z.object({
 
 export const categorySchema = z.object({
   id: z.string().optional(),
+  userId: z.string(),
   name: z.string().min(1).max(50),
   imageUrl: z.string().url().optional(),
   description: z.string().max(255).optional(),
