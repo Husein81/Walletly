@@ -5,7 +5,7 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Stack } from "expo-router";
+import { Slot, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect } from "react";
 import { Platform } from "react-native";
@@ -33,9 +33,9 @@ export {
 const queryClient = new QueryClient();
 
 export default function RootLayout() {
-  const { user, loadUser } = useAuthStore();
+  const { loadUser } = useAuthStore();
   const hasMounted = React.useRef(false);
-  const { colorScheme, isDarkColorScheme } = useColorScheme();
+  const { isDarkColorScheme } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
 
   useIsomorphicLayoutEffect(() => {
@@ -59,13 +59,7 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
         <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
-        <Stack screenOptions={{ headerShown: false }}>
-          {user ? (
-            <Stack.Screen name="(tabs)" />
-          ) : (
-            <Stack.Screen name="(auth)" />
-          )}
-        </Stack>
+        <Slot />
       </ThemeProvider>
     </QueryClientProvider>
   );

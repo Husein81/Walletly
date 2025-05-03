@@ -1,19 +1,22 @@
+import { Redirect } from "expo-router";
 import { useState } from "react";
-import {
-  View,
-  Text,
-  KeyboardAvoidingView,
-  ScrollView,
-  Platform,
-} from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
 
 // Local Imports
 import AuthToggle from "~/components/Auth/AuthToggle";
 import LoginForm from "~/components/Auth/LoginForm";
 import RegisterForm from "~/components/Auth/RegisterForm";
+import { useAuthStore } from "~/store/authStore";
 
 const Auth = () => {
+  const { user } = useAuthStore();
+
   const [isActive, setIsActive] = useState(false);
+
+  if (user) {
+    return <Redirect href={"/"} />;
+  }
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
