@@ -3,7 +3,7 @@ import prisma from "../util/prisma.js";
 
 const getCategories = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { userId } = req.params;
+    const userId = req.query.userId as string;
     const categories = await prisma.category.findMany({
       where: {
         userId,

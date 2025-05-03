@@ -3,16 +3,20 @@ import prisma from "../util/prisma.js";
 
 const getAccounts = async (req: Request, res: Response) => {
   try {
-    const { userId } = req.params;
+    const userId = req.query.userId as string;
+    if (!userId) {
+      throw res
+        .status(400)
+        .json({ message: "Missing userId in query parameters." });
+    }
 
     const accounts = await prisma.account.findMany({
-      where: {
-        userId,
-      },
+      where: { userId },
     });
 
     res.status(200).json(accounts);
   } catch (error) {
+    console.error("Error fetching accounts:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };

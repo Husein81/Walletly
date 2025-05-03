@@ -4,7 +4,7 @@ import { Expense } from "../types.js";
 
 const getExpenses = async (req: Request, res: Response) => {
   try {
-    const { userId } = req.params;
+    const userId = req.query.userId as string;
     const expenses = await prisma.expense.findMany({
       where: {
         userId,
