@@ -8,6 +8,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        shark: "#2a2a2a",
+        iron: "#c0c4c9",
+        shuttleGray: "#6A6D70",
+        lightGray: "#E5E7EB",
+        danger: "#DB4437",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
