@@ -1,4 +1,5 @@
 import { useTheme } from "@react-navigation/native";
+import { router } from "expo-router";
 import { useState } from "react";
 import { View, Text, ActivityIndicator, TouchableOpacity } from "react-native";
 
@@ -23,6 +24,7 @@ const LoginForm = ({ setIsActive }: Props) => {
   const handleLogin = async () => {
     try {
       await mutateAsync();
+      router.replace("/(tabs)");
     } catch (error) {
       console.error("Login failed:", error);
     }

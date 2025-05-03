@@ -21,6 +21,7 @@ const RegisterForm = ({ setIsActive }: Props) => {
   const handleSignUp = async () => {
     try {
       await mutateAsync();
+      setIsActive(false); // Switch to login form after successful registration
     } catch (err) {
       console.error("Registration error:", err);
     }
@@ -60,7 +61,7 @@ const RegisterForm = ({ setIsActive }: Props) => {
               placeholder="Enter your password"
               value={password}
               onChangeText={setPassword}
-              secureTextEntry
+              secureTextEntry={!showPassword}
               className="mb-4"
               autoCapitalize="none"
             />

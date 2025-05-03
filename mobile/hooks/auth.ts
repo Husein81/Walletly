@@ -20,7 +20,7 @@ const useLogin = (email: string, password: string) => {
     },
     onSuccess: (data) => {
       setAuth(data);
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.setQueryData(["user"], data);
     },
   });
 };
@@ -37,7 +37,7 @@ const useRegister = (name: string, email: string, password: string) => {
       return response.data;
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["user"] }, data);
+      queryClient.setQueryData(["user"], data);
     },
   });
 };
