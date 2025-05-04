@@ -1,18 +1,11 @@
 // Global Imports
-import { Redirect, Tabs } from "expo-router";
+import { Tabs } from "expo-router";
 import { Platform } from "react-native";
 
 // Local Imports
-import Icon from "~/lib/icons/Icon";
-import { useAuthStore } from "~/store/authStore";
+import { Icon } from "~/lib/icons/Icon";
 
 const TabsLayout = () => {
-  const { user } = useAuthStore();
-
-  if (!user) {
-    return <Redirect href={"/auth"} />;
-  }
-
   return (
     <Tabs
       screenOptions={{
