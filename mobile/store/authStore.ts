@@ -29,7 +29,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     await AsyncStorage.removeItem("authToken");
     await AsyncStorage.removeItem("user");
     set({ user: null });
-    router.replace("/(auth)");
+    router.replace("/auth");
   },
 
   loadUser: async () => {

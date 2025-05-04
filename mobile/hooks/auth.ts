@@ -44,13 +44,14 @@ const useRegister = (name: string, email: string, password: string) => {
 
 const useLogout = () => {
   const queryClient = useQueryClient();
+  const clearAuth = useAuthStore((state) => state.clearAuth);
   return useMutation({
     mutationFn: async () => {
-      const response = await api.post("/auth/logout");
-      return response.data;
+      await api.post("/auth/logout");
     },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["user"] }, data);
+    onSuccess: () => {
+      clearAuth();
+      queryClient.invalidateQueries({ queryKey: ["user"] });
     },
   });
 };

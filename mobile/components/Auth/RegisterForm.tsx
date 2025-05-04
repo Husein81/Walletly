@@ -1,17 +1,20 @@
-import { View, TouchableOpacity, ActivityIndicator } from "react-native";
-import { Button, Text, Input, Label } from "../ui";
-import { useState } from "react";
-import Icon from "~/lib/icons/Icon";
 import { useTheme } from "@react-navigation/native";
-import { NAV_THEME } from "~/lib/constants";
+import { useState } from "react";
+import { ActivityIndicator, TouchableOpacity, View } from "react-native";
+
+// Local imports
 import { useRegister } from "~/hooks/auth";
+import { NAV_THEME } from "~/lib/constants";
+import { Icon } from "~/lib/icons/Icon";
+import { Button, Input, Label, Text } from "../ui";
+import { useColorScheme } from "~/lib/useColorScheme";
 
 type Props = {
   setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const RegisterForm = ({ setIsActive }: Props) => {
-  const theme = useTheme();
+  const { isDarkColorScheme } = useColorScheme();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -70,7 +73,9 @@ const RegisterForm = ({ setIsActive }: Props) => {
               className="absolute right-3 top-3"
               onPress={() => setShowPassword(!showPassword)}
               color={
-                theme.dark ? NAV_THEME.dark.primary : NAV_THEME.light.primary
+                isDarkColorScheme
+                  ? NAV_THEME.dark.primary
+                  : NAV_THEME.light.primary
               }
             />
           </View>

@@ -9,11 +9,12 @@ module.exports = {
     extend: {
       colors: {
         shark: "#2a2a2a",
+        darkShark: "#1a1a1a",
         iron: "#c0c4c9",
         shuttleGray: "#6A6D70",
         lightGray: "#E5E7EB",
-        danger: "#e64444",
-        success: "#1F8C29",
+        danger: "#e13344",
+        success: "#1a7C21",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

@@ -1,4 +1,3 @@
-import { useTheme } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useState } from "react";
 import { View, Text, ActivityIndicator, TouchableOpacity } from "react-native";
@@ -7,14 +6,15 @@ import { View, Text, ActivityIndicator, TouchableOpacity } from "react-native";
 import { Button, Input, Label } from "~/components/ui";
 import { useLogin } from "~/hooks/auth";
 import { NAV_THEME } from "~/lib/constants";
-import Icon from "~/lib/icons/Icon";
+import { Icon } from "~/lib/icons/Icon";
+import { useColorScheme } from "~/lib/useColorScheme";
 
 type Props = {
   setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const LoginForm = ({ setIsActive }: Props) => {
-  const theme = useTheme();
+  const { isDarkColorScheme } = useColorScheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -24,7 +24,7 @@ const LoginForm = ({ setIsActive }: Props) => {
   const handleLogin = async () => {
     try {
       await mutateAsync();
-      router.replace("/(tabs)");
+      router.replace("/");
     } catch (error) {
       console.error("Login failed:", error);
     }
@@ -63,7 +63,9 @@ const LoginForm = ({ setIsActive }: Props) => {
               className="absolute right-3 top-3"
               onPress={() => setShowPassword(!showPassword)}
               color={
-                theme.dark ? NAV_THEME.dark.primary : NAV_THEME.light.primary
+                isDarkColorScheme
+                  ? NAV_THEME.dark.primary
+                  : NAV_THEME.light.primary
               }
             />
           </View>

@@ -45,7 +45,7 @@ export const categorySchema = z.object({
 });
 
 export const accountSchema = z.object({
-  id: z.string().optional(),
+  id: z.string(),
   userId: z.string(),
   name: z.string().min(1).max(50),
   balance: z.number().default(0),

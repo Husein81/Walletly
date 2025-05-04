@@ -7,7 +7,7 @@ interface IconProps extends LucideProps {
   onPress?: () => void;
 }
 
-const Icon = ({ name, color, size, className, onPress }: IconProps) => {
+export const Icon = ({ name, color, size, className, onPress }: IconProps) => {
   const LucideIcon = icons[name as keyof typeof icons];
   return (
     <Pressable className={className} onPress={onPress}>
@@ -15,5 +15,3 @@ const Icon = ({ name, color, size, className, onPress }: IconProps) => {
     </Pressable>
   );
 };
-
-export default Icon;
