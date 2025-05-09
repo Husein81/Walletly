@@ -11,12 +11,11 @@ import { useAuthStore } from "~/store/authStore";
 
 const DrawerLayout = () => {
   const { isDarkColorScheme } = useColorScheme();
-  const { user } = useAuthStore();
+  const { user, token } = useAuthStore();
 
-  if (!user) {
+  if (!user || !token) {
     return <Redirect href="/auth" />;
   }
-  console.log(user);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

@@ -46,7 +46,7 @@ const useRegister = (name: string, email: string, password: string) => {
 
 const useLogout = () => {
   const queryClient = useQueryClient();
-  const clearAuth = useAuthStore((state) => state.clearAuth);
+  const { clearAuth } = useAuthStore();
   return useMutation({
     mutationFn: async () => {
       await api.post("/auth/logout");

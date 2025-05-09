@@ -32,7 +32,7 @@ const LoginForm = ({ setIsActive }: Props) => {
 
   return (
     <View className="flex-1">
-      <Text className="text-5xl font-bold text-primary text-center mb-8">
+      <Text className="text-5xl font-bold dark:text-dark-text text-light-text  text-center mb-8">
         Welcome Back!
       </Text>
       {/* Form */}
@@ -43,7 +43,7 @@ const LoginForm = ({ setIsActive }: Props) => {
             placeholder="Enter your email"
             value={email}
             onChangeText={setEmail}
-            className="mb-4"
+            className="mb-4 dark:bg-shark"
             autoCapitalize="none"
           />
         </View>
@@ -55,7 +55,7 @@ const LoginForm = ({ setIsActive }: Props) => {
               value={password}
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
-              className="mb-4"
+              className="mb-4 dark:bg-shark"
               autoCapitalize="none"
             />
             <Icon
@@ -72,12 +72,14 @@ const LoginForm = ({ setIsActive }: Props) => {
         </View>
 
         {/* Error */}
-        {error && <Text className="text-red-500 mb-4">{error.message}</Text>}
+        {error && (
+          <Text className="text-dark-notification mb-4">{error.message}</Text>
+        )}
         <Button onPress={handleLogin}>
           {isPending ? (
             <ActivityIndicator />
           ) : (
-            <Text className="text-white dark:text-shark">Sign In</Text>
+            <Text className="text-dark-text dark:text-light-text">Sign In</Text>
           )}
         </Button>
 
@@ -86,7 +88,7 @@ const LoginForm = ({ setIsActive }: Props) => {
             Don't have an account?{" "}
           </Text>
           <TouchableOpacity onPress={() => setIsActive(true)}>
-            <Text className="text-shark font-semibold dark:text-white ">
+            <Text className="text-shark font-semibold text-light-text dark:text-dark-text ">
               Sign up
             </Text>
           </TouchableOpacity>

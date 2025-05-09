@@ -15,7 +15,7 @@ interface AuthStore {
   user: User | null;
   token: string | null;
   setAuth: (data: { user: User; token: string }) => Promise<void>;
-  signOut: () => Promise<void>;
+  clearAuth: () => Promise<void>;
   loadUser: () => Promise<void>;
 }
 
@@ -35,7 +35,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
     }
   },
 
-  signOut: async () => {
+  clearAuth: async () => {
     await AsyncStorage.removeItem("authToken");
     await AsyncStorage.removeItem("user");
     set({ user: null, token: null });
