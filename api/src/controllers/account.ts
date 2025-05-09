@@ -1,13 +1,15 @@
+// Global imports
 import { Request, Response } from "express";
+
+// Local imports
 import prisma from "../util/prisma.js";
+import NotFoundError from "../error/not-found.js";
 
 const getAccounts = async (req: Request, res: Response) => {
   try {
     const userId = req.query.userId as string;
     if (!userId) {
-      throw res
-        .status(400)
-        .json({ message: "Missing userId in query parameters." });
+      throw new NotFoundError("Missing userId in query parameters.");
     }
 
     const accounts = await prisma.account.findMany({
@@ -16,7 +18,6 @@ const getAccounts = async (req: Request, res: Response) => {
 
     res.status(200).json(accounts);
   } catch (error) {
-    console.error("Error fetching accounts:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -32,7 +33,7 @@ const getAccount = async (req: Request, res: Response) => {
     });
 
     if (!account) {
-      throw res.status(404).json({ message: "Account not found" });
+      throw new NotFoundError("Account not found");
     }
 
     res.status(200).json(account);
@@ -43,8 +44,7 @@ const getAccount = async (req: Request, res: Response) => {
 
 const createAccount = async (req: Request, res: Response) => {
   try {
-    const { userId } = req.params;
-    const { name, imageUrl, balance } = req.body;
+    const { name, imageUrl, balance, userId } = req.body;
 
     const newAccount = await prisma.account.create({
       data: {

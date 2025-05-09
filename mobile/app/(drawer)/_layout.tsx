@@ -1,7 +1,7 @@
 import { Redirect } from "expo-router";
 import { Drawer } from "expo-router/drawer";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import CustomDrawer from "~/components/CustomDrawer";
+import { CustomDrawer } from "~/components/ui-components";
 import { NAV_THEME } from "~/lib/constants";
 
 // Local Imports
@@ -16,6 +16,7 @@ const DrawerLayout = () => {
   if (!user) {
     return <Redirect href="/auth" />;
   }
+  console.log(user);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

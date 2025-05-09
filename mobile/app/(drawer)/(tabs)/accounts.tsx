@@ -1,0 +1,61 @@
+// Global imports
+import { useMemo } from "react";
+import { View } from "react-native";
+
+// Local imports
+import AccountForm from "~/components/Account/AccountForm";
+import AccountList from "~/components/Account/AccountList";
+import { Button, Text } from "~/components/ui";
+import { Modal } from "~/components/ui-components";
+import { useGetAccounts } from "~/hooks/accounts";
+import { Icon } from "~/lib/icons/Icon";
+import { useColorScheme } from "~/lib/useColorScheme";
+import { useAuthStore } from "~/store/authStore";
+
+const Accounts = () => {
+  const { isDarkColorScheme } = useColorScheme();
+  const { user } = useAuthStore();
+  const { data: accounts } = useGetAccounts(user?.id ?? "");
+
+  const totalBalance = useMemo(
+    () => accounts?.reduce((acc, account) => acc + account.balance, 0),
+    [accounts]
+  );
+
+  return (
+    <View className="p-8 flex-1 gap-4">
+      <View className="flex-row items-center justify-between mb-4">
+        <Text className="text-2xl font-semibold text-primary text-start mb-8">
+          All Accounts: ${totalBalance}
+        </Text>
+      </View>
+
+      <Text className="text-2xl font-semibold text-primary text-start mb-8">
+        Accounts
+      </Text>
+      <AccountList accounts={accounts || []} />
+
+      <View className="items-center ">
+        <Modal
+          trigger={
+            <Button
+              variant={"outline"}
+              className="flex-row gap-4 border-primary w-fit "
+            >
+              <Icon
+                name="Plus"
+                size={20}
+                color={isDarkColorScheme ? "white" : "black"}
+                className="border rounded-full border-primary"
+              />
+              <Text className="uppercase">add new account</Text>
+            </Button>
+          }
+        >
+          <AccountForm />
+        </Modal>
+      </View>
+    </View>
+  );
+};
+export default Accounts;

@@ -8,9 +8,9 @@ import { useLogout } from "~/hooks/auth";
 import { NAV_THEME } from "~/lib/constants";
 import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
-import { Switch } from "./ui/switch";
+import { Switch } from "../ui/switch";
 
-const CustomDrawer = (props: any) => {
+export const CustomDrawer = (props: any) => {
   const { mutateAsync } = useLogout();
   const { isDarkColorScheme, toggleColorScheme } = useColorScheme();
 
@@ -44,4 +44,3 @@ const CustomDrawer = (props: any) => {
   );
 };
 
-export default CustomDrawer;

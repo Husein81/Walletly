@@ -3,13 +3,14 @@ import {
   AlertDialog,
   AlertDialogContent,
   AlertDialogTrigger,
-} from "./ui/alert-dialog";
+} from "~/components/ui/alert-dialog";
 
 type Props = {
   trigger: React.ReactNode;
   children: React.ReactNode;
 };
-const Modal = ({ trigger, children }: Props) => {
+
+export const Modal = ({ trigger, children }: Props) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
@@ -17,4 +18,3 @@ const Modal = ({ trigger, children }: Props) => {
     </AlertDialog>
   );
 };
-export default Modal;

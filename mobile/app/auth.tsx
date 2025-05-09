@@ -20,7 +20,7 @@ const Auth = () => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      className="flex-1"
+      className="flex-1 bg-primary"
     >
       <ScrollView className="mt-12 p-10">
         <View>

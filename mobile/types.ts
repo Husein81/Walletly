@@ -45,13 +45,19 @@ export const categorySchema = z.object({
 });
 
 export const accountSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   userId: z.string(),
   name: z.string().min(1).max(50),
   balance: z.number().default(0),
   imageUrl: z.string().url().optional(),
-  createdAt: z.date().default(() => new Date()),
-  updatedAt: z.date().default(() => new Date()),
+  createdAt: z
+    .date()
+    .default(() => new Date())
+    .optional(),
+  updatedAt: z
+    .date()
+    .default(() => new Date())
+    .optional(),
 });
 
 export type User = z.infer<typeof userSchema>;
