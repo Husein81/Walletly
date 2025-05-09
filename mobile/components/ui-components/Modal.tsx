@@ -14,7 +14,9 @@ export const Modal = ({ trigger, children }: Props) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
-      <AlertDialogContent className="w-full">{children}</AlertDialogContent>
+      <AlertDialogContent className="w-full bg-card">
+        {children}
+      </AlertDialogContent>
     </AlertDialog>
   );
 };

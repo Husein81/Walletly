@@ -17,7 +17,7 @@ type Option = {
   label: string;
   value: string;
   shortcut?: string;
-  onPress?: () => void;
+  onPress?: () => void | React.ReactNode;
 };
 
 type Props = {
@@ -29,7 +29,7 @@ type Props = {
 export const Dropdown = ({ title, icon, options }: Props) => {
   const { isDarkColorScheme } = useColorScheme();
   return (
-    <DropdownMenu>
+    <DropdownMenu className="relative">
       <DropdownMenuTrigger asChild>
         <Button variant={"ghost"}>
           {title && <Text className="text-primary">{title}</Text>}
@@ -38,7 +38,7 @@ export const Dropdown = ({ title, icon, options }: Props) => {
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
+      <DropdownMenuContent className="dark:bg-darkShark absolute -translate-x-1/2">
         {options.map((option) => (
           <DropdownMenuItem key={option.value} onPress={option.onPress}>
             <Text className="text-primary">{option.label}</Text>

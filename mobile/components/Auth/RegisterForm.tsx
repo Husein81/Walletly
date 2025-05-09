@@ -29,9 +29,10 @@ const RegisterForm = ({ setIsActive }: Props) => {
       console.error("Registration error:", err);
     }
   };
+
   return (
     <View>
-      <Text className="text-4xl font-bold text-primary text-center mb-8">
+      <Text className="text-5xl font-bold text-primary text-center mb-8">
         Lets Get Started!
       </Text>
 
@@ -43,7 +44,7 @@ const RegisterForm = ({ setIsActive }: Props) => {
             placeholder="Enter your name"
             value={name}
             onChangeText={setName}
-            className="mb-4"
+            className="mb-4 dark:bg-shark"
             autoCapitalize="none"
           />
         </View>
@@ -53,7 +54,7 @@ const RegisterForm = ({ setIsActive }: Props) => {
             placeholder="Enter your email"
             value={email}
             onChangeText={setEmail}
-            className="mb-4"
+            className="mb-4 dark:bg-shark"
             autoCapitalize="none"
           />
         </View>
@@ -65,7 +66,7 @@ const RegisterForm = ({ setIsActive }: Props) => {
               value={password}
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
-              className="mb-4"
+              className="mb-4 dark:bg-shark"
               autoCapitalize="none"
             />
             <Icon
