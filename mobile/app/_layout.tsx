@@ -11,6 +11,7 @@ import { StatusBar } from "expo-status-bar";
 import React, { useEffect } from "react";
 import { Platform } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Modal } from "~/components/ui-components";
 
 // Local Imports
 import "~/global.css";
@@ -63,8 +64,8 @@ export default function RootLayout() {
         <SafeAreaProvider>
           <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
           <Slot />
+          <PortalHost />
         </SafeAreaProvider>
-        <PortalHost />
       </ThemeProvider>
     </QueryClientProvider>
   );

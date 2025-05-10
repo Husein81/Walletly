@@ -6,12 +6,23 @@ import { Dropdown } from "~/components/ui-components";
 import { cn } from "~/lib/utils";
 import { Account } from "~/types";
 import { Card } from "../ui/card";
+import { useDeleteAccount } from "~/hooks/accounts";
+import useModalStore from "~/store/modalStore";
+import AccountForm from "./AccountForm";
 
 type Props = {
   account: Account;
 };
 
 const AccountCard = ({ account }: Props) => {
+  const { onOpen } = useModalStore();
+  const deleteAccount = useDeleteAccount(account.id ?? "");
+
+  const handleDelete = async () => await deleteAccount.mutateAsync();
+
+  const handleEdit = () =>
+    onOpen(<AccountForm account={account} />, "Edit account");
+
   const formattedBalance = (balance: number) =>
     balance > 0
       ? `$${balance.toFixed(2)}`
@@ -21,22 +32,17 @@ const AccountCard = ({ account }: Props) => {
     {
       label: "Edit",
       value: "edit",
-      onPress: () => console.log("Edit"),
+      onPress: handleEdit,
     },
     {
       label: "Delete",
       value: "delete",
-      onPress: () => console.log("Delete"),
-    },
-    {
-      label: "Ignore",
-      value: "ignore",
-      onPress: () => console.log("Ignore"),
+      onPress: handleDelete,
     },
   ];
 
   return (
-    <Card className="flex-row gap-4 py-2 px-3 items-center justify-between dark:border-primary">
+    <Card className="flex-row gap-4 py-2 px-3 items-center justify-between dark:border-primary dark:bg-darkShark">
       <View className="flex-row gap-4 items-center">
         <Image
           source={{

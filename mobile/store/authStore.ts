@@ -39,7 +39,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
     await AsyncStorage.removeItem("authToken");
     await AsyncStorage.removeItem("user");
     set({ user: null, token: null });
-    router.replace("/auth"); // Redirect to login or home
+    router.navigate("/auth"); // Redirect to login or home
   },
 
   loadUser: async () => {
@@ -52,7 +52,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
         if (decoded.exp && decoded.exp < now) {
           // Token expired
-          await AsyncStorage.removeItem("authToken");
+          await AsyncStorage.removeItem("token");
           await AsyncStorage.removeItem("user");
           set({ user: null, token: null });
           router.replace("/auth"); // redirect to login
@@ -65,7 +65,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
         }
       } catch (err) {
         // Malformed token
-        await AsyncStorage.removeItem("authToken");
+        await AsyncStorage.removeItem("token");
         await AsyncStorage.removeItem("user");
         set({ user: null, token: null });
         router.replace("/auth");

@@ -16,10 +16,10 @@ const useGetAccounts = (userId: string) => {
   });
 };
 
-const useCreateAccount = (account: Account) => {
+const useCreateAccount = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (): Promise<void> => {
+    mutationFn: async (account: Account): Promise<void> => {
       console.log("Creating account:", account);
       await api.post<Account>("/account", account);
     },
@@ -33,10 +33,10 @@ const useCreateAccount = (account: Account) => {
   });
 };
 
-const useUpdateAccount = (account: Account) => {
+const useUpdateAccount = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (): Promise<void> => {
+    mutationFn: async (account: Account): Promise<void> => {
       await api.put<Account>(`/account/${account.id}`, account);
     },
     onSuccess: () => {

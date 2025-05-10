@@ -1,78 +1,120 @@
-import { useState } from "react";
-import { Text, View } from "react-native";
+import { useForm } from "@tanstack/react-form";
+import { ActivityIndicator, Text, View } from "react-native";
+import { z } from "zod";
 
 // Local Imports
 import { useCreateAccount, useUpdateAccount } from "~/hooks/accounts";
 import { useAuthStore } from "~/store/authStore";
 import { Account } from "~/types";
-import { Input, Label } from "../ui";
-import { AlertDialogAction, AlertDialogCancel } from "../ui/alert-dialog";
+import { Button, Input, Label } from "../ui";
+import { FieldInfo } from "../ui-components";
+import useModalStore from "~/store/modalStore";
 
 type Props = {
   account?: Account;
 };
 
+const accountSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  balance: z
+    .number({ invalid_type_error: "Balance must be a number" })
+    .nonnegative("Balance must be 0 or more"),
+});
+
 const AccountForm = ({ account }: Props) => {
+  const { onClose } = useModalStore();
   const { user } = useAuthStore();
-  const [name, setName] = useState(account?.name || "");
-  const [balance, setBalance] = useState(account?.balance || 0);
 
-  const { mutateAsync: createAccount } = useCreateAccount({
-    name,
-    balance,
-    imageUrl: "",
-    userId: user?.id || "",
+  const createAccount = useCreateAccount();
+  const updateAccount = useUpdateAccount();
+
+  const form = useForm({
+    defaultValues: {
+      name: account?.name || "",
+      balance: account?.balance || 0,
+    },
+    onSubmit: async ({ value }) => {
+      const payload = {
+        ...value,
+        imageUrl: "",
+        userId: user?.id || "",
+      };
+      console.log("Payload:", payload);
+      if (account) {
+        await updateAccount.mutateAsync({ ...payload, id: account.id });
+      } else {
+        await createAccount.mutateAsync(payload);
+      }
+      onClose();
+    },
   });
-
-  const { mutateAsync: updateAccount } = useUpdateAccount({
-    id: account?.id || "",
-    name,
-    balance,
-    userId: user?.id || "",
-  });
-
-  const handleSubmit = async () => {
-    if (account) {
-      await updateAccount();
-    } else {
-      await createAccount();
-    }
-  };
 
   return (
-    <View className="">
-      <Text className="text-primary text-2xl font-semibold mb-4">
-        {account ? "Edit account" : "Add new account"}
-      </Text>
+    <View>
+      <form.Field
+        name="name"
+        validators={{ onChange: accountSchema.shape.name }}
+        children={(field) => (
+          <View>
+            <Label>Name</Label>
+            <Input
+              value={field.state.value}
+              onChangeText={field.handleChange}
+              placeholder="Account name"
+              className="mb-4"
+              autoCapitalize="none"
+            />
+            <FieldInfo field={field} />
+          </View>
+        )}
+      />
 
-      <View className="gap-4">
-        <Label>Name</Label>
-        <Input
-          value={name}
-          onChangeText={setName}
-          placeholder="Account name"
-          className="mb-4 dark:bg-darkShark"
-        />
-      </View>
-      <View className="gap-4">
-        <Label>Balance</Label>
-        <Input
-          value={balance.toString()}
-          onChangeText={(text) => setBalance(parseFloat(text) || 0)}
-          keyboardType="numeric"
-          className="mb-4 dark:bg-darkShark"
-        />
-      </View>
+      <form.Field
+        name="balance"
+        validators={{ onChange: accountSchema.shape.balance }}
+        children={(field) => (
+          <View>
+            <Label>Balance</Label>
+            <Input
+              value={field.state.value.toString()}
+              onChangeText={(text) => field.handleChange(parseFloat(text) || 0)}
+              keyboardType="numeric"
+              className="mb-4"
+            />
+            <FieldInfo field={field} />
+          </View>
+        )}
+      />
 
       <View className="flex-row gap-4">
-        <AlertDialogCancel className="border-primary border">
-          <Text className="dark:text-primary">Cancel</Text>
-        </AlertDialogCancel>
-        <AlertDialogAction onPress={handleSubmit}>
-          <Text className="dark:text-shark text-white">Save</Text>
-        </AlertDialogAction>
+        <Button
+          variant={"outline"}
+          className="border-primary border"
+          onPress={onClose}
+        >
+          <Text className="text-primary">Cancel</Text>
+        </Button>
+        <form.Subscribe
+          selector={(state) => [state.canSubmit, state.isSubmitting]}
+          children={([canSubmit, isSubmitting]) => (
+            <Button
+              disabled={!canSubmit}
+              onPress={(e) => {
+                e.preventDefault();
+                form.handleSubmit();
+              }}
+            >
+              {isSubmitting ? (
+                <ActivityIndicator />
+              ) : (
+                <Text className="text-secondary font-semibold">Save</Text>
+              )}
+            </Button>
+          )}
+        />
       </View>
     </View>
   );
 };
+
 export default AccountForm;

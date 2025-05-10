@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import UnauthenticatedError from "../error/unauthenticated.js";
 
 interface AuthRequest extends Request {
   userId?: string;
@@ -9,7 +10,7 @@ const protect = (req: AuthRequest, res: Response, next: NextFunction): void => {
   const auth = req.headers.authorization;
 
   if (!auth || !auth.startsWith("Bearer")) {
-    throw res.status(401).json({ message: "Unauthorized" });
+    throw new UnauthenticatedError("Unauthorized account");
   }
 
   try {
@@ -20,7 +21,7 @@ const protect = (req: AuthRequest, res: Response, next: NextFunction): void => {
     req.userId = decoded.userId;
     next();
   } catch (error) {
-    res.status(401).json({ message: "Invalid token" });
+    throw new UnauthenticatedError("Invalid token");
   }
 };
 

@@ -12,34 +12,28 @@ type Props = {
 
 const AuthToggle: React.FC<Props> = ({ isActive, setIsActive }) => {
   return (
-    <View className="dark:bg-shark bg-lightGray  rounded-lg flex-row w-full p-1 gap-4 mb-8">
+    <View className="bg-secondary rounded-lg flex-row w-full p-1 gap-4 mb-8">
       <Button
-        className={cn(
-          "flex-1 dark:bg-shark bg-lightGray",
-          !isActive && "dark:bg-white bg-shark"
-        )}
+        className={cn("flex-1 bg-secondary", !isActive && "bg-foreground")}
         onPress={() => setIsActive(false)}
       >
         <Text
           className={cn(
-            "text-center font-semibold text-white dark:text-shark",
-            isActive && "text-primary dark:text-white"
+            "text-center font-semibold text-secondary",
+            isActive && "text-primary"
           )}
         >
           Login
         </Text>
       </Button>
       <Button
-        className={cn(
-          "flex-1 dark:bg-shark bg-lightGray",
-          isActive && "dark:bg-white bg-shark"
-        )}
+        className={cn("flex-1 bg-secondary", isActive && "bg-foreground")}
         onPress={() => setIsActive(true)}
       >
         <Text
           className={cn(
-            "text-center font-semibold text-white dark:text-shark",
-            !isActive && "text-primary dark:text-white"
+            "text-center font-semibold text-secondary",
+            !isActive && "text-primary"
           )}
         >
           Register

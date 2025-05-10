@@ -1,13 +1,26 @@
-import { router } from "expo-router";
-import { useState } from "react";
 import { View, Text, ActivityIndicator, TouchableOpacity } from "react-native";
+import { useState } from "react";
+import { router } from "expo-router";
+import { useColorScheme } from "~/lib/useColorScheme";
+
+// Form & validation
+import { Field, useForm } from "@tanstack/react-form";
+import { z } from "zod";
+import { zodValidator } from "@tanstack/zod-form-adapter";
 
 // Local imports
 import { Button, Input, Label } from "~/components/ui";
 import { useLogin } from "~/hooks/auth";
 import { NAV_THEME } from "~/lib/constants";
 import { Icon } from "~/lib/icons/Icon";
-import { useColorScheme } from "~/lib/useColorScheme";
+import { FieldInfo } from "../ui-components";
+
+export const loginSchema = z.object({
+  email: z.string().email("Invalid email"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
+type LoginFormValues = z.infer<typeof loginSchema>;
 
 type Props = {
   setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
@@ -15,80 +28,140 @@ type Props = {
 
 const LoginForm = ({ setIsActive }: Props) => {
   const { isDarkColorScheme } = useColorScheme();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const { mutateAsync, isPending, error } = useLogin(email, password);
+  const { mutateAsync, isPending, error } = useLogin();
 
-  const handleLogin = async () => {
-    try {
-      await mutateAsync();
-      router.replace("/");
-    } catch (error) {
-      console.error("Login failed:", error);
-    }
-  };
+  const form = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+    onSubmit: async ({ value }: { value: LoginFormValues }) => {
+      console.log("value", value);
+      try {
+        await mutateAsync(value);
+        router.navigate("/");
+      } catch (err) {
+        console.error("Login failed:", err);
+      }
+    },
+  });
 
   return (
     <View className="flex-1">
-      <Text className="text-5xl font-bold dark:text-dark-text text-light-text  text-center mb-8">
+      <Text className="text-5xl font-bold text-foreground text-center mb-8">
         Welcome Back!
       </Text>
-      {/* Form */}
+
       <View className="flex-1 gap-4">
-        <View className="gap-4">
-          <Label>Email</Label>
-          <Input
-            placeholder="Enter your email"
-            value={email}
-            onChangeText={setEmail}
-            className="mb-4 dark:bg-shark"
-            autoCapitalize="none"
-          />
-        </View>
-        <View className="gap-4">
-          <Label>Password</Label>
-          <View className="relative">
-            <Input
-              placeholder="Enter your password"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry={!showPassword}
-              className="mb-4 dark:bg-shark"
-              autoCapitalize="none"
-            />
-            <Icon
-              name={showPassword ? "EyeOff" : "Eye"}
-              className="absolute right-3 top-3"
-              onPress={() => setShowPassword(!showPassword)}
-              color={
-                isDarkColorScheme
-                  ? NAV_THEME.dark.primary
-                  : NAV_THEME.light.primary
+        {/* Email Field */}
+        <form.Field
+          name="email"
+          validators={{
+            onChange: z
+              .string()
+              .min(1, { message: "This field has to be filled." })
+              .email("This is not a valid email."),
+            onChangeAsyncDebounceMs: 500,
+            onChangeAsync: z.string().refine(
+              async (value) => {
+                return !value.includes("error");
+              },
+              {
+                message: "No 'error' allowed in email",
               }
-            />
-          </View>
-        </View>
-
-        {/* Error */}
-        {error && (
-          <Text className="text-dark-notification mb-4">{error.message}</Text>
-        )}
-        <Button onPress={handleLogin}>
-          {isPending ? (
-            <ActivityIndicator />
-          ) : (
-            <Text className="text-dark-text dark:text-light-text">Sign In</Text>
+            ),
+          }}
+          children={(field) => (
+            <View className="gap-2">
+              <Label>Email</Label>
+              <Input
+                placeholder="Enter your email"
+                value={field.state.value}
+                onChangeText={field.handleChange}
+                autoCapitalize="none"
+              />
+              <FieldInfo field={field} />
+            </View>
           )}
-        </Button>
+        />
 
-        <View className="flex-row justify-center items-center ">
-          <Text className="text-center text-shuttleGray">
-            Don't have an account?{" "}
-          </Text>
+        {/* Password Field */}
+        <form.Field
+          name="password"
+          validators={{
+            onChange: z
+              .string()
+              .min(1, { message: "This field has to be filled." })
+              .min(6, { message: "Password must be at least 6 characters" }),
+            onChangeAsyncDebounceMs: 500,
+            onChangeAsync: z.string().refine(
+              async (value) => {
+                return !value.includes("error");
+              },
+              {
+                message: "No 'error' allowed in password",
+              }
+            ),
+          }}
+          children={(field) => (
+            <View className="gap-2">
+              <Label>Password</Label>
+              <View className="relative">
+                <Input
+                  placeholder="Enter your password"
+                  value={field.state.value}
+                  onChangeText={field.handleChange}
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
+                />
+                <Icon
+                  name={showPassword ? "EyeOff" : "Eye"}
+                  className="absolute right-3 top-3"
+                  onPress={() => setShowPassword(!showPassword)}
+                  color={
+                    isDarkColorScheme
+                      ? NAV_THEME.dark.primary
+                      : NAV_THEME.light.primary
+                  }
+                />
+              </View>
+              <FieldInfo field={field} />
+            </View>
+          )}
+        />
+
+        {/* API error */}
+        {error && (
+          <Text className="text-danger text-sm mb-2">{error.message}</Text>
+        )}
+
+        {/* Submit */}
+        <form.Subscribe
+          selector={(state) => [state.canSubmit, state.isSubmitting]}
+          children={([canSubmit, isSubmitting]) => (
+            <Button
+              disabled={!canSubmit}
+              onPress={() => form.handleSubmit()}
+              className="bg-primary"
+            >
+              {isPending || isSubmitting ? (
+                <ActivityIndicator
+                  color={isDarkColorScheme ? "black" : "white"}
+                />
+              ) : (
+                <Text className="text-white dark:text-shark">Sign in</Text>
+              )}
+            </Button>
+          )}
+        />
+
+        {/* Switch to Signup */}
+        <View className="flex-row justify-center items-center">
+          <Text className="text-shuttleGray">Don't have an account? </Text>
           <TouchableOpacity onPress={() => setIsActive(true)}>
-            <Text className="text-shark font-semibold text-light-text dark:text-dark-text ">
+            <Text className="text-shark dark:text-white font-semibold">
               Sign up
             </Text>
           </TouchableOpacity>
