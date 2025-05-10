@@ -8,24 +8,33 @@ import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { Category } from "~/types";
 import { Dropdown } from "../ui-components";
+import { useDeleteCategory } from "~/hooks/categories";
+import useModalStore from "~/store/modalStore";
+import CategoryForm from "./CategoryForm";
 
 type Props = {
   category: Category;
 };
 const CategoryCard = ({ category }: Props) => {
+  const { onOpen } = useModalStore();
   const { isDarkColorScheme } = useColorScheme();
   const color = getColorByIndex(category.name);
 
+  const deleteCategory = useDeleteCategory(category?.id ?? "");
+
+  const handleDelete = async () => await deleteCategory.mutateAsync();
+  const handleEdit = () =>
+    onOpen(<CategoryForm category={category} />, "Edit Category");
   const options = [
     {
       label: "Edit",
       value: "edit",
-      onPress: () => console.log("Edit"),
+      onPress: handleEdit,
     },
     {
       label: "Delete",
       value: "delete",
-      onPress: () => console.log("Delete"),
+      onPress: handleDelete,
     },
   ];
 

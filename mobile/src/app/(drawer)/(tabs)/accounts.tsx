@@ -29,7 +29,7 @@ const Accounts = () => {
   const handleOpenForm = () => onOpen(<AccountForm />, "Add new account");
 
   return (
-    <View className="p-8  flex-1 gap-4">
+    <View className="py-4 px-6 flex-1 gap-4">
       <View className="flex-row items-center justify-between mb-4">
         <Text className="text-2xl font-semibold text-primary text-start ">
           All Accounts: ${totalBalance}
@@ -39,10 +39,10 @@ const Accounts = () => {
       <Text className="text-2xl font-semibold text-primary text-start mb-8">
         Accounts
       </Text>
-
-      {accounts ? <AccountList accounts={accounts} /> : <ListSkeleton />}
-
-      <View className="items-center ">
+      <View className="flex-1">
+        {accounts ? <AccountList accounts={accounts} /> : <ListSkeleton />}
+      </View>
+      <View className="">
         <Button
           variant={"outline"}
           className="flex-row gap-4 border-primary w-fit "
@@ -54,10 +54,9 @@ const Accounts = () => {
             color={isDarkColorScheme ? "white" : "black"}
             className="border rounded-full border-primary"
           />
-          <Text className="uppercase">add new account</Text>
+          <Text className="text-primary uppercase">add new account</Text>
         </Button>
       </View>
-      <Modal />
     </View>
   );
 };

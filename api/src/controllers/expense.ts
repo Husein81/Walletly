@@ -43,8 +43,8 @@ const getExpense = async (req: Request, res: Response) => {
 
 const createExpense = async (req: Request, res: Response) => {
   try {
-    const { userId } = req.params;
-    const { amount, description, categoryId, type, date } = req.body as Expense;
+    const { amount, description, categoryId, type, date, userId } =
+      req.body as Expense;
 
     const newExpense = await prisma.expense.create({
       data: {

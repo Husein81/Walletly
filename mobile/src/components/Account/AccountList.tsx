@@ -14,6 +14,7 @@ const AccountList = ({ accounts }: Props) => {
         keyExtractor={(item) => item.id || Math.random().toString()}
         className="gap-4"
         renderItem={({ item }) => <AccountCard account={item} />}
+        showsVerticalScrollIndicator={false}
         ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
       />
     </View>

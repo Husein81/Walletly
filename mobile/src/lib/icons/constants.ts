@@ -1,6 +1,7 @@
 export const iconsRecord: Record<string, string> = {
   pc: "Laptop",
   car: "Car",
+  handCoins: "HandCoins",
   food: "Utensils",
   clothes: "Shirt",
   health: "Activity",
@@ -10,6 +11,12 @@ export const iconsRecord: Record<string, string> = {
   piggy: "PiggyBank",
   money: "DollarSign",
   card: "CreditCard",
+  shopping: "ShoppingCart",
+  transportation: "BusFront",
+  rental: "Landmark",
+  grant: "Gift",
+  sale: "Receipt",
+  sport: "Dumbbell",
   salary: "WalletMinimal",
   other: "CircleHelp",
 };

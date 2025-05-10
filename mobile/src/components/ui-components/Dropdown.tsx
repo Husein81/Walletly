@@ -12,6 +12,7 @@ import {
 import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { Button } from "~/components/ui";
+import { useState } from "react";
 
 type Option = {
   label: string;
@@ -28,17 +29,22 @@ type Props = {
 
 export const Dropdown = ({ title, icon, options }: Props) => {
   const { isDarkColorScheme } = useColorScheme();
+  const [open, setOpen] = useState(false);
   return (
-    <DropdownMenu className="relative">
+    <DropdownMenu onOpenChange={() => setOpen(!open)} className="relative">
       <DropdownMenuTrigger asChild>
         <Button variant={"ghost"}>
           {title && <Text className="text-primary">{title}</Text>}
           {icon && (
-            <Icon name={icon} color={isDarkColorScheme ? "white" : "black"} />
+            <Icon
+              onPress={() => setOpen(!open)}
+              name={icon}
+              color={isDarkColorScheme ? "white" : "black"}
+            />
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="dark:bg-darkShark absolute -translate-x-1/2">
+      <DropdownMenuContent className="dark:bg-darkShark absolute -translate-x-1/3">
         {options.map((option) => (
           <DropdownMenuItem key={option.value} onPress={option.onPress}>
             <Text className="text-primary">{option.label}</Text>

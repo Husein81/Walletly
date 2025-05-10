@@ -36,6 +36,7 @@ const IconSelector = ({ selectedIcon, setSelectedIcon }: Props) => {
               style={{ backgroundColor }}
             >
               <Icon
+                onPress={() => setSelectedIcon(key)}
                 name={value}
                 color={
                   isDarkColorScheme

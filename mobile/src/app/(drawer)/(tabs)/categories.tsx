@@ -1,39 +1,42 @@
 // Global imports
 import { useFocusEffect } from "expo-router";
-import { useCallback, useEffect, useMemo } from "react";
-import { FlatList, SectionList, Text, View } from "react-native";
+import { useCallback, useMemo } from "react";
+import { Text, View } from "react-native";
+import CategoryForm from "~/components/Category/CategoryForm";
 import CategorySectionList from "~/components/Category/CategorySectionList";
+import { Button } from "~/components/ui";
 import ListSkeleton from "~/components/ui-components/ListSkeleton";
 
 // Local imports
 import { useCategories } from "~/hooks/categories";
 import { NAV_THEME } from "~/lib/constants";
-import { getColorByIndex } from "~/lib/functions";
-import { iconsRecord } from "~/lib/icons/constants";
 import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
-import { cn } from "~/lib/utils";
 import { useAuthStore } from "~/store/authStore";
+import useModalStore from "~/store/modalStore";
+import { ExpenseType } from "~/types";
 
 const Categories = () => {
   const { user } = useAuthStore();
+  const { onOpen } = useModalStore();
   const { isDarkColorScheme } = useColorScheme();
 
-  const { data: categories, refetch } = useCategories(user?.id ?? "");
+  const { data: categories, refetch } = useCategories(user?.id || "");
 
   useFocusEffect(
     useCallback(() => {
       refetch();
-    }, [categories, user])
+    }, [categories, refetch])
   );
-
   const expenseCategories = useMemo(
-    () => categories?.filter((category) => category.type === "EXPENSE"),
+    () =>
+      categories?.filter((category) => category.type === ExpenseType.EXPENSE),
     [categories]
   );
 
   const incomeCategories = useMemo(
-    () => categories?.filter((category) => category.type === "INCOME"),
+    () =>
+      categories?.filter((category) => category.type === ExpenseType.INCOME),
     [categories]
   );
 
@@ -48,21 +51,31 @@ const Categories = () => {
     },
   ];
 
+  const handleOpenCategory = () => onOpen(<CategoryForm />, "Add new Category");
   return (
-    <View className="p-8 flex-1 ">
-      {categories ? (
-        <CategorySectionList categorySections={categorySections} />
-      ) : (
-        <ListSkeleton />
-      )}
+    <View className="py-4 px-6 flex-1 ">
+      <View className="flex-1">
+        {categories ? (
+          <CategorySectionList categorySections={categorySections} />
+        ) : (
+          <ListSkeleton />
+        )}
+      </View>
 
-      <View className="p-4 rounded-full shadow-lg absolute bottom-6 right-4 bg-primary">
-        <Icon
-          name="Plus"
-          color={
-            isDarkColorScheme ? NAV_THEME.light.primary : NAV_THEME.dark.primary
-          }
-        />
+      <View className="">
+        <Button
+          variant={"outline"}
+          className="flex-row gap-4 border-primary w-fit "
+          onPress={handleOpenCategory}
+        >
+          <Icon
+            name="Plus"
+            size={20}
+            color={isDarkColorScheme ? "white" : "black"}
+            className="border rounded-full border-primary"
+          />
+          <Text className="text-primary uppercase">add new category</Text>
+        </Button>
       </View>
     </View>
   );

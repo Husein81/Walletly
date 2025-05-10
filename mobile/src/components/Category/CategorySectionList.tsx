@@ -12,6 +12,7 @@ const CategorySectionList = ({ categorySections }: Props) => {
       <SectionList
         sections={categorySections}
         keyExtractor={(item) => item.id || Math.random().toString()}
+        showsVerticalScrollIndicator={false}
         ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
         renderSectionHeader={({ section: { title } }) => (
           <View className="first:my-4 mb-8 mt-20">
