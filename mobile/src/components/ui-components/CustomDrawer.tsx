@@ -20,7 +20,7 @@ export const CustomDrawer = (props: any) => {
   return (
     <DrawerContentScrollView {...props}>
       <View className="px-4 pt-4">
-        <View className=" flex-row items-center justify-end mb-4 gap-4">
+        <View className="flex-row-reverse items-center justify-between w-full  mb-4 gap-4">
           <Switch
             checked={isDarkColorScheme}
             onCheckedChange={toggleColorScheme}

@@ -9,6 +9,11 @@ import { Card } from "../ui/card";
 import { useDeleteAccount } from "~/hooks/accounts";
 import useModalStore from "~/store/modalStore";
 import AccountForm from "./AccountForm";
+import { iconsRecord } from "~/lib/icons/constants";
+import { useColorScheme } from "~/lib/useColorScheme";
+import { getColorByIndex } from "~/lib/functions";
+import { NAV_THEME } from "~/lib/constants";
+import { Icon } from "~/lib/icons/Icon";
 
 type Props = {
   account: Account;
@@ -16,6 +21,8 @@ type Props = {
 
 const AccountCard = ({ account }: Props) => {
   const { onOpen } = useModalStore();
+  const { isDarkColorScheme } = useColorScheme();
+
   const deleteAccount = useDeleteAccount(account.id ?? "");
 
   const handleDelete = async () => await deleteAccount.mutateAsync();
@@ -40,16 +47,25 @@ const AccountCard = ({ account }: Props) => {
       onPress: handleDelete,
     },
   ];
+  const color = getColorByIndex(account.name);
 
   return (
     <Card className="flex-row gap-4 py-2 px-3 items-center justify-between dark:border-primary bg-card">
       <View className="flex-row gap-4 items-center">
-        <Image
-          source={{
-            uri: account.imageUrl || "https://via.placeholder.com/150",
-          }}
-          className="size-14 rounded border border-primary"
-        />
+        <View
+          className={cn("p-2 rounded-lg")}
+          style={{ backgroundColor: color }}
+        >
+          <Icon
+            name={iconsRecord[account.imageUrl || "other"]}
+            color={
+              isDarkColorScheme
+                ? NAV_THEME.light.primary
+                : NAV_THEME.dark.primary
+            }
+            size={32}
+          />
+        </View>
         <View>
           <Text className="text-lg font-semibold text-primary capitalize">
             {account.name}

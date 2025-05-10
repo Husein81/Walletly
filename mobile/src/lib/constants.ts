@@ -20,3 +20,18 @@ export const NAV_THEME = {
     shuttleGray: "#6A6D70",
   },
 };
+
+export const COLOR_PALETTE = [
+  "#FF6B6B", // red
+  "#FFB347", // orange
+  "#FFD93D", // yellow
+  "#6BCB77", // green
+  "#4D96FF", // blue
+  "#9D4Ecc", // purple
+  "#FF85A1", // pink
+  "#00C2A8", // teal
+  "#FFC75F", // gold
+  "#C34A36", // brown
+  "#6C5DD3", // indigo
+  "#3D405B", // dark blue
+];

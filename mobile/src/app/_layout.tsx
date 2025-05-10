@@ -14,7 +14,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Modal } from "~/components/ui-components";
 
 // Local Imports
-import "~/global.css";
+import "../../global.css";
 import { NAV_THEME } from "~/lib/constants";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { useAuthStore } from "~/store/authStore";

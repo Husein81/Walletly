@@ -21,7 +21,12 @@ const DrawerLayout = () => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Drawer
         drawerContent={CustomDrawer}
-        screenOptions={{ drawerStyle: { borderRadius: 0 } }}
+        screenOptions={{
+          drawerStyle: { borderRadius: 0 },
+          drawerItemStyle: {
+            borderRadius: 15,
+          },
+        }}
       >
         <Drawer.Protected guard={!!user}>
           <Drawer.Screen
