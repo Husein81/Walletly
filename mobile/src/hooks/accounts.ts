@@ -20,7 +20,6 @@ const useCreateAccount = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (account: Account): Promise<void> => {
-      console.log("Creating account:", account);
       await api.post<Account>("/account", account);
     },
     onSuccess: () => {

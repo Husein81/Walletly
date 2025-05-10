@@ -3,12 +3,15 @@ import { ActivityIndicator, Text, View } from "react-native";
 import { z } from "zod";
 
 // Local Imports
+import { useState } from "react";
 import { useCreateAccount, useUpdateAccount } from "~/hooks/accounts";
+import { useColorScheme } from "~/lib/useColorScheme";
 import { useAuthStore } from "~/store/authStore";
+import useModalStore from "~/store/modalStore";
 import { Account } from "~/types";
 import { Button, Input, Label } from "../ui";
 import { FieldInfo } from "../ui-components";
-import useModalStore from "~/store/modalStore";
+import IconSelector from "../ui-components/IconSelector";
 
 type Props = {
   account?: Account;
@@ -25,6 +28,10 @@ const AccountForm = ({ account }: Props) => {
   const { onClose } = useModalStore();
   const { user } = useAuthStore();
 
+  const { isDarkColorScheme } = useColorScheme();
+
+  const [selectedIcon, setSelectedIcon] = useState(account?.imageUrl || "pc");
+
   const createAccount = useCreateAccount();
   const updateAccount = useUpdateAccount();
 
@@ -36,10 +43,10 @@ const AccountForm = ({ account }: Props) => {
     onSubmit: async ({ value }) => {
       const payload = {
         ...value,
-        imageUrl: "",
+        imageUrl: selectedIcon,
         userId: user?.id || "",
       };
-      console.log("Payload:", payload);
+
       if (account) {
         await updateAccount.mutateAsync({ ...payload, id: account.id });
       } else {
@@ -55,13 +62,12 @@ const AccountForm = ({ account }: Props) => {
         name="name"
         validators={{ onChange: accountSchema.shape.name }}
         children={(field) => (
-          <View>
+          <View className="gap-2 mb-2">
             <Label>Name</Label>
             <Input
               value={field.state.value}
               onChangeText={field.handleChange}
               placeholder="Account name"
-              className="mb-4"
               autoCapitalize="none"
             />
             <FieldInfo field={field} />
@@ -73,18 +79,24 @@ const AccountForm = ({ account }: Props) => {
         name="balance"
         validators={{ onChange: accountSchema.shape.balance }}
         children={(field) => (
-          <View>
+          <View className="gap-2 mb-2">
             <Label>Balance</Label>
             <Input
               value={field.state.value.toString()}
               onChangeText={(text) => field.handleChange(parseFloat(text) || 0)}
               keyboardType="numeric"
-              className="mb-4"
             />
             <FieldInfo field={field} />
           </View>
         )}
       />
+      <View className="gap-2 mb-4">
+        <Label>Icon</Label>
+        <IconSelector
+          selectedIcon={selectedIcon}
+          setSelectedIcon={setSelectedIcon}
+        />
+      </View>
 
       <View className="flex-row gap-4">
         <Button
@@ -105,7 +117,9 @@ const AccountForm = ({ account }: Props) => {
               }}
             >
               {isSubmitting ? (
-                <ActivityIndicator />
+                <ActivityIndicator
+                  color={isDarkColorScheme ? "black" : "white"}
+                />
               ) : (
                 <Text className="text-secondary font-semibold">Save</Text>
               )}

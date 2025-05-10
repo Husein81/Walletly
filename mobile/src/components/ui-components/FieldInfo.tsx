@@ -10,7 +10,9 @@ export function FieldInfo({ field }: { field: AnyFieldApi }) {
           {field.state.meta.errors.map((e) => e.message).join(" ")}
         </Text>
       ) : null}
-      <Text>{field.state.meta.isValidating ? "Validating..." : null}</Text>
+      <Text className="italic text-sm">
+        {field.state.meta.isValidating ? "Validating..." : null}
+      </Text>
     </View>
   );
 }

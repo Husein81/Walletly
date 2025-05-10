@@ -60,8 +60,8 @@ const AccountCard = ({ account }: Props) => {
             name={iconsRecord[account.imageUrl || "other"]}
             color={
               isDarkColorScheme
-                ? NAV_THEME.light.primary
-                : NAV_THEME.dark.primary
+                ? NAV_THEME.dark.primary
+                : NAV_THEME.light.primary
             }
             size={32}
           />

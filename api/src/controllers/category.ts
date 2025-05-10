@@ -37,15 +37,14 @@ const getCategory = async (req: Request, res: Response): Promise<void> => {
 
 const createCategory = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { userId } = req.params;
-    const { name, imageUrl, description, type } = req.body;
+    const { name, imageUrl, type, userId } = req.body;
 
     const newCategory = await prisma.category.create({
       data: {
         name,
         imageUrl,
-        description,
         userId,
+        type,
       },
     });
 
@@ -58,7 +57,7 @@ const createCategory = async (req: Request, res: Response): Promise<void> => {
 const updateCategory = async (req: Request, res: Response): Promise<void> => {
   try {
     const { categoryId } = req.params;
-    const { name, imageUrl, description } = req.body;
+    const { name, imageUrl, type } = req.body;
 
     const updatedCategory = await prisma.category.update({
       where: {
@@ -67,7 +66,7 @@ const updateCategory = async (req: Request, res: Response): Promise<void> => {
       data: {
         name,
         imageUrl,
-        description,
+        type,
       },
     });
 
