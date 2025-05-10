@@ -1,6 +1,8 @@
 // Global imports
-import { useEffect, useMemo } from "react";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useEffect, useMemo } from "react";
 import { FlatList, SectionList, Text, View } from "react-native";
+import CategorySectionList from "~/components/Category/CategorySectionList";
 import ListSkeleton from "~/components/ui-components/ListSkeleton";
 
 // Local imports
@@ -19,9 +21,11 @@ const Categories = () => {
 
   const { data: categories, refetch } = useCategories(user?.id ?? "");
 
-  useEffect(() => {
-    refetch();
-  }, [categories, user]);
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [categories, user])
+  );
 
   const expenseCategories = useMemo(
     () => categories?.filter((category) => category.type === "EXPENSE"),
@@ -45,41 +49,9 @@ const Categories = () => {
   ];
 
   return (
-    <View className="px-8 flex-1 ">
-      {expenseCategories && incomeCategories ? (
-        <SectionList
-          sections={categorySections}
-          keyExtractor={(item) => item.id || Math.random().toString()}
-          ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-          renderSectionHeader={({ section: { title } }) => (
-            <View className="first:my-4 mb-8 mt-20">
-              <Text className="text-2xl font-bold text-primary">{title}</Text>
-              <View className="w-full mx-auto h-px bg-primary my-4" />
-            </View>
-          )}
-          renderItem={({ item }) => {
-            const color = getColorByIndex(item.name);
-            return (
-              <View className="flex-row items-center gap-4 mb-3">
-                <View
-                  className="p-2 rounded-lg"
-                  style={{ backgroundColor: color }}
-                >
-                  <Icon
-                    name={iconsRecord[item.imageUrl || "other"]}
-                    color={
-                      isDarkColorScheme
-                        ? NAV_THEME.light.primary
-                        : NAV_THEME.dark.primary
-                    }
-                    size={32}
-                  />
-                </View>
-                <Text className="text-primary text-xl">{item.name}</Text>
-              </View>
-            );
-          }}
-        />
+    <View className="p-8 flex-1 ">
+      {categories ? (
+        <CategorySectionList categorySections={categorySections} />
       ) : (
         <ListSkeleton />
       )}

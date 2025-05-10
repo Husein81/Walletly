@@ -29,9 +29,9 @@ const Accounts = () => {
   const handleOpenForm = () => onOpen(<AccountForm />, "Add new account");
 
   return (
-    <View className="p-8 flex-1 gap-4">
+    <View className="p-8  flex-1 gap-4">
       <View className="flex-row items-center justify-between mb-4">
-        <Text className="text-2xl font-semibold text-primary text-start mb-8">
+        <Text className="text-2xl font-semibold text-primary text-start ">
           All Accounts: ${totalBalance}
         </Text>
       </View>
