@@ -7,6 +7,7 @@ import AccountForm from "~/components/Account/AccountForm";
 import AccountList from "~/components/Account/AccountList";
 import { Button, Text } from "~/components/ui";
 import { Modal } from "~/components/ui-components";
+import ListSkeleton from "~/components/ui-components/ListSkeleton";
 import { useGetAccounts } from "~/hooks/accounts";
 import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
@@ -38,7 +39,8 @@ const Accounts = () => {
       <Text className="text-2xl font-semibold text-primary text-start mb-8">
         Accounts
       </Text>
-      <AccountList accounts={accounts || []} />
+
+      {accounts ? <AccountList accounts={accounts} /> : <ListSkeleton />}
 
       <View className="items-center ">
         <Button

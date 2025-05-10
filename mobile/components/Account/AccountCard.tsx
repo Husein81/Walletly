@@ -42,7 +42,7 @@ const AccountCard = ({ account }: Props) => {
   ];
 
   return (
-    <Card className="flex-row gap-4 py-2 px-3 items-center justify-between dark:border-primary dark:bg-darkShark">
+    <Card className="flex-row gap-4 py-2 px-3 items-center justify-between dark:border-primary bg-card">
       <View className="flex-row gap-4 items-center">
         <Image
           source={{
