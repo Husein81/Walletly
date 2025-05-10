@@ -9,9 +9,12 @@ import { NAV_THEME } from "~/lib/constants";
 import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { Switch } from "../ui/switch";
+import { useAuthStore } from "~/store/authStore";
 
 export const CustomDrawer = (props: any) => {
   const { mutateAsync } = useLogout();
+  const { clearAuth } = useAuthStore();
+
   const { isDarkColorScheme, toggleColorScheme } = useColorScheme();
 
   return (
@@ -36,6 +39,7 @@ export const CustomDrawer = (props: any) => {
           label={"Logout"}
           onPress={async () => {
             await mutateAsync();
+            clearAuth();
             props.navigation.closeDrawer();
           }}
         />
@@ -43,4 +47,3 @@ export const CustomDrawer = (props: any) => {
     </DrawerContentScrollView>
   );
 };
-

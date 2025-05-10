@@ -87,13 +87,23 @@ const deleteAccount = async (req: Request, res: Response) => {
   try {
     const { accountId } = req.params;
 
+    const account = await prisma.account.findUnique({
+      where: {
+        id: accountId,
+      },
+    });
+
+    if (!account) {
+      throw new NotFoundError("Account not found");
+    }
+
     await prisma.account.delete({
       where: {
         id: accountId,
       },
     });
 
-    res.status(204).send();
+    res.status(204).send({ message: "account deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }

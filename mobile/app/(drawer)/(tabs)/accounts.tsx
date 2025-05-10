@@ -11,16 +11,21 @@ import { useGetAccounts } from "~/hooks/accounts";
 import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { useAuthStore } from "~/store/authStore";
+import useModalStore from "~/store/modalStore";
 
 const Accounts = () => {
   const { isDarkColorScheme } = useColorScheme();
   const { user } = useAuthStore();
+  const { onOpen } = useModalStore();
+
   const { data: accounts } = useGetAccounts(user?.id ?? "");
 
   const totalBalance = useMemo(
     () => accounts?.reduce((acc, account) => acc + account.balance, 0),
     [accounts]
   );
+
+  const handleOpenForm = () => onOpen(<AccountForm />, "Add new account");
 
   return (
     <View className="p-8 flex-1 gap-4">
@@ -36,25 +41,21 @@ const Accounts = () => {
       <AccountList accounts={accounts || []} />
 
       <View className="items-center ">
-        <Modal
-          trigger={
-            <Button
-              variant={"outline"}
-              className="flex-row gap-4 border-primary w-fit "
-            >
-              <Icon
-                name="Plus"
-                size={20}
-                color={isDarkColorScheme ? "white" : "black"}
-                className="border rounded-full border-primary"
-              />
-              <Text className="uppercase">add new account</Text>
-            </Button>
-          }
+        <Button
+          variant={"outline"}
+          className="flex-row gap-4 border-primary w-fit "
+          onPress={handleOpenForm}
         >
-          <AccountForm />
-        </Modal>
+          <Icon
+            name="Plus"
+            size={20}
+            color={isDarkColorScheme ? "white" : "black"}
+            className="border rounded-full border-primary"
+          />
+          <Text className="uppercase">add new account</Text>
+        </Button>
       </View>
+      <Modal />
     </View>
   );
 };
