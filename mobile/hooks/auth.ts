@@ -7,11 +7,17 @@ import { User } from "~/types";
 
 type LoginResponse = { user: User; token: string };
 
-const useLogin = (email: string, password: string) => {
+const useLogin = () => {
   const setAuth = useAuthStore((state) => state.setAuth);
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (): Promise<LoginResponse> => {
+    mutationFn: async ({
+      email,
+      password,
+    }: {
+      email: string;
+      password: string;
+    }): Promise<LoginResponse> => {
       const response = await api.post<LoginResponse>("/auth/login", {
         email,
         password,
@@ -26,10 +32,18 @@ const useLogin = (email: string, password: string) => {
   });
 };
 
-const useRegister = (name: string, email: string, password: string) => {
+const useRegister = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async ({
+      name,
+      email,
+      password,
+    }: {
+      name: string;
+      email: string;
+      password: string;
+    }) => {
       const response = await api.post("/auth/register", {
         name,
         email,
@@ -46,13 +60,11 @@ const useRegister = (name: string, email: string, password: string) => {
 
 const useLogout = () => {
   const queryClient = useQueryClient();
-  const clearAuth = useAuthStore((state) => state.clearAuth);
   return useMutation({
     mutationFn: async () => {
       await api.post("/auth/logout");
     },
     onSuccess: () => {
-      clearAuth();
       queryClient.invalidateQueries({ queryKey: ["user"] });
     },
   });

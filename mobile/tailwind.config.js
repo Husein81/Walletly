@@ -8,7 +8,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        shark: "#2a2a2a",
+        shark: "#212121",
         darkShark: "#1a1a1a",
         iron: "#c0c4c9",
         shuttleGray: "#6A6D70",

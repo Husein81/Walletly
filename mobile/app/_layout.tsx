@@ -10,6 +10,8 @@ import { Slot } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect } from "react";
 import { Platform } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Modal } from "~/components/ui-components";
 
 // Local Imports
 import "~/global.css";
@@ -28,7 +30,7 @@ const DARK_THEME: Theme = {
 
 export {
   // Catch any errors thrown by the Layout component.
-  ErrorBoundary
+  ErrorBoundary,
 } from "expo-router";
 
 const queryClient = new QueryClient();
@@ -59,9 +61,11 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-        <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
-        <Slot />
-        <PortalHost />
+        <SafeAreaProvider>
+          <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
+          <Slot />
+          <PortalHost />
+        </SafeAreaProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

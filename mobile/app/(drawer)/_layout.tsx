@@ -1,7 +1,7 @@
 import { Redirect } from "expo-router";
 import { Drawer } from "expo-router/drawer";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import CustomDrawer from "~/components/CustomDrawer";
+import { CustomDrawer } from "~/components/ui-components";
 import { NAV_THEME } from "~/lib/constants";
 
 // Local Imports
@@ -11,9 +11,9 @@ import { useAuthStore } from "~/store/authStore";
 
 const DrawerLayout = () => {
   const { isDarkColorScheme } = useColorScheme();
-  const { user } = useAuthStore();
+  const { user, token } = useAuthStore();
 
-  if (!user) {
+  if (!user || !token) {
     return <Redirect href="/auth" />;
   }
 

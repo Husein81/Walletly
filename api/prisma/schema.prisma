@@ -50,12 +50,13 @@ model Expense {
 }
 
 model Category {
-  id          String   @id @default(uuid())
+  id          String      @id @default(uuid())
   name        String
   imageUrl    String
   description String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  type        ExpenseType @default(EXPENSE)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
   userId   String?
   user     User?     @relation(fields: [userId], references: [id])
