@@ -8,16 +8,18 @@ import { PortalHost } from "@rn-primitives/portal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Slot } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Platform } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { Modal } from "~/components/ui-components";
+import * as SplashScreen from "expo-splash-screen";
 
 // Local Imports
 import "../../global.css";
 import { NAV_THEME } from "~/lib/constants";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { useAuthStore } from "~/store/authStore";
+
+SplashScreen.preventAutoHideAsync();
 
 const LIGHT_THEME: Theme = {
   ...DefaultTheme,
@@ -36,7 +38,7 @@ export {
 const queryClient = new QueryClient();
 
 export default function RootLayout() {
-  const { loadUser } = useAuthStore();
+  const { loadUser, isReady } = useAuthStore();
   const hasMounted = React.useRef(false);
   const { isDarkColorScheme } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
@@ -58,10 +60,16 @@ export default function RootLayout() {
     loadUser();
   }, []);
 
+  const onLayoutRootView = useCallback(() => {
+    if (isReady) {
+      SplashScreen.hide();
+    }
+  }, [isReady]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-        <SafeAreaProvider>
+        <SafeAreaProvider onLayout={onLayoutRootView}>
           <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
           <Slot />
           <PortalHost />

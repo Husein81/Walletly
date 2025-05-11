@@ -5,7 +5,7 @@ import useModalStore from "~/store/modalStore";
 import { Card, Text } from "../ui";
 
 export const Modal = () => {
-  const { open, onClose, title, body } = useModalStore();
+  const { open, title, body } = useModalStore();
 
   return (
     <RModal transparent visible={open} animationType={"fade"}>

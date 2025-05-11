@@ -1,15 +1,15 @@
 // Global imports
 import { useFocusEffect } from "expo-router";
 import { useCallback, useMemo } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
+
 import CategoryForm from "~/components/Category/CategoryForm";
 import CategorySectionList from "~/components/Category/CategorySectionList";
-import { Button } from "~/components/ui";
+import { Button, Text } from "~/components/ui";
 import ListSkeleton from "~/components/ui-components/ListSkeleton";
 
 // Local imports
 import { useCategories } from "~/hooks/categories";
-import { NAV_THEME } from "~/lib/constants";
 import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { useAuthStore } from "~/store/authStore";
@@ -26,8 +26,9 @@ const Categories = () => {
   useFocusEffect(
     useCallback(() => {
       refetch();
-    }, [categories, refetch])
+    }, [categories])
   );
+
   const expenseCategories = useMemo(
     () =>
       categories?.filter((category) => category.type === ExpenseType.EXPENSE),
@@ -52,8 +53,9 @@ const Categories = () => {
   ];
 
   const handleOpenCategory = () => onOpen(<CategoryForm />, "Add new Category");
+
   return (
-    <View className="py-4 px-6 flex-1 ">
+    <View className="py-4 px-6 flex-1">
       <View className="flex-1">
         {categories ? (
           <CategorySectionList categorySections={categorySections} />
@@ -65,16 +67,18 @@ const Categories = () => {
       <View className="">
         <Button
           variant={"outline"}
-          className="flex-row gap-4 border-primary w-fit "
+          className="flex-row gap-4 border-primary items-center border-2"
           onPress={handleOpenCategory}
         >
           <Icon
             name="Plus"
             size={20}
             color={isDarkColorScheme ? "white" : "black"}
-            className="border rounded-full border-primary"
+            className="border-2 rounded-full border-primary"
           />
-          <Text className="text-primary uppercase">add new category</Text>
+          <Text className="text-primary uppercase font-semibold">
+            add new category
+          </Text>
         </Button>
       </View>
     </View>

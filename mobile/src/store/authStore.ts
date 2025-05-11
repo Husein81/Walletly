@@ -14,6 +14,7 @@ interface DecodedToken {
 interface AuthStore {
   user: User | null;
   token: string | null;
+  isReady: boolean;
   setAuth: (data: { user: User; token: string }) => Promise<void>;
   clearAuth: () => Promise<void>;
   loadUser: () => Promise<void>;
@@ -22,12 +23,13 @@ interface AuthStore {
 export const useAuthStore = create<AuthStore>((set) => ({
   user: null,
   token: null,
-
+  isReady: false,
+  setIsReady: (isReady: boolean) => set({ isReady }),
   setAuth: async (data) => {
     try {
       if (data.token) {
         await AsyncStorage.setItem("authToken", data.token);
-        await AsyncStorage.setItem("user", JSON.stringify(data.user));
+        await AsyncStorage.setItem("authUser", JSON.stringify(data.user));
         set({ user: data.user, token: data.token });
       }
     } catch (error) {
@@ -37,39 +39,39 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
   clearAuth: async () => {
     await AsyncStorage.removeItem("authToken");
-    await AsyncStorage.removeItem("user");
+    await AsyncStorage.removeItem("authUser");
     set({ user: null, token: null });
-    router.navigate("/auth"); // Redirect to login or home
+    router.replace("/auth");
   },
 
   loadUser: async () => {
     const token = await AsyncStorage.getItem("authToken");
-
-    if (token) {
-      try {
+    try {
+      if (token) {
         const decoded = jwtDecode<DecodedToken>(token);
         const now = Date.now() / 1000;
 
         if (decoded.exp && decoded.exp < now) {
           // Token expired
-          await AsyncStorage.removeItem("token");
-          await AsyncStorage.removeItem("user");
+          await AsyncStorage.removeItem("authToken");
+          await AsyncStorage.removeItem("authUser");
           set({ user: null, token: null });
           router.replace("/auth"); // redirect to login
           return;
         }
 
-        const userJson = await AsyncStorage.getItem("user");
+        const userJson = await AsyncStorage.getItem("authUser");
         if (userJson) {
           set({ user: JSON.parse(userJson), token });
         }
-      } catch (err) {
-        // Malformed token
-        await AsyncStorage.removeItem("token");
-        await AsyncStorage.removeItem("user");
-        set({ user: null, token: null });
-        router.replace("/auth");
       }
+      set({ isReady: true });
+    } catch (err) {
+      // Malformed token
+      await AsyncStorage.removeItem("authToken");
+      await AsyncStorage.removeItem("authUser");
+      set({ user: null, token: null });
+      router.replace("/auth");
     }
   },
 }));
