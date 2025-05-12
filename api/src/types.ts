@@ -22,18 +22,6 @@ export const userSchema = z.object({
   updatedAt: z.date().default(() => new Date()),
 });
 
-export const expenseSchema = z.object({
-  id: z.string().optional(),
-  userId: z.string(),
-  categoryId: z.string(),
-  description: z.string().max(255).optional(),
-  amount: z.number(),
-  type: z.nativeEnum(ExpenseType),
-  date: z.date().default(() => new Date()),
-  createdAt: z.date().default(() => new Date()),
-  updatedAt: z.date().default(() => new Date()),
-});
-
 export const categorySchema = z.object({
   id: z.string().optional(),
   userId: z.string(),
@@ -54,6 +42,18 @@ export const accountSchema = z.object({
   updatedAt: z.date().default(() => new Date()),
 });
 
+export const expenseSchema = z.object({
+  id: z.string().optional(),
+  userId: z.string(),
+  categoryId: z.string(),
+  category: categorySchema,
+  description: z.string().max(255).optional(),
+  amount: z.number(),
+  type: z.nativeEnum(ExpenseType),
+  date: z.date().default(() => new Date()),
+  createdAt: z.date().default(() => new Date()),
+  updatedAt: z.date().default(() => new Date()),
+});
 export type User = z.infer<typeof userSchema>;
 export type Expense = z.infer<typeof expenseSchema>;
 export type Category = z.infer<typeof categorySchema>;
