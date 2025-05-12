@@ -2,6 +2,7 @@
 import { useFocusEffect } from "expo-router";
 import { useCallback, useMemo } from "react";
 import { View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import CategoryForm from "~/components/Category/CategoryForm";
 import CategorySectionList from "~/components/Category/CategorySectionList";
@@ -55,7 +56,7 @@ const Categories = () => {
   const handleOpenCategory = () => onOpen(<CategoryForm />, "Add new Category");
 
   return (
-    <View className="py-4 px-6 flex-1">
+    <SafeAreaView edges={["top"]} className="py-4 px-6 flex-1">
       <View className="flex-1">
         {categories ? (
           <CategorySectionList categorySections={categorySections} />
@@ -81,7 +82,7 @@ const Categories = () => {
           </Text>
         </Button>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 export default Categories;

@@ -15,12 +15,12 @@ const TabsLayout = () => {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="(home)"
         options={{
-          title: "Records",
+          title: "Home",
           headerShown: false,
           tabBarIcon: ({ color }) => (
-            <Icon name="ReceiptText" color={color} size={28} />
+            <Icon name="House" color={color} size={28} />
           ),
         }}
       />

@@ -2,6 +2,7 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useMemo } from "react";
 import { View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 // Local imports
 import AccountForm from "~/components/Account/AccountForm";
@@ -31,7 +32,7 @@ const Accounts = () => {
   const color = useMemo(() => getColorByIndex(user?.name || ""), [user?.name]);
 
   return (
-    <View className="py-4 px-6 flex-1 gap-4">
+    <SafeAreaView className="py-4 px-6 flex-1 gap-4">
       <LinearGradient
         colors={["#c0c4c9ff", "#c0c4c980"]}
         start={{ x: 0, y: 0 }}
@@ -70,7 +71,7 @@ const Accounts = () => {
           add new account
         </Text>
       </Button>
-    </View>
+    </SafeAreaView>
   );
 };
 export default Accounts;

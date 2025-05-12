@@ -35,6 +35,7 @@ const DrawerLayout = () => {
               title: "My Wallet",
             }}
           />
+
           <Drawer.Screen
             name="settings"
             options={{
