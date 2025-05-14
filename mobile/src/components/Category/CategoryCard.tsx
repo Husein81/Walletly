@@ -11,6 +11,8 @@ import { Dropdown } from "../ui-components";
 import { useDeleteCategory } from "~/hooks/categories";
 import useModalStore from "~/store/modalStore";
 import CategoryForm from "./CategoryForm";
+import { Card } from "../ui";
+import { CardContent } from "../ui/card";
 
 type Props = {
   category: Category;
@@ -39,9 +41,9 @@ const CategoryCard = ({ category }: Props) => {
   ];
 
   return (
-    <View className="flex-row justify-between items-center gap-4 mb-3">
+    <Card className="flex-row py-2 px-3 rounded-xl justify-between items-center gap-4 mb-3">
       <View className="flex-row items-center gap-4">
-        <View className="p-2 rounded-lg" style={{ backgroundColor: color }}>
+        <View className="p-2 rounded-xl" style={{ backgroundColor: color }}>
           <Icon
             name={iconsRecord[category.imageUrl || "other"]}
             color={
@@ -55,7 +57,7 @@ const CategoryCard = ({ category }: Props) => {
         <Text className="text-primary text-xl capitalize">{category.name}</Text>
       </View>
       <Dropdown icon="Ellipsis" options={options} />
-    </View>
+    </Card>
   );
 };
 export default CategoryCard;

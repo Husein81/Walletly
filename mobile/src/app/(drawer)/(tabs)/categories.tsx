@@ -11,11 +11,12 @@ import ListSkeleton from "~/components/ui-components/ListSkeleton";
 
 // Local imports
 import { useCategories } from "~/hooks/categories";
-import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
+import { ExpenseType } from "~/types";
+
+// store imports
 import { useAuthStore } from "~/store/authStore";
 import useModalStore from "~/store/modalStore";
-import { ExpenseType } from "~/types";
 
 const Categories = () => {
   const { user } = useAuthStore();
@@ -66,18 +67,8 @@ const Categories = () => {
       </View>
 
       <View className="">
-        <Button
-          variant={"outline"}
-          className="flex-row gap-4 border-primary items-center border-2"
-          onPress={handleOpenCategory}
-        >
-          <Icon
-            name="Plus"
-            size={20}
-            color={isDarkColorScheme ? "white" : "black"}
-            className="border-2 rounded-full border-primary"
-          />
-          <Text className="text-primary uppercase font-semibold">
+        <Button className="rounded-xl" onPress={handleOpenCategory}>
+          <Text className="text-secondary uppercase font-semibold">
             add new category
           </Text>
         </Button>

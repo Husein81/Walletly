@@ -1,0 +1,71 @@
+// Local Imports
+import { ScrollView } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  Option,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
+
+type Props = {
+  defaultValue?: Option;
+  value?: Option;
+  options: Option[];
+  label?: string;
+  placeholder?: string;
+  onValueChange?: (option: Option) => void;
+};
+
+const Selection = ({
+  value,
+  defaultValue,
+  options,
+  label,
+  placeholder,
+  onValueChange,
+}: Props) => {
+  const insets = useSafeAreaInsets();
+  const contentInsets = {
+    top: insets.top,
+    bottom: insets.bottom,
+    left: 12,
+    right: 12,
+    zIndex: 100,
+  };
+
+  return (
+    <Select
+      defaultValue={defaultValue}
+      onValueChange={onValueChange}
+      className="flex-1"
+    >
+      <SelectTrigger className="w-full">
+        <SelectValue
+          className="text-foreground text-sm native:text-lg flex-1"
+          placeholder={placeholder || "Select an option"}
+        />
+      </SelectTrigger>
+      <SelectContent insets={contentInsets}>
+        {label && (
+          <SelectLabel className="text-sm text-muted-foreground">
+            {label}
+          </SelectLabel>
+        )}
+        {options.map((option) => (
+          <SelectItem
+            key={option?.value}
+            value={option?.value as string}
+            label={option?.label as string}
+          />
+        ))}
+      </SelectContent>
+    </Select>
+  );
+};
+
+export default Selection;

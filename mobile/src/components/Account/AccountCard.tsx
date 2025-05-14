@@ -50,10 +50,10 @@ const AccountCard = ({ account }: Props) => {
   const color = getColorByIndex(account.name);
 
   return (
-    <Card className="flex-row gap-4 py-2 px-3 items-center justify-between dark:border-primary bg-card">
+    <Card className="flex-row gap-4 py-2 px-3 items-center rounded-xl justify-between bg-card">
       <View className="flex-row gap-4 items-center">
         <View
-          className={cn("p-2 rounded-lg")}
+          className={cn("p-2 rounded-xl")}
           style={{ backgroundColor: color }}
         >
           <Icon

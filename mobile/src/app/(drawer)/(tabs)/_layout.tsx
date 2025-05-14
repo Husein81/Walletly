@@ -30,17 +30,7 @@ const TabsLayout = () => {
           title: "Analysis",
           headerShown: false,
           tabBarIcon: ({ color }) => (
-            <Icon name="ChartPie" color={color} size={28} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="budgets"
-        options={{
-          title: "Budgets",
-          headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <Icon name="Calculator" color={color} size={28} />
+            <Icon name="ChartNoAxesColumnIncreasing" color={color} size={28} />
           ),
         }}
       />
@@ -60,7 +50,7 @@ const TabsLayout = () => {
           title: "Categories",
           headerShown: false,
           tabBarIcon: ({ color }) => (
-            <Icon name="ChartColumnStacked" color={color} size={28} />
+            <Icon name="Tag" color={color} size={28} />
           ),
         }}
       />
