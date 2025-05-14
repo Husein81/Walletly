@@ -1,38 +1,30 @@
-import { Pressable, ScrollView, Modal as RModal, View } from "react-native";
+import { Pressable, Modal as RModal, ScrollView, View } from "react-native";
 
 // local imports
-import useModalStore from "~/store/modalStore";
-import { Card, Text } from "../ui";
 import { cn } from "~/lib/utils";
+import { Text } from "../ui";
+
+// store imports
+import useModalStore from "~/store/modalStore";
 
 export const Modal = () => {
-  const { open, title, body, transparent } = useModalStore();
+  const { open, title, body, onClose } = useModalStore();
 
   return (
     <RModal
-      transparent={transparent}
       visible={open}
-      animationType={transparent ? "fade" : "slide"}
+      hardwareAccelerated={true}
+      navigationBarTranslucent={true}
+      presentationStyle={"formSheet"}
+      onRequestClose={onClose}
+      animationType={"slide"}
     >
-      <Pressable
-        className={cn(
-          "flex-1 z-50 items-center justify-center bg-background ",
-          transparent && "bg-black/50"
-        )}
-        onPress={useModalStore.getState().onClose}
+      <View
+        className={cn("flex-1 p-8 items-center justify-center bg-background")}
       >
-        <View
-          className={cn(
-            " p-4 ",
-            transparent && "w-4/5 rounded-lg bg-card elevation-md"
-          )}
-        >
-          {title && (
-            <Text className="text-2xl font-semibold mb-4">{title}</Text>
-          )}
-          <ScrollView className="max-h-[60vh]">{body}</ScrollView>
-        </View>
-      </Pressable>
+        {title && <Text className="text-2xl font-semibold mb-4">{title}</Text>}
+        <ScrollView>{body}</ScrollView>
+      </View>
     </RModal>
   );
 };

@@ -7,17 +7,18 @@ import {
 import { PortalHost } from "@rn-primitives/portal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Slot } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import React, { useCallback, useEffect } from "react";
 import { Platform } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import * as SplashScreen from "expo-splash-screen";
 
 // Local Imports
-import "../../global.css";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { NAV_THEME } from "~/lib/constants";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { useAuthStore } from "~/store/authStore";
+import "../../global.css";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -69,10 +70,15 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-        <SafeAreaProvider onLayout={onLayoutRootView}>
+        <SafeAreaProvider
+          className="flex-1 items-center justify-center"
+          onLayout={onLayoutRootView}
+        >
           <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
-          <Slot />
-          <PortalHost />
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <Slot />
+            <PortalHost />
+          </GestureHandlerRootView>
         </SafeAreaProvider>
       </ThemeProvider>
     </QueryClientProvider>

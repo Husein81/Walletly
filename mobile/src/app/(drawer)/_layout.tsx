@@ -18,43 +18,41 @@ const DrawerLayout = () => {
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <Drawer
-        drawerContent={CustomDrawer}
-        screenOptions={{
-          drawerStyle: { borderRadius: 0 },
-          drawerItemStyle: {
-            borderRadius: 15,
-          },
-        }}
-      >
-        <Drawer.Protected guard={!!user}>
-          <Drawer.Screen
-            name="(tabs)"
-            options={{
-              title: "My Wallet",
-            }}
-          />
+    <Drawer
+      drawerContent={CustomDrawer}
+      screenOptions={{
+        drawerStyle: { borderRadius: 0 },
+        drawerItemStyle: {
+          borderRadius: 15,
+        },
+      }}
+    >
+      <Drawer.Protected guard={!!user}>
+        <Drawer.Screen
+          name="(tabs)"
+          options={{
+            title: "My Wallet",
+          }}
+        />
 
-          <Drawer.Screen
-            name="settings"
-            options={{
-              title: "Settings",
-              drawerIcon: () => (
-                <Icon
-                  name="Settings"
-                  color={
-                    isDarkColorScheme
-                      ? NAV_THEME.dark.primary
-                      : NAV_THEME.light.primary
-                  }
-                />
-              ),
-            }}
-          />
-        </Drawer.Protected>
-      </Drawer>
-    </GestureHandlerRootView>
+        <Drawer.Screen
+          name="settings"
+          options={{
+            title: "Settings",
+            drawerIcon: () => (
+              <Icon
+                name="Settings"
+                color={
+                  isDarkColorScheme
+                    ? NAV_THEME.dark.primary
+                    : NAV_THEME.light.primary
+                }
+              />
+            ),
+          }}
+        />
+      </Drawer.Protected>
+    </Drawer>
   );
 };
 export default DrawerLayout;

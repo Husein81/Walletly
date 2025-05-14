@@ -12,12 +12,30 @@ import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { useAuthStore } from "~/store/authStore";
 import { Switch } from "../ui/switch";
+import { useEffect, useRef } from "react";
 
 export const CustomDrawer = (props: any) => {
   const { mutateAsync } = useLogout();
   const { clearAuth } = useAuthStore();
 
   const { isDarkColorScheme, toggleColorScheme } = useColorScheme();
+
+  const isMounted = useRef(false);
+
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    await mutateAsync();
+    if (isMounted.current) {
+      clearAuth();
+      props.navigation?.closeDrawer?.();
+    }
+  };
 
   return (
     <DrawerContentScrollView {...props}>
@@ -37,14 +55,7 @@ export const CustomDrawer = (props: any) => {
           />
         </View>
         <DrawerItemList {...props} />
-        <DrawerItem
-          label={"Logout"}
-          onPress={async () => {
-            await mutateAsync();
-            clearAuth();
-            props.navigation.closeDrawer();
-          }}
-        />
+        <DrawerItem label={"Logout"} onPress={handleLogout} />
       </View>
     </DrawerContentScrollView>
   );

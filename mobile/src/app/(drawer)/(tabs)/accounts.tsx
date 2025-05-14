@@ -8,6 +8,7 @@ import AccountForm from "~/components/Account/AccountForm";
 import AccountList from "~/components/Account/AccountList";
 import { Button, Text } from "~/components/ui";
 import ListSkeleton from "~/components/ui-components/ListSkeleton";
+import { Skeleton } from "~/components/ui/skeleton";
 import { useGetAccounts } from "~/hooks/accounts";
 import { getColorByIndex } from "~/lib/functions";
 import { useColorScheme } from "~/lib/useColorScheme";
@@ -33,12 +34,16 @@ const Accounts = () => {
 
   return (
     <SafeAreaView className="py-4 px-6 flex-1 gap-4">
-      <View className="w-full items-center justify-center">
-        <Text className="text-primary text-5xl font-semibold mt-2 ml-2">
-          ${totalBalance?.toFixed(2)}
-        </Text>
-        <Text className="text-primary text-xl">Total Balance</Text>
-      </View>
+      {totalBalance ? (
+        <View className="w-full items-center justify-center">
+          <Text className="text-primary text-5xl font-semibold mt-2 ml-2">
+            ${totalBalance?.toFixed(2)}
+          </Text>
+          <Text className="text-primary text-xl">Total Balance</Text>
+        </View>
+      ) : (
+        <Skeleton className="w-1/2 h-10 bg-primary rounded-full" />
+      )}
       <View className="rounded-t-lg bg-background flex-1">
         <Text className="text-2xl font-semibold text-primary text-start mb-8">
           My wallets
