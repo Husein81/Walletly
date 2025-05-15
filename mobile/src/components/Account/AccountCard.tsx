@@ -46,6 +46,7 @@ const AccountCard = ({ account }: Props) => {
       onPress: handleDelete,
     },
   ];
+
   const color = getColorByIndex(account.name);
 
   return (

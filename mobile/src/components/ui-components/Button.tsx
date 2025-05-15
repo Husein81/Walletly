@@ -10,6 +10,7 @@ type Props = {
   onPress?: (args?: any) => void;
   children?: React.ReactNode;
   iconName?: string;
+  iconSize?: string;
   text?: string;
   rightIconName?: string;
   isSubmitting?: boolean;
@@ -29,6 +30,7 @@ type Props = {
 export const Button = ({
   onPress,
   iconName,
+  iconSize,
   text,
   isSubmitting,
   rightIconName,
@@ -53,6 +55,7 @@ export const Button = ({
             <Icon
               onPress={onPress}
               name={iconName ?? "default-icon"}
+              size={iconSize}
               color={isDarkColorScheme ? "white" : "black"}
             />
           )}

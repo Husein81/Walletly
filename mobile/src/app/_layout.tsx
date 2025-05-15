@@ -12,11 +12,11 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import React, { useCallback, useEffect } from "react";
 import { Platform } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 // Local Imports
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { NAV_THEME } from "~/lib/constants";
+import { NAV_THEME } from "~/lib/config";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { useAuthStore } from "~/store/authStore";
 import "../../global.css";

@@ -58,4 +58,6 @@ export const iconsRecord: Record<string, string> = {
   sport: "Dumbbell",
   salary: "WalletMinimal",
   other: "CircleHelp",
+  tag: "Tag",
+  wallet: "Wallet",
 };

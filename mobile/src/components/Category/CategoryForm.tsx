@@ -77,12 +77,12 @@ const CategoryForm = ({ category }: Props) => {
     [selectedType]
   );
   return (
-    <View>
+    <View className="gap-8 flex">
       <form.Field
         name="type"
         validators={{ onChange: categorySchema.shape.type }}
         children={(field) => (
-          <View className="gap-2 flex-row items-center justify-between mb-4">
+          <View className="gap-2 flex-row items-center justify-between ">
             <Label>Type</Label>
             <TouchableOpacity
               className="flex-row items-center gap-2"
@@ -145,7 +145,7 @@ const CategoryForm = ({ category }: Props) => {
         )}
       />
 
-      <View className="gap-2 mb-4">
+      <View className="gap-2 ">
         <Label>Icon</Label>
         <IconSelector
           selectedIcon={selectedIcon}

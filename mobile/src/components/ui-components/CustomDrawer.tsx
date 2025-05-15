@@ -30,10 +30,14 @@ export const CustomDrawer = (props: any) => {
   }, []);
 
   const handleLogout = async () => {
-    await mutateAsync();
-    if (isMounted.current) {
-      clearAuth();
-      props.navigation?.closeDrawer?.();
+    try {
+      await mutateAsync();
+      if (isMounted.current) {
+        clearAuth();
+        props.navigation?.closeDrawer?.();
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
     }
   };
 
