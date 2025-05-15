@@ -3,7 +3,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 // Local imports
 import ExpenseForm from "~/components/Expense/ExpenseForm";
-import { Modal } from "~/components/ui-components";
 import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
 import useModalStore from "~/store/modalStore";

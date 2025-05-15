@@ -1,18 +1,16 @@
-import { View, Text } from "react-native";
+import { Text, View } from "react-native";
 
 // Local imports
-import { NAV_THEME } from "~/lib/constants";
+import { useDeleteCategory } from "~/hooks/categories";
+import { NAV_THEME, iconsRecord } from "~/lib/config";
 import { getColorByIndex } from "~/lib/functions";
-import { iconsRecord } from "~/lib/icons/constants";
 import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
-import { Category } from "~/types";
-import { Dropdown } from "../ui-components";
-import { useDeleteCategory } from "~/hooks/categories";
 import useModalStore from "~/store/modalStore";
-import CategoryForm from "./CategoryForm";
+import { Category } from "~/types";
 import { Card } from "../ui";
-import { CardContent } from "../ui/card";
+import { Dropdown } from "../ui-components";
+import CategoryForm from "./CategoryForm";
 
 type Props = {
   category: Category;

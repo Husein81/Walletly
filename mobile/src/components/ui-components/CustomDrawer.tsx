@@ -7,7 +7,7 @@ import { View } from "react-native";
 
 // Local Imports
 import { useLogout } from "~/hooks/auth";
-import { NAV_THEME } from "~/lib/constants";
+import { NAV_THEME } from "~/lib/config";
 import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { useAuthStore } from "~/store/authStore";

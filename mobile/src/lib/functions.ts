@@ -1,4 +1,4 @@
-import { COLOR_PALETTE } from "./constants";
+import { COLOR_PALETTE } from "./config";
 
 export const getColorByIndex = (str: string): string => {
   let hash = 0;

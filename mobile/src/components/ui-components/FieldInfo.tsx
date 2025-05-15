@@ -1,6 +1,9 @@
+// Global imports
 import type { AnyFieldApi } from "@tanstack/react-form";
-import { Text } from "../ui/text";
 import { View } from "react-native";
+
+// Local imports
+import { Text } from "../ui/text";
 
 export function FieldInfo({ field }: { field: AnyFieldApi }) {
   return (

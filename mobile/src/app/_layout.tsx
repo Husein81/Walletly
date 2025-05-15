@@ -1,3 +1,4 @@
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import {
   DarkTheme,
   DefaultTheme,
@@ -70,14 +71,13 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-        <SafeAreaProvider
-          className="flex-1 items-center justify-center"
-          onLayout={onLayoutRootView}
-        >
-          <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
+        <SafeAreaProvider onLayout={onLayoutRootView}>
           <GestureHandlerRootView style={{ flex: 1 }}>
-            <Slot />
-            <PortalHost />
+            <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
+            <BottomSheetModalProvider>
+              <Slot />
+              <PortalHost />
+            </BottomSheetModalProvider>
           </GestureHandlerRootView>
         </SafeAreaProvider>
       </ThemeProvider>

@@ -1,19 +1,18 @@
 // Global imports
-import { Image, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 // Local imports
 import { Dropdown } from "~/components/ui-components";
+import { useDeleteAccount } from "~/hooks/accounts";
+import { NAV_THEME, iconsRecord } from "~/lib/config";
+import { getColorByIndex } from "~/lib/functions";
+import { Icon } from "~/lib/icons/Icon";
+import { useColorScheme } from "~/lib/useColorScheme";
 import { cn } from "~/lib/utils";
+import useModalStore from "~/store/modalStore";
 import { Account } from "~/types";
 import { Card } from "../ui/card";
-import { useDeleteAccount } from "~/hooks/accounts";
-import useModalStore from "~/store/modalStore";
 import AccountForm from "./AccountForm";
-import { iconsRecord } from "~/lib/icons/constants";
-import { useColorScheme } from "~/lib/useColorScheme";
-import { getColorByIndex } from "~/lib/functions";
-import { NAV_THEME } from "~/lib/constants";
-import { Icon } from "~/lib/icons/Icon";
 
 type Props = {
   account: Account;

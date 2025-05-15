@@ -35,3 +35,27 @@ export const COLOR_PALETTE = [
   "#6C5DD3", // indigo
   "#3D405B", // dark blue
 ];
+
+export const iconsRecord: Record<string, string> = {
+  pc: "Laptop",
+  car: "Car",
+  handCoins: "HandCoins",
+  food: "Utensils",
+  clothes: "Shirt",
+  health: "Activity",
+  education: "Book",
+  travel: "Plane",
+  entertainment: "Gamepad2",
+  piggy: "PiggyBank",
+  money: "Banknote",
+  dollar: "DollarSign",
+  card: "CreditCard",
+  shopping: "ShoppingCart",
+  transportation: "BusFront",
+  rental: "Landmark",
+  grant: "Gift",
+  sale: "Receipt",
+  sport: "Dumbbell",
+  salary: "WalletMinimal",
+  other: "CircleHelp",
+};

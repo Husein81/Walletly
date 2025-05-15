@@ -5,7 +5,7 @@ import { z } from "zod";
 // Local imports
 import { useState } from "react";
 import { useRegister } from "~/hooks/auth";
-import { NAV_THEME } from "~/lib/constants";
+import { NAV_THEME } from "~/lib/config";
 import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { Button, Input, Label, Text } from "../ui";

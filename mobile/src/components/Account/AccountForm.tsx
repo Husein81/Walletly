@@ -1,5 +1,5 @@
 import { useForm } from "@tanstack/react-form";
-import { ActivityIndicator, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { z } from "zod";
 
 // Local Imports
@@ -9,8 +9,8 @@ import { useColorScheme } from "~/lib/useColorScheme";
 import { useAuthStore } from "~/store/authStore";
 import useModalStore from "~/store/modalStore";
 import { Account } from "~/types";
-import { Button, Input, Label } from "../ui";
-import { FieldInfo } from "../ui-components";
+import { Input, Label } from "../ui";
+import { Button, FieldInfo } from "../ui-components";
 import IconSelector from "../ui-components/IconSelector";
 
 type Props = {
@@ -57,12 +57,12 @@ const AccountForm = ({ account }: Props) => {
   });
 
   return (
-    <View>
+    <View className="gap-8 flex">
       <form.Field
         name="name"
         validators={{ onChange: accountSchema.shape.name }}
         children={(field) => (
-          <View className="gap-2 mb-2">
+          <View className="gap-2">
             <Label>Name</Label>
             <Input
               value={field.state.value}
@@ -79,7 +79,7 @@ const AccountForm = ({ account }: Props) => {
         name="balance"
         validators={{ onChange: accountSchema.shape.balance }}
         children={(field) => (
-          <View className="gap-2 mb-2">
+          <View className="gap-2">
             <Label>Balance</Label>
             <Input
               value={field.state.value.toString()}
@@ -90,7 +90,7 @@ const AccountForm = ({ account }: Props) => {
           </View>
         )}
       />
-      <View className="gap-2 mb-4">
+      <View className="gap-2 ">
         <Label>Icon</Label>
         <IconSelector
           selectedIcon={selectedIcon}
@@ -115,14 +115,9 @@ const AccountForm = ({ account }: Props) => {
                 e.preventDefault();
                 form.handleSubmit();
               }}
+              isSubmitting={isSubmitting}
             >
-              {isSubmitting ? (
-                <ActivityIndicator
-                  color={isDarkColorScheme ? "black" : "white"}
-                />
-              ) : (
-                <Text className="text-secondary font-semibold">Save</Text>
-              )}
+              <Text className="text-secondary font-semibold">Save</Text>
             </Button>
           )}
         />

@@ -31,7 +31,7 @@ export const Dropdown = ({ title, icon, options }: Props) => {
   const { isDarkColorScheme } = useColorScheme();
   const [open, setOpen] = useState(false);
   return (
-    <DropdownMenu onOpenChange={() => setOpen(!open)} className="relative">
+    <DropdownMenu onOpenChange={(open) => setOpen(!open)} className="relative">
       <DropdownMenuTrigger asChild>
         <Button variant={"ghost"}>
           {title && <Text className="text-primary">{title}</Text>}
@@ -44,7 +44,7 @@ export const Dropdown = ({ title, icon, options }: Props) => {
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="dark:bg-darkShark absolute -translate-x-1/3">
+      <DropdownMenuContent className="absolute -translate-x-1/3">
         {options.map((option) => (
           <DropdownMenuItem key={option.value} onPress={option.onPress}>
             <Text className="text-primary">{option.label}</Text>

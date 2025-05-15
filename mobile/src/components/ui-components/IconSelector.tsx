@@ -1,11 +1,10 @@
-import React, { useState } from "react";
-import { View, TouchableOpacity, Pressable } from "react-native";
+import React from "react";
+import { Pressable, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 
 // Local imports
-import { NAV_THEME } from "~/lib/constants";
+import { iconsRecord, NAV_THEME } from "~/lib/config";
 import { getColorByIndex } from "~/lib/functions";
-import { iconsRecord } from "~/lib/icons/constants";
 import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { cn } from "~/lib/utils";

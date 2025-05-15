@@ -1,4 +1,4 @@
-import { View, Text, FlatList } from "react-native";
+import { FlatList, View } from "react-native";
 import { Account } from "~/types";
 import AccountCard from "./AccountCard";
 

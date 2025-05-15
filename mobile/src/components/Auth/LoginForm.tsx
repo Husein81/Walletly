@@ -11,7 +11,7 @@ import { zodValidator } from "@tanstack/zod-form-adapter";
 // Local imports
 import { Button, Input, Label } from "~/components/ui";
 import { useLogin } from "~/hooks/auth";
-import { NAV_THEME } from "~/lib/constants";
+import { NAV_THEME } from "~/lib/config";
 import { Icon } from "~/lib/icons/Icon";
 import { FieldInfo } from "../ui-components";
 
