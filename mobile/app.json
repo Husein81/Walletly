@@ -4,12 +4,12 @@
     "slug": "MyMoneyWallet",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/wallet-2.jpg",
+    "icon": "./assets/images/wallet.png",
     "scheme": "mobile",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/wallet-2.jpg",
+      "image": "./assets/images/wallet.png",
       "resizeMode": "contain",
       "backgroundColor": "#1e1e1e"
     },
@@ -18,7 +18,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/wallet-2.jpg",
+        "foregroundImage": "./assets/images/wallet.png",
         "backgroundColor": "#1e1e1e"
       },
       "edgeToEdgeEnabled": true

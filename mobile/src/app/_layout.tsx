@@ -21,7 +21,7 @@ import { useColorScheme } from "~/lib/useColorScheme";
 import { useAuthStore } from "~/store/authStore";
 import "../../global.css";
 
-SplashScreen.preventAutoHideAsync();
+// SplashScreen.preventAutoHideAsync();
 
 const LIGHT_THEME: Theme = {
   ...DefaultTheme,
@@ -62,16 +62,10 @@ export default function RootLayout() {
     loadUser();
   }, []);
 
-  const onLayoutRootView = useCallback(() => {
-    if (isReady) {
-      SplashScreen.hide();
-    }
-  }, [isReady]);
-
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-        <SafeAreaProvider onLayout={onLayoutRootView}>
+        <SafeAreaProvider>
           <GestureHandlerRootView style={{ flex: 1 }}>
             <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
             <BottomSheetModalProvider>

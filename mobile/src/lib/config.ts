@@ -14,8 +14,8 @@ export const NAV_THEME = {
     border: "hsl(220 12% 20%)", // dark border
     card: "hsl(220 15% 12%)", // dark card background
     notification: "hsl(0 72% 51%)", // destructive
-    primary: "hsl(0 0% 98%)", // primary
-    text: "hsl(0 0% 98%)", // foreground
+    primary: "hsl(220 10% 90%)", // slightly blueish off-white
+    text: "hsl(220 10% 90%)", // slightly blueish off-white
     iron: "#c0c4c9",
     shuttleGray: "#6A6D70",
   },

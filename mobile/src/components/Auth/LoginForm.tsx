@@ -1,19 +1,18 @@
-import { View, Text, ActivityIndicator, TouchableOpacity } from "react-native";
-import { useState } from "react";
 import { router } from "expo-router";
+import { useState } from "react";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { useColorScheme } from "~/lib/useColorScheme";
 
 // Form & validation
-import { Field, useForm } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
 import { z } from "zod";
-import { zodValidator } from "@tanstack/zod-form-adapter";
 
 // Local imports
-import { Button, Input, Label } from "~/components/ui";
+import { Input, Label } from "~/components/ui";
 import { useLogin } from "~/hooks/auth";
 import { NAV_THEME } from "~/lib/config";
 import { Icon } from "~/lib/icons/Icon";
-import { FieldInfo } from "../ui-components";
+import { FieldInfo, Button } from "../ui-components";
 
 export const loginSchema = z.object({
   email: z.string().email("Invalid email"),
@@ -49,11 +48,7 @@ const LoginForm = ({ setIsActive }: Props) => {
   });
 
   return (
-    <View className="flex-1">
-      <Text className="text-5xl font-bold text-foreground text-center mb-8">
-        Welcome Back!
-      </Text>
-
+    <View className="flex-1 gap-4">
       <View className="flex-1 gap-4">
         {/* Email Field */}
         <form.Field
@@ -142,18 +137,17 @@ const LoginForm = ({ setIsActive }: Props) => {
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
             <Button
-              disabled={!canSubmit}
-              onPress={() => form.handleSubmit()}
-              className="bg-primary"
-            >
-              {isPending || isSubmitting ? (
-                <ActivityIndicator
-                  color={isDarkColorScheme ? "black" : "white"}
-                />
-              ) : (
-                <Text className="text-white dark:text-shark">Sign in</Text>
-              )}
-            </Button>
+              className="w-full mt-4"
+              onPress={form.handleSubmit}
+              disabled={!canSubmit || isSubmitting}
+              isSubmitting={isPending || isSubmitting}
+              text="Sign in"
+              textColor={
+                isDarkColorScheme
+                  ? NAV_THEME.dark.background
+                  : NAV_THEME.light.background
+              }
+            />
           )}
         />
 
@@ -161,9 +155,7 @@ const LoginForm = ({ setIsActive }: Props) => {
         <View className="flex-row justify-center items-center">
           <Text className="text-shuttleGray">Don't have an account? </Text>
           <TouchableOpacity onPress={() => setIsActive(true)}>
-            <Text className="text-shark dark:text-white font-semibold">
-              Sign up
-            </Text>
+            <Text className="text-primary font-semibold">Sign up</Text>
           </TouchableOpacity>
         </View>
       </View>

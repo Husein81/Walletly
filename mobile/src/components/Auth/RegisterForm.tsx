@@ -1,5 +1,5 @@
 import { useForm } from "@tanstack/react-form";
-import { ActivityIndicator, TouchableOpacity, View } from "react-native";
+import { Image, TouchableOpacity, View } from "react-native";
 import { z } from "zod";
 
 // Local imports
@@ -8,8 +8,8 @@ import { useRegister } from "~/hooks/auth";
 import { NAV_THEME } from "~/lib/config";
 import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
-import { Button, Input, Label, Text } from "../ui";
-import { FieldInfo } from "../ui-components";
+import { Input, Label, Text } from "../ui";
+import { Button, FieldInfo } from "../ui-components";
 
 type Props = {
   setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
@@ -44,11 +44,7 @@ const RegisterForm = ({ setIsActive }: Props) => {
   });
 
   return (
-    <View>
-      <Text className="text-5xl font-bold text-primary text-center mb-8">
-        Let’s Get Started!
-      </Text>
-
+    <View className="gap-4">
       <form.Field
         name="name"
         validators={{ onChange: () => registerSchema.shape.name }}
@@ -121,14 +117,14 @@ const RegisterForm = ({ setIsActive }: Props) => {
           <Button
             disabled={!canSubmit}
             onPress={() => form.handleSubmit()}
-            className="bg-primary"
-          >
-            {isPending || isSubmitting ? (
-              <ActivityIndicator />
-            ) : (
-              <Text className="text-white dark:text-shark">Register</Text>
-            )}
-          </Button>
+            isSubmitting={isSubmitting}
+            text="Register"
+            textColor={
+              isDarkColorScheme
+                ? NAV_THEME.dark.background
+                : NAV_THEME.light.background
+            }
+          />
         )}
       </form.Subscribe>
 
@@ -136,10 +132,8 @@ const RegisterForm = ({ setIsActive }: Props) => {
         <Text className="text-center text-shuttleGray">
           Already have an account?{" "}
         </Text>
-        <TouchableOpacity onPress={() => setIsActive(true)}>
-          <Text className="text-shark font-semibold dark:text-white">
-            Sign in
-          </Text>
+        <TouchableOpacity onPress={() => setIsActive(false)}>
+          <Text className="text-primary font-semibold ">Sign in</Text>
         </TouchableOpacity>
       </View>
     </View>

@@ -5,20 +5,17 @@ import {
   BottomSheetScrollView,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
-import {
-  forwardRef,
-  useCallback,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-} from "react";
-import { Text, View, ViewStyle } from "react-native";
+import { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
+import { Text, ViewStyle } from "react-native";
 
 // Local Imports
 import { NAV_THEME } from "~/lib/config";
 import { useColorScheme } from "~/lib/useColorScheme";
+import { Account, Category } from "~/types";
 
-type BottomSheetProps<T> = {
+type T = Account | Category;
+
+type BottomSheetProps = {
   data: T[];
   renderItem: (item: T, index: number) => React.ReactNode;
   title?: string;
@@ -31,13 +28,13 @@ export type BottomSheetRef = {
 };
 
 const BottomSheet = forwardRef(
-  <T,>(
+  (
     {
       data,
       renderItem,
       title = "Items",
       contentContainerStyle,
-    }: BottomSheetProps<T>,
+    }: BottomSheetProps,
     ref: React.Ref<BottomSheetRef>
   ) => {
     const { isDarkColorScheme } = useColorScheme();
@@ -77,7 +74,7 @@ const BottomSheet = forwardRef(
             pressBehavior="close" // This makes tapping outside close the sheet
             opacity={0.5}
             style={{
-              backgroundColor: "rgba(0, 0, 0, 0.9)", // optional customization
+              backgroundColor: "rgba(0, 0, 0, 0.8)", // optional customization
             }}
           />
         )}

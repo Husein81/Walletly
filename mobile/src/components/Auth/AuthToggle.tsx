@@ -14,7 +14,7 @@ const AuthToggle: React.FC<Props> = ({ isActive, setIsActive }) => {
   return (
     <View className="bg-secondary rounded-lg flex-row w-full p-1 gap-4 mb-8">
       <Button
-        className={cn("flex-1 bg-secondary", !isActive && "bg-foreground")}
+        className={cn("flex-1 bg-secondary", !isActive && "bg-primary")}
         onPress={() => setIsActive(false)}
       >
         <Text
@@ -27,7 +27,7 @@ const AuthToggle: React.FC<Props> = ({ isActive, setIsActive }) => {
         </Text>
       </Button>
       <Button
-        className={cn("flex-1 bg-secondary", isActive && "bg-foreground")}
+        className={cn("flex-1 bg-secondary", isActive && "bg-primary")}
         onPress={() => setIsActive(true)}
       >
         <Text

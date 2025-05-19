@@ -1,5 +1,6 @@
 import { Redirect } from "expo-router";
 import { Drawer } from "expo-router/drawer";
+import { View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { CustomDrawer } from "~/components/ui-components";
 import { NAV_THEME } from "~/lib/config";
@@ -32,6 +33,16 @@ const DrawerLayout = () => {
           name="(tabs)"
           options={{
             title: "My Wallet",
+            drawerIcon: () => (
+              <Icon
+                name="WalletMinimal"
+                color={
+                  isDarkColorScheme
+                    ? NAV_THEME.dark.primary
+                    : NAV_THEME.light.primary
+                }
+              />
+            ),
           }}
         />
 

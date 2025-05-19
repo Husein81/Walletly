@@ -5,6 +5,7 @@ import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { cn } from "~/lib/utils";
 import { Button as SButton } from "../ui/button";
+import { NAV_THEME } from "~/lib/config";
 
 type Props = {
   onPress?: (args?: any) => void;
@@ -12,6 +13,7 @@ type Props = {
   iconName?: string;
   iconSize?: string;
   text?: string;
+  textColor?: string;
   rightIconName?: string;
   isSubmitting?: boolean;
   className?: string;
@@ -32,6 +34,7 @@ export const Button = ({
   iconName,
   iconSize,
   text,
+  textColor,
   isSubmitting,
   rightIconName,
   variant,
@@ -40,6 +43,7 @@ export const Button = ({
   children,
 }: Props) => {
   const { isDarkColorScheme } = useColorScheme();
+
   return (
     <SButton
       variant={variant ?? "default"}
@@ -48,7 +52,13 @@ export const Button = ({
       disabled={disabled}
     >
       {isSubmitting ? (
-        <ActivityIndicator />
+        <ActivityIndicator
+          color={
+            isDarkColorScheme
+              ? NAV_THEME.dark.background
+              : NAV_THEME.light.background
+          }
+        />
       ) : (
         <>
           {iconName && (
@@ -60,7 +70,7 @@ export const Button = ({
             />
           )}
           {children}
-          {text && <Text className="text-primary">{text}</Text>}
+          {text && <Text style={{ color: textColor }}>{text}</Text>}
           {rightIconName && (
             <Icon
               onPress={onPress}

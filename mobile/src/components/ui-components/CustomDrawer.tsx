@@ -58,8 +58,23 @@ export const CustomDrawer = (props: any) => {
             }
           />
         </View>
+
         <DrawerItemList {...props} />
-        <DrawerItem label={"Logout"} onPress={handleLogout} />
+
+        <DrawerItem
+          icon={() => (
+            <Icon
+              color={
+                isDarkColorScheme
+                  ? NAV_THEME.dark.primary
+                  : NAV_THEME.light.primary
+              }
+              name="LogOut"
+            />
+          )}
+          label={"Logout"}
+          onPress={handleLogout}
+        />
       </View>
     </DrawerContentScrollView>
   );
