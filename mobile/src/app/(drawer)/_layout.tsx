@@ -35,7 +35,7 @@ const DrawerLayout = () => {
             title: "My Wallet",
             drawerIcon: () => (
               <Icon
-                name="WalletMinimal"
+                name="Wallet"
                 color={
                   isDarkColorScheme
                     ? NAV_THEME.dark.primary

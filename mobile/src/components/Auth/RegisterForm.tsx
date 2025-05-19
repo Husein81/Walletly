@@ -10,6 +10,7 @@ import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { Input, Label, Text } from "../ui";
 import { Button, FieldInfo } from "../ui-components";
+import Toast from "react-native-toast-message";
 
 type Props = {
   setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
@@ -38,7 +39,12 @@ const RegisterForm = ({ setIsActive }: Props) => {
         await mutateAsync(value);
         setIsActive(false);
       } catch (err) {
-        console.error("Registration error:", err);
+        const errorMessage = (err as Error)?.message;
+        Toast.show({
+          type: "error",
+          text1: "Registration error:",
+          text2: errorMessage,
+        });
       }
     },
   });

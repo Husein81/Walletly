@@ -12,6 +12,7 @@ import { Account } from "~/types";
 import { Input, Label } from "../ui";
 import { Button, FieldInfo } from "../ui-components";
 import IconSelector from "../ui-components/IconSelector";
+import Toast from "react-native-toast-message";
 
 type Props = {
   account?: Account;
@@ -46,11 +47,18 @@ const AccountForm = ({ account }: Props) => {
         imageUrl: selectedIcon,
         userId: user?.id || "",
       };
-
-      if (account) {
-        await updateAccount.mutateAsync({ ...payload, id: account.id });
-      } else {
-        await createAccount.mutateAsync(payload);
+      try {
+        if (account) {
+          await updateAccount.mutateAsync({ ...payload, id: account.id });
+        } else {
+          await createAccount.mutateAsync(payload);
+        }
+      } catch (error) {
+        Toast.show({
+          type: "error",
+          text1: "Account error:",
+          text2: (error as Error)?.message,
+        });
       }
       onClose();
     },

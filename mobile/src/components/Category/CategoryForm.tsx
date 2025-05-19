@@ -12,6 +12,7 @@ import { FieldInfo } from "../ui-components";
 import IconSelector from "../ui-components/IconSelector";
 import { cn } from "~/lib/utils";
 import { Icon } from "~/lib/icons/Icon";
+import Toast from "react-native-toast-message";
 
 type Props = {
   category?: Category;
@@ -44,38 +45,47 @@ const CategoryForm = ({ category }: Props) => {
     },
 
     onSubmit: async ({ value }) => {
-      if (category) {
-        const payload: Category = {
-          ...value,
-          imageUrl: selectedIcon,
-          id: category.id,
-          userId: category.userId,
-          createdAt: category.createdAt,
-          updatedAt: new Date(),
-          type: selectedType,
-        };
-        console.log("payload", payload);
-        await upgradeCategory.mutateAsync(payload);
-      } else {
-        const payload: Category = {
-          ...value,
-          imageUrl: selectedIcon,
-          userId: user?.id || "",
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          type: selectedType,
-        };
-        await createCategory.mutateAsync(payload);
+      try {
+        if (category) {
+          const payload: Category = {
+            ...value,
+            imageUrl: selectedIcon,
+            id: category.id,
+            userId: category.userId,
+            createdAt: category.createdAt,
+            updatedAt: new Date(),
+            type: selectedType,
+          };
+          await upgradeCategory.mutateAsync(payload);
+        } else {
+          const payload: Category = {
+            ...value,
+            imageUrl: selectedIcon,
+            userId: user?.id || "",
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            type: selectedType,
+          };
+          await createCategory.mutateAsync(payload);
+        }
+      } catch (error) {
+        Toast.show({
+          type: "error",
+          text1: "Category error:",
+          text2: (error as Error)?.message,
+        });
       }
       onClose();
     },
   });
+
   const isSelectedType = useCallback(
     (type: ExpenseType) => {
       return type === selectedType;
     },
     [selectedType]
   );
+
   return (
     <View className="gap-8 flex">
       <form.Field

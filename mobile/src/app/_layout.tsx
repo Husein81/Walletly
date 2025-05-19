@@ -8,12 +8,12 @@ import {
 import { PortalHost } from "@rn-primitives/portal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Slot } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import React, { useCallback, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 // Local Imports
 import { NAV_THEME } from "~/lib/config";
@@ -71,6 +71,7 @@ export default function RootLayout() {
             <BottomSheetModalProvider>
               <Slot />
               <PortalHost />
+              <Toast />
             </BottomSheetModalProvider>
           </GestureHandlerRootView>
         </SafeAreaProvider>
