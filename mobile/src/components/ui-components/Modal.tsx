@@ -23,13 +23,13 @@ export const Modal = () => {
         <BottomSheetModalProvider>
           <View
             className={cn(
-              "flex-1 gap-4 p-8  items-center justify-center bg-background"
+              "flex-1 gap-4 p-8 items-center justify-center bg-background"
             )}
           >
             {title && (
               <Text className="text-2xl font-semibold mb-4">{title}</Text>
             )}
-            <ScrollView>{body}</ScrollView>
+            <ScrollView showsVerticalScrollIndicator={false}>{body}</ScrollView>
           </View>
         </BottomSheetModalProvider>
       </GestureHandlerRootView>

@@ -26,11 +26,11 @@ const Auth = () => {
   }
 
   return (
-    <SafeAreaView edges={["top"]} className="flex-1">
+    <SafeAreaView edges={["top"]} className="flex-1 bg-background">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <ScrollView className="mt-12 px-8">
+        <ScrollView showsVerticalScrollIndicator={false} className="px-6 mt-8">
           <AuthToggle isActive={isActive} setIsActive={setIsActive} />
           {/* Toggle between login and register */}
           <Text className="text-5xl font-bold text-primary text-center mb-8">

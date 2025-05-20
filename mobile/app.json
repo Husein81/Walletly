@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "",
+    "name": "My Money",
     "slug": "MyMoneyWallet",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -21,7 +21,8 @@
         "foregroundImage": "./assets/images/wallet.png",
         "backgroundColor": "#1e1e1e"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.anonymous.MyMoneyWallet"
     },
     "web": {
       "bundler": "metro",
@@ -29,6 +30,20 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/wallet.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#1e1e1e",
+          "userInterfaceStyle": "automatic",
+          "statusBar": {
+            "translucent": true,
+            "style": "light",
+            "backgroundColor": "#1e1e1e"
+          }
+        }
+      ],
       "expo-router"
     ],
     "experiments": {

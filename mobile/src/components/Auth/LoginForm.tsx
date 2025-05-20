@@ -131,11 +131,6 @@ const LoginForm = ({ setIsActive }: Props) => {
         )}
       />
 
-      {/* API error */}
-      {error && (
-        <Text className="text-danger text-sm mb-2">{error.message}</Text>
-      )}
-
       {/* Submit */}
       <form.Subscribe
         selector={(state) => [state.canSubmit, state.isSubmitting]}

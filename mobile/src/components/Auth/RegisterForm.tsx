@@ -53,24 +53,24 @@ const RegisterForm = ({ setIsActive }: Props) => {
     <View className="gap-4">
       <form.Field
         name="name"
-        validators={{ onChange: () => registerSchema.shape.name }}
-      >
-        {(field) => (
+        validators={{ onChange: registerSchema.shape.name }}
+        children={(field) => (
           <View className="gap-2">
             <Label>Name</Label>
             <Input
               placeholder="Enter your name"
               value={field.state.value}
               onChangeText={field.handleChange}
+              autoCapitalize="none"
             />
             <FieldInfo field={field} />
           </View>
         )}
-      </form.Field>
+      />
 
       <form.Field
         name="email"
-        validators={{ onChange: () => registerSchema.shape.email }}
+        validators={{ onChange: registerSchema.shape.email }}
       >
         {(field) => (
           <View className="gap-2">
@@ -88,9 +88,8 @@ const RegisterForm = ({ setIsActive }: Props) => {
 
       <form.Field
         name="password"
-        validators={{ onChange: () => registerSchema.shape.password }}
-      >
-        {(field) => (
+        validators={{ onChange: registerSchema.shape.password }}
+        children={(field) => (
           <View className="gap-2 relative">
             <Label>Password</Label>
             <View>
@@ -98,7 +97,8 @@ const RegisterForm = ({ setIsActive }: Props) => {
                 placeholder="Enter your password"
                 value={field.state.value}
                 onChangeText={field.handleChange}
-                secureTextEntry
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
               />
               <Icon
                 name={showPassword ? "EyeOff" : "Eye"}
@@ -114,16 +114,15 @@ const RegisterForm = ({ setIsActive }: Props) => {
             <FieldInfo field={field} />
           </View>
         )}
-      </form.Field>
+      />
 
       <form.Subscribe
         selector={(state) => [state.canSubmit, state.isSubmitting]}
-      >
-        {([canSubmit, isSubmitting]) => (
+        children={([canSubmit, isSubmitting]) => (
           <Button
-            disabled={!canSubmit}
-            onPress={() => form.handleSubmit()}
-            isSubmitting={isSubmitting}
+            disabled={!canSubmit || isSubmitting}
+            onPress={form.handleSubmit}
+            isSubmitting={isPending || isSubmitting}
             text="Register"
             textColor={
               isDarkColorScheme
@@ -132,11 +131,11 @@ const RegisterForm = ({ setIsActive }: Props) => {
             }
           />
         )}
-      </form.Subscribe>
+      />
 
       <View className="flex-row justify-center items-center mt-4">
         <Text className="text-center text-shuttleGray">
-          Already have an account?{" "}
+          Already have an account?
         </Text>
         <TouchableOpacity onPress={() => setIsActive(false)}>
           <Text className="text-primary font-semibold ">Sign in</Text>
