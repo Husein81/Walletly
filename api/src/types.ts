@@ -36,7 +36,7 @@ export const accountSchema = z.object({
   id: z.string().optional(),
   userId: z.string(),
   name: z.string().min(1).max(50),
-  balance: z.string().default("0"),
+  balance: z.number().default(0),
   imageUrl: z.string().url().optional(),
   createdAt: z.date().default(() => new Date()),
   updatedAt: z.date().default(() => new Date()),
@@ -48,12 +48,13 @@ export const expenseSchema = z.object({
   categoryId: z.string(),
   category: categorySchema,
   description: z.string().max(255).optional(),
-  amount: z.string().default("0"),
+  amount: z.number().default(0),
   type: z.nativeEnum(ExpenseType),
   date: z.date().default(() => new Date()),
   createdAt: z.date().default(() => new Date()),
   updatedAt: z.date().default(() => new Date()),
 });
+
 export type User = z.infer<typeof userSchema>;
 export type Expense = z.infer<typeof expenseSchema>;
 export type Category = z.infer<typeof categorySchema>;
