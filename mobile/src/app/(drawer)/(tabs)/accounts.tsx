@@ -8,10 +8,11 @@ import AccountForm from "~/components/Account/AccountForm";
 import AccountList from "~/components/Account/AccountList";
 import { Text } from "~/components/ui";
 import { Button } from "~/components/ui-components";
+import Empty from "~/components/ui-components/Empty";
 import ListSkeleton from "~/components/ui-components/ListSkeleton";
 import { Skeleton } from "~/components/ui/skeleton";
+import { formattedBalance } from "~/functions";
 import { useGetAccounts } from "~/hooks/accounts";
-import { getColorByIndex } from "~/lib/functions";
 import { useColorScheme } from "~/lib/useColorScheme";
 
 // store imports
@@ -26,19 +27,35 @@ const Accounts = () => {
   const { data: accounts } = useGetAccounts(user?.id ?? "");
 
   const totalBalance = useMemo(
-    () => accounts?.reduce((acc, account) => acc + account.balance, 0),
+    () => accounts?.reduce((acc, account) => acc + Number(account.balance), 0),
     [accounts]
   );
 
   const handleOpenForm = () => onOpen(<AccountForm />, "Add new account");
-  const color = useMemo(() => getColorByIndex(user?.name || ""), [user?.name]);
+
+  if (!accounts || accounts.length < 1) {
+    return (
+      <SafeAreaView edges={["top"]} className="py-2 px-6 flex-1 gap-4">
+        <Empty
+          title="No accounts found"
+          description="Add your first account to get started"
+          icon="Info"
+        />
+        <Button className="rounded-xl w-full" onPress={handleOpenForm}>
+          <Text className="text-secondary uppercase font-semibold">
+            add new account
+          </Text>
+        </Button>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView edges={["top"]} className="py-2 px-6 flex-1 gap-4">
       {totalBalance ? (
         <View className="w-full items-center justify-center">
           <Text className="text-primary text-5xl font-semibold mt-2 ml-2">
-            ${totalBalance?.toFixed(2)}
+            {formattedBalance(totalBalance)}
           </Text>
           <Text className="text-primary text-xl">Total Balance</Text>
         </View>
@@ -57,13 +74,11 @@ const Accounts = () => {
           {accounts ? <AccountList accounts={accounts} /> : <ListSkeleton />}
         </View>
 
-        <View>
-          <Button className="rounded-xl" onPress={handleOpenForm}>
-            <Text className="text-secondary uppercase font-semibold">
-              add new account
-            </Text>
-          </Button>
-        </View>
+        <Button className="rounded-xl" onPress={handleOpenForm}>
+          <Text className="text-secondary uppercase font-semibold">
+            add new account
+          </Text>
+        </Button>
       </View>
     </SafeAreaView>
   );

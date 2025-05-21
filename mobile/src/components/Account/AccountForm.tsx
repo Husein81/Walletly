@@ -20,9 +20,7 @@ type Props = {
 
 const accountSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  balance: z
-    .number({ invalid_type_error: "Balance must be a number" })
-    .nonnegative("Balance must be 0 or more"),
+  balance: z.number().or(z.string()),
 });
 
 const AccountForm = ({ account }: Props) => {
@@ -39,13 +37,14 @@ const AccountForm = ({ account }: Props) => {
   const form = useForm({
     defaultValues: {
       name: account?.name || "",
-      balance: account?.balance || 0,
+      balance: account?.balance || "0",
     },
     onSubmit: async ({ value }) => {
       const payload = {
         ...value,
         imageUrl: selectedIcon,
         userId: user?.id || "",
+        balance: parseFloat(value.balance.toString()),
       };
       try {
         if (account) {
@@ -90,9 +89,28 @@ const AccountForm = ({ account }: Props) => {
           <View className="gap-2">
             <Label>Balance</Label>
             <Input
-              value={field.state.value.toString()}
-              onChangeText={(text) => field.handleChange(parseFloat(text) || 0)}
+              placeholder="Enter balance"
               keyboardType="numeric"
+              value={field.state.value?.toString() ?? ""}
+              onChangeText={(text) => {
+                // Accept negative, positive, and decimals
+                const numericValue = parseFloat(text);
+                if (
+                  !isNaN(numericValue) ||
+                  text.includes("") ||
+                  text.includes("-") ||
+                  text.includes(".")
+                ) {
+                  // Allow empty string or negative sign
+                  field.handleChange(
+                    text.includes("") ||
+                      text.includes("-") ||
+                      text.includes(".")
+                      ? text
+                      : numericValue
+                  );
+                }
+              }}
             />
             <FieldInfo field={field} />
           </View>

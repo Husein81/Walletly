@@ -13,6 +13,7 @@ import useModalStore from "~/store/modalStore";
 import { Account } from "~/types";
 import { Card } from "../ui/card";
 import AccountForm from "./AccountForm";
+import { formattedBalance } from "~/functions";
 
 type Props = {
   account: Account;
@@ -28,11 +29,6 @@ const AccountCard = ({ account }: Props) => {
 
   const handleEdit = () =>
     onOpen(<AccountForm account={account} />, "Edit account");
-
-  const formattedBalance = (balance: number) =>
-    balance > 0
-      ? `$${balance.toFixed(2)}`
-      : `-$${Math.abs(balance).toFixed(2)}`;
 
   const options = [
     {
