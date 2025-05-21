@@ -47,6 +47,8 @@ export const expenseSchema = z.object({
   userId: z.string(),
   categoryId: z.string(),
   category: categorySchema,
+  accountId: z.string(),
+  account: accountSchema,
   description: z.string().max(255).optional(),
   amount: z.number().default(0),
   type: z.nativeEnum(ExpenseType),

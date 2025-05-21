@@ -31,11 +31,13 @@ model Account {
 
   userId String
   user   User?  @relation(fields: [userId], references: [id])
+
+  expenses Expense[]
 }
 
 model Expense {
   id          String      @id @default(uuid())
-  description String
+  description String?
   amount      Float
   type        ExpenseType
   date        DateTime
@@ -47,6 +49,9 @@ model Expense {
 
   categoryId String?
   category   Category? @relation(fields: [categoryId], references: [id])
+
+  accountId String?
+  account   Account? @relation(fields: [accountId], references: [id])
 }
 
 model Category {
