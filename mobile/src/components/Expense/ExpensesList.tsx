@@ -1,4 +1,4 @@
-import { SectionList, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { Expense } from "~/types";
 import ExpenseCard from "./ExpenseCard";
 
@@ -8,17 +8,25 @@ type Props = {
 
 const ExpensesList = ({ expensesSections }: Props) => {
   return (
-    <SectionList
-      sections={expensesSections}
-      keyExtractor={(item) => item.id || Math.random().toString()}
-      renderSectionHeader={({ section: { title } }) => (
-        <View className="py-4 gap-2">
-          <Text className="text-xl font-bold text-primary">{title}</Text>
-          <View className="w-full mx-auto h-px bg-primary " />
+    <View>
+      {expensesSections.map((section) => (
+        <View key={section.title} className="mb-6">
+          {/* Section Header */}
+          <View className="py-4 gap-2">
+            <Text className="text-lg font-bold text-primary">
+              {section.title}
+            </Text>
+            <View className="w-full mx-auto h-px bg-primary" />
+          </View>
+
+          {/* Expenses in Section */}
+          {section.data.map((expense) => (
+            <ExpenseCard key={expense.id} expense={expense} />
+          ))}
         </View>
-      )}
-      renderItem={({ item }) => <ExpenseCard expense={item} />}
-    />
+      ))}
+    </View>
   );
 };
+
 export default ExpensesList;

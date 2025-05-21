@@ -29,6 +29,7 @@ import { Account, Category, Expense, ExpenseType } from "~/types";
 // store imports
 import { useAuthStore } from "~/store/authStore";
 import useModalStore from "~/store/modalStore";
+import { useCreateExpense, useUpgradeExpense } from "~/hooks/expense";
 
 type Props = {
   expense?: Expense;
@@ -64,7 +65,6 @@ const ExpenseForm = ({ expense }: Props) => {
   const [selectedCategory, setSelectedCategory] = useState<
     Category | undefined
   >(undefined);
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [bottomSheetType, setBottomSheetType] =
     useState<BottomSheetType | null>(null);
 
@@ -103,29 +103,63 @@ const ExpenseForm = ({ expense }: Props) => {
     bottomSheetRef.current?.present();
   };
 
+  const createExpense = useCreateExpense();
+  const updateExpense = useUpgradeExpense();
+
   const form = useForm({
     defaultValues: {
       type: expense?.type || selectedExpenseType,
       category: expense?.category || selectedCategory,
       amount: expense?.amount || "",
       description: expense?.description || "",
-      createdAt: expense?.createdAt || selectedDate,
-      updatedAt: expense?.updatedAt || selectedDate,
+      updatedAt: expense?.updatedAt || new Date(),
     },
     onSubmit: async ({ value }) => {
-      const payload = {
+      if (!selectedCategory?.id || !selectedAccount?.id) {
+        Toast.show({
+          type: "error",
+          text1: "Expense error:",
+          text2: "Please select a category.",
+        });
+        return;
+      }
+      const payload: Expense = {
         ...value,
-        accountId: selectedAccount?.id,
-        categoryId: selectedCategory?.id,
         userId: user?.id || "",
+        type: selectedExpenseType,
+        updatedAt: value.updatedAt,
+        accountId: selectedAccount?.id,
+        account: selectedAccount,
+        categoryId: selectedCategory.id,
+        category: selectedCategory,
+        amount:
+          selectedExpenseType === ExpenseType.EXPENSE
+            ? -Math.abs(Number(value.amount))
+            : Math.abs(Number(value.amount)),
+        description: value.description,
       };
-      // Handle form submission logic here
-      Toast.show({
-        type: "success",
-        text1: "Form submitted successfully",
-        text2: JSON.stringify(payload),
-      });
-      onClose();
+      try {
+        if (expense) {
+          await updateExpense.mutateAsync({
+            ...payload,
+            id: expense.id,
+          });
+        } else {
+          await createExpense.mutateAsync(payload);
+        }
+        Toast.show({
+          type: "success",
+          text1: "Expense saved successfully",
+        });
+      } catch (error) {
+        Toast.show({
+          type: "error",
+          text1: "Expense error:",
+          text2: (error as Error)?.message,
+        });
+      } finally {
+        onClose();
+      }
     },
   });
 
@@ -257,23 +291,7 @@ const ExpenseForm = ({ expense }: Props) => {
                 keyboardType="numeric"
                 value={field.state.value?.toString() ?? ""}
                 onChangeText={(text) => {
-                  // Accept negative, positive, and decimals
-                  const numericValue = parseFloat(text);
-                  if (
-                    !isNaN(numericValue) ||
-                    text.includes("") ||
-                    text.includes("-") ||
-                    text.includes(".")
-                  ) {
-                    // Allow empty string or negative sign
-                    field.handleChange(
-                      text.includes("") ||
-                        text.includes("-") ||
-                        text.includes(".")
-                        ? text
-                        : numericValue
-                    );
-                  }
+                  field.handleChange(text);
                 }}
               />
               {/* <FieldInfo field={field} /> */}

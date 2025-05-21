@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from ".";
 import { Expense } from "~/types";
 
@@ -18,4 +18,61 @@ const useGetExpenses = (userId: string, year?: string, month?: string) => {
   });
 };
 
-export { useGetExpenses };
+const useCreateExpense = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: Expense) => {
+      const response = await api.post("/expense", data);
+      return response.data;
+    },
+    onSuccess: () => {
+      // Invalidate the expenses query to refetch the data
+      queryClient.invalidateQueries({ queryKey: ["expenses"] });
+    },
+  });
+};
+
+const useUpgradeExpense = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: Expense) => {
+      const response = await api.put(`/expense/${data.id}`, data);
+      return response.data;
+    },
+    onSuccess: () => {
+      // Invalidate the expenses query to refetch the data
+      queryClient.invalidateQueries({ queryKey: ["expenses"] });
+    },
+  });
+};
+
+const useGetExpenseById = (expenseId: string) => {
+  return useQuery({
+    queryKey: ["expense", expenseId],
+    queryFn: async (): Promise<Expense> => {
+      const response = await api.get<Expense>(`/expense/${expenseId}`);
+      return response.data;
+    },
+  });
+};
+
+const useDeleteExpense = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (expenseId: string) => {
+      await api.delete(`/expense/${expenseId}`);
+    },
+    onSuccess: () => {
+      // Invalidate the expenses query to refetch the data
+      queryClient.invalidateQueries({ queryKey: ["expenses"] });
+    },
+  });
+};
+
+export {
+  useGetExpenses,
+  useCreateExpense,
+  useUpgradeExpense,
+  useGetExpenseById,
+  useDeleteExpense,
+};

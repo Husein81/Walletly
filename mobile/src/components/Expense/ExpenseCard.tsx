@@ -28,11 +28,11 @@ const ExpenseCard = ({ expense }: Props) => {
                 ? NAV_THEME.dark.primary
                 : NAV_THEME.light.primary
             }
-            size={36}
+            size={32}
           />
         </View>
         <View>
-          <Text className="text-primary text-2xl capitalize">
+          <Text className="text-primary text-xl capitalize">
             {expense.category.name}
           </Text>
           <View className="flex-row items-center gap-2">

@@ -58,7 +58,10 @@ export const expenseSchema = z.object({
   description: z.string().max(255).optional(),
   amount: z.number().default(0),
   type: z.nativeEnum(ExpenseType),
-  createdAt: z.date().default(() => new Date()),
+  createdAt: z
+    .date()
+    .default(() => new Date())
+    .optional(),
   updatedAt: z.date().default(() => new Date()),
 });
 
