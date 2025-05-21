@@ -40,7 +40,6 @@ model Expense {
   description String?
   amount      Float
   type        ExpenseType
-  date        DateTime
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 

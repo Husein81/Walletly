@@ -4,13 +4,28 @@ import { Expense } from "../types.js";
 
 const getExpenses = async (req: Request, res: Response) => {
   try {
-    const userId = req.query.userId as string;
+    const { userId, month, year } = req.query as {
+      userId: string;
+      month?: string;
+      year?: string;
+    };
+
+    const parsedYear = year ? parseInt(year, 10) : new Date().getFullYear();
+    const parsedMonth = month ? parseInt(month, 10) : new Date().getMonth() + 1;
+    const startDate = new Date(parsedYear, parsedMonth - 1, 1);
+    const endDate = new Date(parsedYear, parsedMonth, 1); // start of next month
+
     const expenses = await prisma.expense.findMany({
       where: {
         userId,
+        updatedAt: {
+          gte: startDate,
+          lte: endDate,
+        },
       },
       include: {
         category: true,
+        account: true,
       },
     });
     res.status(200).json(expenses);
@@ -43,8 +58,15 @@ const getExpense = async (req: Request, res: Response) => {
 
 const createExpense = async (req: Request, res: Response) => {
   try {
-    const { amount, description, categoryId, type, date, userId } =
-      req.body as Expense;
+    const {
+      amount,
+      description,
+      categoryId,
+      type,
+      userId,
+      accountId,
+      updatedAt,
+    } = req.body as Expense;
 
     const newExpense = await prisma.expense.create({
       data: {
@@ -53,7 +75,9 @@ const createExpense = async (req: Request, res: Response) => {
         userId,
         categoryId,
         type,
-        date,
+        createdAt: new Date(),
+        updatedAt: updatedAt || new Date(),
+        accountId,
       },
     });
 
@@ -66,7 +90,8 @@ const createExpense = async (req: Request, res: Response) => {
 const updateExpense = async (req: Request, res: Response) => {
   try {
     const { expenseId } = req.params;
-    const { amount, description, categoryId, type, date } = req.body as Expense;
+    const { amount, description, categoryId, type, accountId, updatedAt } =
+      req.body as Expense;
 
     const updatedExpense = await prisma.expense.update({
       where: {
@@ -77,7 +102,9 @@ const updateExpense = async (req: Request, res: Response) => {
         description,
         categoryId,
         type,
-        date,
+        accountId,
+        createdAt: new Date(),
+        updatedAt: updatedAt || new Date(),
       },
     });
 

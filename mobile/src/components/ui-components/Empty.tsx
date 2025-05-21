@@ -7,7 +7,8 @@ type Props = {
   description?: string;
   icon?: string;
 };
-const Empty = ({ title, description, icon }: Props) => {
+
+export const Empty = ({ title, description, icon }: Props) => {
   const { isDarkColorScheme } = useColorScheme();
   return (
     <View className="flex-1 items-center justify-center gap-4">
@@ -27,4 +28,3 @@ const Empty = ({ title, description, icon }: Props) => {
     </View>
   );
 };
-export default Empty;

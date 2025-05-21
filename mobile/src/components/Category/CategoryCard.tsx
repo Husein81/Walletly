@@ -18,6 +18,7 @@ type Props = {
 const CategoryCard = ({ category }: Props) => {
   const { onOpen } = useModalStore();
   const { isDarkColorScheme } = useColorScheme();
+
   const color = getColorByIndex(category.name);
 
   const deleteCategory = useDeleteCategory(category?.id ?? "");
@@ -25,6 +26,7 @@ const CategoryCard = ({ category }: Props) => {
   const handleDelete = async () => await deleteCategory.mutateAsync();
   const handleEdit = () =>
     onOpen(<CategoryForm category={category} />, "Edit Category");
+
   const options = [
     {
       label: "Edit",

@@ -7,7 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import CategoryForm from "~/components/Category/CategoryForm";
 import CategorySectionList from "~/components/Category/CategorySectionList";
 import { Button, Text } from "~/components/ui";
-import ListSkeleton from "~/components/ui-components/ListSkeleton";
+import { Empty, ListSkeleton } from "~/components/ui-components";
 
 // Local imports
 import { useCategories } from "~/hooks/categories";
@@ -17,7 +17,6 @@ import { ExpenseType } from "~/types";
 // store imports
 import { useAuthStore } from "~/store/authStore";
 import useModalStore from "~/store/modalStore";
-import Empty from "~/components/ui-components/Empty";
 
 const Categories = () => {
   const { user } = useAuthStore();

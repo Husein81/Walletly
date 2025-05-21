@@ -13,7 +13,8 @@ type Props = {
   selectedIcon: string;
   setSelectedIcon: React.Dispatch<React.SetStateAction<string>>;
 };
-const IconSelector = ({ selectedIcon, setSelectedIcon }: Props) => {
+
+export const IconSelector = ({ selectedIcon, setSelectedIcon }: Props) => {
   const { isDarkColorScheme } = useColorScheme();
 
   return (
@@ -53,5 +54,3 @@ const IconSelector = ({ selectedIcon, setSelectedIcon }: Props) => {
     </View>
   );
 };
-
-export default IconSelector;

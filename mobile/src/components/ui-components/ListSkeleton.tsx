@@ -1,6 +1,6 @@
-import { View, Text, FlatList } from "react-native";
+import { FlatList, View } from "react-native";
 import { Skeleton } from "../ui/skeleton";
-const ListSkeleton = () => {
+export const ListSkeleton = () => {
   return (
     <View>
       <FlatList
@@ -20,4 +20,3 @@ const ListSkeleton = () => {
     </View>
   );
 };
-export default ListSkeleton;
