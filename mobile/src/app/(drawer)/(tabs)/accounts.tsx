@@ -33,23 +33,6 @@ const Accounts = () => {
 
   const handleOpenForm = () => onOpen(<AccountForm />, "Add new account");
 
-  if (!accounts || accounts.length < 1) {
-    return (
-      <SafeAreaView edges={["top"]} className="py-2 px-6 flex-1 gap-4">
-        <Empty
-          title="No accounts found"
-          description="Add your first account to get started"
-          icon="Info"
-        />
-        <Button className="rounded-xl w-full" onPress={handleOpenForm}>
-          <Text className="text-secondary uppercase font-semibold">
-            add new account
-          </Text>
-        </Button>
-      </SafeAreaView>
-    );
-  }
-
   return (
     <SafeAreaView edges={["top"]} className="py-2 px-6 flex-1 gap-4">
       {totalBalance ? (
@@ -66,15 +49,25 @@ const Accounts = () => {
         </View>
       )}
       <View className="rounded-t-lg bg-background flex-1">
-        <Text className="text-2xl font-semibold text-primary text-start mb-8">
+        <Text className="text-3xl font-semibold text-primary text-start mb-4">
           My wallets
         </Text>
 
         <View className="flex-1">
-          {accounts ? <AccountList accounts={accounts} /> : <ListSkeleton />}
+          {accounts && accounts.length > 0 ? (
+            <AccountList accounts={accounts} />
+          ) : accounts && accounts.length === 0 ? (
+            <Empty
+              title="No accounts found"
+              description="Add your first account to get started"
+              icon="Info"
+            />
+          ) : (
+            <ListSkeleton />
+          )}
         </View>
 
-        <Button className="rounded-xl" onPress={handleOpenForm}>
+        <Button className="rounded-xl mb-4" onPress={handleOpenForm}>
           <Text className="text-secondary uppercase font-semibold">
             add new account
           </Text>

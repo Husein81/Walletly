@@ -17,6 +17,7 @@ import { ExpenseType } from "~/types";
 // store imports
 import { useAuthStore } from "~/store/authStore";
 import useModalStore from "~/store/modalStore";
+import Empty from "~/components/ui-components/Empty";
 
 const Categories = () => {
   const { user } = useAuthStore();
@@ -57,22 +58,26 @@ const Categories = () => {
   const handleOpenCategory = () => onOpen(<CategoryForm />, "Add new Category");
 
   return (
-    <SafeAreaView edges={["top"]} className="px-6 py-2 flex-1 gap-4">
+    <SafeAreaView edges={["top"]} className="px-6 flex-1">
       <View className="flex-1">
-        {categories ? (
+        {categories && categories.length > 0 ? (
           <CategorySectionList categorySections={categorySections} />
+        ) : categories && categories.length === 0 ? (
+          <Empty
+            title="No categories found"
+            description="Add your first category to get started"
+            icon="Info"
+          />
         ) : (
           <ListSkeleton />
         )}
       </View>
 
-      <View className="">
-        <Button className="rounded-xl" onPress={handleOpenCategory}>
-          <Text className="text-secondary uppercase font-semibold">
-            add new category
-          </Text>
-        </Button>
-      </View>
+      <Button className="rounded-xl mb-4" onPress={handleOpenCategory}>
+        <Text className="text-secondary uppercase font-semibold">
+          add new category
+        </Text>
+      </Button>
     </SafeAreaView>
   );
 };

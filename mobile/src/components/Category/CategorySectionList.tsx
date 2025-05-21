@@ -15,13 +15,14 @@ const CategorySectionList = ({ categorySections }: Props) => {
       showsVerticalScrollIndicator={false}
       ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
       renderSectionHeader={({ section: { title } }) => (
-        <View className="">
+        <View className="py-4 gap-2">
           <Text className="text-2xl font-bold text-primary">{title}</Text>
-          <View className="w-full mx-auto h-px bg-primary my-4" />
+          <View className="w-full mx-auto h-px bg-primary mb-4" />
         </View>
       )}
       renderItem={({ item }) => <CategoryCard category={item} />}
     />
   );
 };
+
 export default CategorySectionList;
