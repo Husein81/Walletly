@@ -16,7 +16,7 @@ const ExpenseCard = ({ expense }: Props) => {
   const { isDarkColorScheme } = useColorScheme();
 
   const catColor = getColorByIndex(expense.category.imageUrl || "other");
-  const accColor = getColorByIndex(expense.account.imageUrl || "other");
+
   return (
     <Card className="flex-row py-2 px-3 rounded-xl justify-between items-center gap-4 mb-3">
       <View className="flex-row gap-4 items-center">

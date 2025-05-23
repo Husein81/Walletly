@@ -1,6 +1,10 @@
+// global imports
 import { Request, Response } from "express";
+
+// local imports
 import prisma from "../util/prisma.js";
 import { Expense } from "../types.js";
+import NotFoundError from "../error/not-found.js";
 
 const getExpenses = async (req: Request, res: Response) => {
   try {
@@ -68,6 +72,16 @@ const createExpense = async (req: Request, res: Response) => {
       updatedAt,
     } = req.body as Expense;
 
+    const account = await prisma.account.findUnique({
+      where: { id: accountId },
+    });
+
+    if (!account) {
+      throw new NotFoundError("Account not found");
+    }
+
+    const newBalance = Number(account.balance) + Number(amount);
+
     const newExpense = await prisma.expense.create({
       data: {
         amount,
@@ -79,6 +93,12 @@ const createExpense = async (req: Request, res: Response) => {
         updatedAt: updatedAt || new Date(),
         accountId,
       },
+    });
+
+    // Update the account balance
+    await prisma.account.update({
+      where: { id: accountId },
+      data: { balance: newBalance },
     });
 
     res.status(201).json(newExpense);
@@ -93,6 +113,16 @@ const updateExpense = async (req: Request, res: Response) => {
     const { amount, description, categoryId, type, accountId, updatedAt } =
       req.body as Expense;
 
+    const account = await prisma.account.findUnique({
+      where: { id: accountId },
+    });
+
+    if (!account) {
+      throw new NotFoundError("Account not found");
+    }
+
+    const newBalance = Number(account.balance) + Number(amount);
+
     const updatedExpense = await prisma.expense.update({
       where: {
         id: expenseId,
@@ -106,6 +136,12 @@ const updateExpense = async (req: Request, res: Response) => {
         createdAt: new Date(),
         updatedAt: updatedAt || new Date(),
       },
+    });
+
+    // Update the account balance
+    await prisma.account.update({
+      where: { id: accountId },
+      data: { balance: newBalance },
     });
 
     res.status(200).json(updatedExpense);

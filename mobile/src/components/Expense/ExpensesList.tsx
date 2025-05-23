@@ -1,6 +1,7 @@
 import { Text, View } from "react-native";
 import { Expense } from "~/types";
 import ExpenseCard from "./ExpenseCard";
+import { Separator } from "../ui";
 
 type Props = {
   expensesSections: Array<{ title: string; data: Expense[] }>;
@@ -16,7 +17,7 @@ const ExpensesList = ({ expensesSections }: Props) => {
             <Text className="text-lg font-bold text-primary">
               {section.title}
             </Text>
-            <View className="w-full mx-auto h-px bg-primary" />
+            <Separator />
           </View>
 
           {/* Expenses in Section */}

@@ -10,8 +10,7 @@ import { useAuthStore } from "~/store/authStore";
 import useModalStore from "~/store/modalStore";
 import { Account } from "~/types";
 import { Input, Label } from "../ui";
-import { Button, FieldInfo } from "../ui-components";
-import IconSelector from "../ui-components/IconSelector";
+import { Button, FieldInfo, IconSelector } from "../ui-components";
 import Toast from "react-native-toast-message";
 
 type Props = {

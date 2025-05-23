@@ -7,3 +7,4 @@ export { Switch } from "./switch";
 export { DropdownMenu } from "./dropdown-menu";
 export { AlertDialog } from "./alert-dialog";
 export { Textarea } from "./textarea";
+export { Separator } from "./separator";

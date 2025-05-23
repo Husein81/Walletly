@@ -7,19 +7,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import AccountForm from "~/components/Account/AccountForm";
 import AccountList from "~/components/Account/AccountList";
 import { Text } from "~/components/ui";
-import { Button } from "~/components/ui-components";
-import { Empty, ListSkeleton } from "~/components/ui-components";
+import { Button, Empty, ListSkeleton } from "~/components/ui-components";
 import { Skeleton } from "~/components/ui/skeleton";
 import { formattedBalance } from "~/functions";
 import { useGetAccounts } from "~/hooks/accounts";
-import { useColorScheme } from "~/lib/useColorScheme";
 
 // store imports
 import { useAuthStore } from "~/store/authStore";
 import useModalStore from "~/store/modalStore";
 
 const Accounts = () => {
-  const { isDarkColorScheme } = useColorScheme();
   const { user } = useAuthStore();
   const { onOpen } = useModalStore();
 
@@ -30,6 +27,16 @@ const Accounts = () => {
     [accounts]
   );
 
+  const sortedAccountsByDate = useMemo(() => {
+    if (!accounts) return [];
+
+    return [...accounts].sort((a, b) => {
+      const aDate = new Date(a.createdAt ?? 0).getTime();
+      const bDate = new Date(b.createdAt ?? 0).getTime();
+      return bDate - aDate; // descending order
+    });
+  }, [accounts]);
+
   const handleOpenForm = () => onOpen(<AccountForm />, "Add new account");
 
   return (
@@ -38,6 +45,13 @@ const Accounts = () => {
         <View className="w-full items-center justify-center">
           <Text className="text-primary text-5xl font-semibold mt-2 ml-2">
             {formattedBalance(totalBalance)}
+          </Text>
+          <Text className="text-primary text-xl">Total Balance</Text>
+        </View>
+      ) : totalBalance === 0 ? (
+        <View className="w-full items-center justify-center">
+          <Text className="text-primary text-5xl font-semibold mt-2 ml-2">
+            {formattedBalance(0)}
           </Text>
           <Text className="text-primary text-xl">Total Balance</Text>
         </View>
@@ -54,7 +68,7 @@ const Accounts = () => {
 
         <View className="flex-1">
           {accounts && accounts.length > 0 ? (
-            <AccountList accounts={accounts} />
+            <AccountList accounts={sortedAccountsByDate} />
           ) : accounts && accounts.length === 0 ? (
             <Empty
               title="No accounts found"

@@ -19,6 +19,7 @@ import BottomSheet, {
 } from "~/components/ui-components/BottomSheet";
 import { useGetAccounts } from "~/hooks/accounts";
 import { useCategories } from "~/hooks/categories";
+import { useCreateExpense, useUpdateExpense } from "~/hooks/expense";
 import { iconsRecord, NAV_THEME } from "~/lib/config";
 import { getColorByIndex } from "~/lib/functions";
 import { Icon } from "~/lib/icons/Icon";
@@ -29,7 +30,6 @@ import { Account, Category, Expense, ExpenseType } from "~/types";
 // store imports
 import { useAuthStore } from "~/store/authStore";
 import useModalStore from "~/store/modalStore";
-import { useCreateExpense, useUpgradeExpense } from "~/hooks/expense";
 
 type Props = {
   expense?: Expense;
@@ -104,7 +104,7 @@ const ExpenseForm = ({ expense }: Props) => {
   };
 
   const createExpense = useCreateExpense();
-  const updateExpense = useUpgradeExpense();
+  const updateExpense = useUpdateExpense();
 
   const form = useForm({
     defaultValues: {
