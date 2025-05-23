@@ -14,6 +14,7 @@ const getAccounts = async (req: Request, res: Response) => {
 
     const accounts = await prisma.account.findMany({
       where: { userId },
+      orderBy: { createdAt: "desc" },
     });
 
     res.status(200).json(accounts);

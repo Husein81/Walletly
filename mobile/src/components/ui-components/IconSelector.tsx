@@ -18,7 +18,7 @@ export const IconSelector = ({ selectedIcon, setSelectedIcon }: Props) => {
   const { isDarkColorScheme } = useColorScheme();
 
   return (
-    <View className="mb-4 border-2 p-2 border-primary rounded-lg">
+    <View className="mb-4 border-2 p-2 border-primary rounded-xl">
       <FlatList
         data={Object.entries(iconsRecord)}
         keyExtractor={([key]) => key}
@@ -30,7 +30,7 @@ export const IconSelector = ({ selectedIcon, setSelectedIcon }: Props) => {
             <Pressable
               onPress={() => setSelectedIcon(key)}
               className={cn(
-                "p-2 rounded-lg mx-1",
+                "p-2 rounded-xl mx-1",
                 isSelected && "border-2 border-primary"
               )}
               style={{ backgroundColor }}

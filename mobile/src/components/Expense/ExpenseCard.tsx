@@ -1,4 +1,8 @@
+// Global imports
+import { format } from "date-fns";
 import { View, Text } from "react-native";
+
+// local imports
 import { formattedBalance } from "~/functions";
 import { iconsRecord, NAV_THEME } from "~/lib/config";
 import { cn } from "~/lib/utils";
@@ -50,6 +54,9 @@ const ExpenseCard = ({ expense }: Props) => {
           )}
         >
           {formattedBalance(expense.amount)}
+        </Text>
+        <Text className="text-xs text-primary">
+          {format(new Date(expense.updatedAt ?? new Date()), "EEE, dd MMM")}
         </Text>
       </View>
     </Card>

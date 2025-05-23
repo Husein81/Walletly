@@ -6,3 +6,4 @@ export { Button } from "./Button";
 export { Empty } from "./Empty";
 export { ListSkeleton } from "./ListSkeleton";
 export { IconSelector } from "./IconSelector";
+export { StackedCards } from "./StackedCards";

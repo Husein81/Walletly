@@ -45,6 +45,7 @@ export const iconsRecord: Record<string, string> = {
   health: "Activity",
   education: "Book",
   travel: "Plane",
+  phone: "Smartphone",
   entertainment: "Gamepad2",
   piggy: "PiggyBank",
   money: "Banknote",
@@ -56,8 +57,7 @@ export const iconsRecord: Record<string, string> = {
   grant: "Gift",
   sale: "Receipt",
   sport: "Dumbbell",
-  salary: "WalletMinimal",
-  other: "CircleHelp",
+  salary: "Wallet",
   tag: "Tag",
-  wallet: "Wallet",
+  other: "CircleHelp",
 };

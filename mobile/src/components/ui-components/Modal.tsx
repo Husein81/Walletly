@@ -8,9 +8,12 @@ import { Text } from "../ui";
 import useModalStore from "~/store/modalStore";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Icon } from "~/lib/icons/Icon";
+import { useColorScheme } from "~/lib/useColorScheme";
 
 export const Modal = () => {
   const { open, title, body, onClose } = useModalStore();
+  const { isDarkColorScheme } = useColorScheme();
 
   return (
     <RModal
@@ -27,9 +30,20 @@ export const Modal = () => {
             )}
           >
             {title && (
-              <Text className="text-2xl font-semibold mb-4">{title}</Text>
+              <View className="w-full flex-row items-center justify-center">
+                <Icon
+                  name="ChevronLeft"
+                  size={28}
+                  onPress={onClose}
+                  className="absolute left-0 bg-primary  rounded-lg"
+                  color={isDarkColorScheme ? "#000" : "#fff"}
+                />
+                <Text className="text-2xl font-semibold ">{title}</Text>
+              </View>
             )}
-            <ScrollView showsVerticalScrollIndicator={false}>{body}</ScrollView>
+            <ScrollView className="w-full" showsVerticalScrollIndicator={false}>
+              {body}
+            </ScrollView>
           </View>
         </BottomSheetModalProvider>
       </GestureHandlerRootView>

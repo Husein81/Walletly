@@ -3,7 +3,7 @@ import { View, Text } from "react-native";
 import { formattedBalance } from "~/functions";
 import { Icon } from "~/lib/icons/Icon";
 
-const StackedCards = ({
+export const StackedCards = ({
   total,
   expense,
   income,
@@ -56,5 +56,3 @@ const StackedCards = ({
     </View>
   );
 };
-
-export default StackedCards;

@@ -8,10 +8,11 @@ import NotFoundError from "../error/not-found.js";
 
 const getExpenses = async (req: Request, res: Response) => {
   try {
-    const { userId, month, year } = req.query as {
+    const { userId, month, year, searchTerm } = req.query as {
       userId: string;
       month?: string;
       year?: string;
+      searchTerm?: string;
     };
 
     const parsedYear = year ? parseInt(year, 10) : new Date().getFullYear();
@@ -26,6 +27,29 @@ const getExpenses = async (req: Request, res: Response) => {
           gte: startDate,
           lte: endDate,
         },
+        OR: searchTerm
+          ? [
+              {
+                category: {
+                  name: {
+                    contains: searchTerm,
+                    mode: "insensitive",
+                  },
+                },
+              },
+              {
+                account: {
+                  name: {
+                    contains: searchTerm,
+                    mode: "insensitive",
+                  },
+                },
+              },
+            ]
+          : undefined,
+      },
+      orderBy: {
+        updatedAt: "desc",
       },
       include: {
         category: true,

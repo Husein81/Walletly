@@ -8,6 +8,9 @@ const getCategories = async (req: Request, res: Response): Promise<void> => {
       where: {
         userId,
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     res.status(200).json(categories);

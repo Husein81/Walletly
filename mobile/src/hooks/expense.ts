@@ -2,15 +2,18 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from ".";
 import { Expense } from "~/types";
 
-const useGetExpenses = (userId: string, year?: string, month?: string) => {
+const useGetExpenses = (
+  userId: string,
+  params: { year?: string; month?: string; searchTerm?: string }
+) => {
+  console.log("useGetExpenses", userId, params);
   return useQuery({
     queryKey: ["expenses"],
     queryFn: async (): Promise<Expense[]> => {
       const response = await api.get("/expense", {
         params: {
           userId,
-          year,
-          month,
+          ...params,
         },
       });
       return response.data;
@@ -28,11 +31,12 @@ const useCreateExpense = () => {
     onSuccess: () => {
       // Invalidate the expenses query to refetch the data
       queryClient.invalidateQueries({ queryKey: ["expenses"] });
+      queryClient.invalidateQueries({ queryKey: ["accounts"] });
     },
   });
 };
 
-const useUpgradeExpense = () => {
+const useUpdateExpense = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data: Expense) => {
@@ -42,6 +46,7 @@ const useUpgradeExpense = () => {
     onSuccess: () => {
       // Invalidate the expenses query to refetch the data
       queryClient.invalidateQueries({ queryKey: ["expenses"] });
+      queryClient.invalidateQueries({ queryKey: ["accounts"] });
     },
   });
 };
@@ -72,7 +77,7 @@ const useDeleteExpense = () => {
 export {
   useGetExpenses,
   useCreateExpense,
-  useUpgradeExpense,
+  useUpdateExpense,
   useGetExpenseById,
   useDeleteExpense,
 };
