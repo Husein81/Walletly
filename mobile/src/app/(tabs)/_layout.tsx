@@ -76,6 +76,21 @@ const TabsLayout = () => {
             ),
           }}
         />
+        <Tabs.Screen
+          name="(user)"
+          options={{
+            headerShown: false,
+            title: "User",
+            tabBarIcon: ({ color }) => (
+              <Icon
+                onPress={() => router.replace("/user")}
+                name="User"
+                color={color}
+                size={28}
+              />
+            ),
+          }}
+        />
       </Tabs>
       <Modal />
     </>

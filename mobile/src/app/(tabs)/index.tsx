@@ -1,18 +1,22 @@
 // Global imports
-import { SafeAreaView } from "react-native-safe-area-context";
+import { format } from "date-fns";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useMemo, useRef, useState } from "react";
 import {
   Animated,
-  ScrollView,
-  NativeSyntheticEvent,
   NativeScrollEvent,
+  NativeSyntheticEvent,
+  ScrollView,
+  View,
 } from "react-native";
-import { useRef, useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 // Local imports
-import ExpenseForm from "~/components/Expense/ExpenseForm";
-import ExpensesList from "~/components/Expense/ExpensesList";
-import { formatDateToMMMddDay } from "~/functions";
+import { ExpenseForm, ExpensesList, Search } from "~/components/Expense";
+import { AlertDialog, Separator, Text } from "~/components/ui";
+import { Dropdown, Empty, StackedCards } from "~/components/ui-components";
 import { useGetExpenses } from "~/hooks/expense";
+import { NAV_THEME } from "~/lib/config";
 import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { Expense } from "~/types";
@@ -20,16 +24,25 @@ import { Expense } from "~/types";
 //store imports
 import { useAuthStore } from "~/store/authStore";
 import useModalStore from "~/store/modalStore";
-import StackedCards from "~/components/ui-components/StackedCards";
-import { useCallback, useMemo } from "react";
-import { useFocusEffect } from "expo-router";
+import {
+  AlertDialogContent,
+  AlertDialogTrigger,
+} from "~/components/ui/alert-dialog";
+import DateFilter from "~/components/ui-components/DateFilter";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover";
 
 const Home = () => {
   const { user } = useAuthStore();
-  const { isDarkColorScheme } = useColorScheme();
+  const { isDarkColorScheme, toggleColorScheme } = useColorScheme();
   const { onOpen } = useModalStore();
 
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [prevScrollPos, setPrevScrollPos] = useState(0);
+
   const fadeAnim = useRef(new Animated.Value(0)).current; // 0 = visible, 1 = hidden
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -45,19 +58,19 @@ const Home = () => {
     setPrevScrollPos(currentOffset);
   };
 
-  const { data: expenses, refetch } = useGetExpenses(
-    user?.id ?? "",
-    "2025",
-    "5"
-  );
+  const { data: expenses, refetch } = useGetExpenses(user?.id ?? "", {
+    year: selectedDate.getFullYear().toString(),
+    month: (selectedDate.getMonth() + 1).toString(),
+  });
 
   useFocusEffect(
     useCallback(() => {
       refetch();
-    }, [refetch])
+    }, [refetch, selectedDate])
   );
 
-  const handleOpenForm = () => onOpen(<ExpenseForm />, "");
+  const handleOpenForm = () => onOpen(<ExpenseForm />);
+  const handleOpenSearch = () => onOpen(<Search />, "Search");
 
   const groupedMap = new Map<string, { title: string; data: Expense[] }>();
 
@@ -66,7 +79,7 @@ const Home = () => {
     const dateKey = date.toDateString(); // e.g., "Mon May 20 2025"
     if (!groupedMap.has(dateKey)) {
       groupedMap.set(dateKey, {
-        title: formatDateToMMMddDay(date), // format once, not later
+        title: format(date, "EEE, dd MMM"),
         data: [],
       });
     }
@@ -100,7 +113,38 @@ const Home = () => {
   }, [expenses]);
 
   return (
-    <SafeAreaView className="flex-1 px-4 gap-8">
+    <SafeAreaView edges={["top"]} className="flex-1 p-4 gap-8">
+      <View className="flex-row justify-between items-center">
+        <View>
+          <Text className="text-primary capitalize ml-2">Hello,</Text>
+          <Text className="text-primary capitalize text-xl font-semibold ml-2">
+            {user?.name}
+          </Text>
+        </View>
+        <View className="flex-row items-center gap-4">
+          <Icon
+            name="Search"
+            className="rounded-full bg-iron/65 p-2"
+            size={20}
+            color={
+              isDarkColorScheme
+                ? NAV_THEME.dark.primary
+                : NAV_THEME.light.primary
+            }
+            onPress={handleOpenSearch}
+          />
+          <DateFilter date={selectedDate} onChange={setSelectedDate} />
+          <Icon
+            onPress={toggleColorScheme}
+            name={isDarkColorScheme ? "Moon" : "Sun"}
+            color={
+              isDarkColorScheme
+                ? NAV_THEME.dark.primary
+                : NAV_THEME.light.primary
+            }
+          />
+        </View>
+      </View>
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
@@ -112,7 +156,18 @@ const Home = () => {
           income={totalIncome ?? 0}
           expense={totalExpense ?? 0}
         />
-        <ExpensesList expensesSections={expensesSections ?? []} />
+        {expensesSections.length > 0 ? (
+          <ExpensesList expensesSections={expensesSections ?? []} />
+        ) : (
+          <View className="flex-1 mt-12">
+            <Separator className="my-2" />
+            <Empty
+              title="No expenses found"
+              description="You can add your first expense by clicking the button below."
+              icon="Plus"
+            />
+          </View>
+        )}
       </ScrollView>
       <Animated.View
         style={{

@@ -57,7 +57,7 @@ const Categories = () => {
   const handleOpenCategory = () => onOpen(<CategoryForm />, "Add new Category");
 
   return (
-    <SafeAreaView edges={["top"]} className="px-6 flex-1">
+    <SafeAreaView edges={["top"]} className="px-6 pt-6 flex-1">
       <View className="flex-1">
         {categories && categories.length > 0 ? (
           <CategorySectionList categorySections={categorySections} />

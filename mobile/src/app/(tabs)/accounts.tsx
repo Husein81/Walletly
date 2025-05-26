@@ -40,7 +40,7 @@ const Accounts = () => {
   const handleOpenForm = () => onOpen(<AccountForm />, "Add new account");
 
   return (
-    <SafeAreaView edges={["top"]} className="py-2 px-6 flex-1 gap-4">
+    <SafeAreaView edges={["top"]} className="pt-4 px-6 flex-1 gap-4">
       {totalBalance ? (
         <View className="w-full items-center justify-center">
           <Text className="text-primary text-5xl font-semibold mt-2 ml-2">

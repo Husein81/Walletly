@@ -1,9 +1,9 @@
 import { View, Text } from "react-native";
-const Settings = () => {
+const User = () => {
   return (
     <View>
-      <Text>Settings</Text>
+      <Text>User</Text>
     </View>
   );
 };
-export default Settings;
+export default User;
