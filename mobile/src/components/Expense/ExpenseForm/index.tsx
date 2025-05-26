@@ -70,6 +70,7 @@ const ExpenseForm = ({ expense }: Props) => {
 
   const [mode, setMode] = useState<"date" | "time">("date");
   const [showDatePicker, setShowDatePicker] = useState(false);
+
   // expense types
   const expenseTypes = [
     { label: "Income", value: ExpenseType.INCOME },
@@ -109,17 +110,19 @@ const ExpenseForm = ({ expense }: Props) => {
   const form = useForm({
     defaultValues: {
       type: expense?.type || selectedExpenseType,
-      category: expense?.category || selectedCategory,
+      category: expense?.category || selectedCategory || "",
+      fromAccount: expense?.fromAccount || selectedAccount,
+      toAccount: expense?.toAccount || selectedToAccount,
       amount: expense?.amount || "",
       description: expense?.description || "",
       updatedAt: expense?.updatedAt || new Date(),
     },
     onSubmit: async ({ value }) => {
-      if (!selectedCategory?.id || !selectedAccount?.id) {
+      if (!selectedAccount?.id) {
         Toast.show({
           type: "error",
           text1: "Expense error:",
-          text2: "Please select a category.",
+          text2: "Please select an account.",
         });
         return;
       }
@@ -128,9 +131,11 @@ const ExpenseForm = ({ expense }: Props) => {
         userId: user?.id || "",
         type: selectedExpenseType,
         updatedAt: value.updatedAt,
-        accountId: selectedAccount?.id,
-        account: selectedAccount,
-        categoryId: selectedCategory.id,
+        fromAccountId: selectedAccount?.id,
+        fromAccount: selectedAccount,
+        toAccountId: selectedToAccount?.id,
+        toAccount: selectedToAccount,
+        categoryId: selectedCategory?.id,
         category: selectedCategory,
         amount:
           selectedExpenseType === ExpenseType.EXPENSE
@@ -164,23 +169,13 @@ const ExpenseForm = ({ expense }: Props) => {
   });
 
   return (
-    <View className="flex-1">
+    <View className="flex-1 mt-4">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
         keyboardVerticalOffset={100}
         style={{ flex: 1 }}
       >
-        {/* Header */}
-        <View className="flex-row items-center justify-between mb-8">
-          <Button variant="ghost" onPress={onClose} iconName="X">
-            <Text className="text-primary uppercase font-semibold">Close</Text>
-          </Button>
-          <Button variant="ghost" onPress={onClose} iconName="Check">
-            <Text className="text-primary uppercase font-semibold">Save</Text>
-          </Button>
-        </View>
-
         {/* Expense Type Selection */}
         <View className="flex-row gap-4 justify-center items-center mb-8">
           {expenseTypes.map((expenseType, index) => (

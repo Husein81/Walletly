@@ -17,6 +17,9 @@ import { ExpenseType } from "~/types";
 // store imports
 import { useAuthStore } from "~/store/authStore";
 import useModalStore from "~/store/modalStore";
+import { useGetAccounts } from "~/hooks/accounts";
+import { formattedBalance } from "~/functions";
+import { Skeleton } from "~/components/ui/skeleton";
 
 const Categories = () => {
   const { user } = useAuthStore();
@@ -24,7 +27,12 @@ const Categories = () => {
   const { isDarkColorScheme } = useColorScheme();
 
   const { data: categories, refetch } = useCategories(user?.id || "");
+  const { data: accounts } = useGetAccounts(user?.id ?? "");
 
+  const totalBalance = useMemo(
+    () => accounts?.reduce((acc, account) => acc + Number(account.balance), 0),
+    [accounts]
+  );
   useFocusEffect(
     useCallback(() => {
       refetch();
@@ -57,7 +65,29 @@ const Categories = () => {
   const handleOpenCategory = () => onOpen(<CategoryForm />, "Add new Category");
 
   return (
-    <SafeAreaView edges={["top"]} className="px-6 pt-6 flex-1">
+    <SafeAreaView edges={["top"]} className="px-6 mt-14 flex-1 ">
+      <View className="">
+        {totalBalance ? (
+          <View className="w-full items-center justify-center">
+            <Text className="text-primary text-5xl font-semibold mt-2 ml-2">
+              {formattedBalance(totalBalance)}
+            </Text>
+            <Text className="text-primary text-xl">Total Balance</Text>
+          </View>
+        ) : totalBalance === 0 ? (
+          <View className="w-full items-center justify-center">
+            <Text className="text-primary text-5xl font-semibold mt-2 ml-2">
+              {formattedBalance(0)}
+            </Text>
+            <Text className="text-primary text-xl">Total Balance</Text>
+          </View>
+        ) : (
+          <View className="w-full items-center justify-center">
+            <Skeleton className="w-1/2 h-8 rounded-full" />
+            <Skeleton className="w-1/4 h-6 rounded-full mt-2" />
+          </View>
+        )}
+      </View>
       <View className="flex-1">
         {categories && categories.length > 0 ? (
           <CategorySectionList categorySections={categorySections} />

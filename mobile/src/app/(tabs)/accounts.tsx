@@ -1,5 +1,6 @@
 // Global imports
-import { useMemo } from "react";
+import { useFocusEffect } from "expo-router";
+import { use, useCallback, useMemo } from "react";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -20,7 +21,14 @@ const Accounts = () => {
   const { user } = useAuthStore();
   const { onOpen } = useModalStore();
 
-  const { data: accounts } = useGetAccounts(user?.id ?? "");
+  const { data: accounts, refetch } = useGetAccounts(user?.id ?? "");
+
+  useFocusEffect(
+    useCallback(() => {
+      // Refetch accounts when the screen is focused
+      refetch();
+    }, [refetch, accounts])
+  );
 
   const totalBalance = useMemo(
     () => accounts?.reduce((acc, account) => acc + Number(account.balance), 0),
@@ -40,7 +48,7 @@ const Accounts = () => {
   const handleOpenForm = () => onOpen(<AccountForm />, "Add new account");
 
   return (
-    <SafeAreaView edges={["top"]} className="pt-4 px-6 flex-1 gap-4">
+    <SafeAreaView edges={["top"]} className="mt-14 flex-1 gap-12">
       {totalBalance ? (
         <View className="w-full items-center justify-center">
           <Text className="text-primary text-5xl font-semibold mt-2 ml-2">
@@ -61,7 +69,8 @@ const Accounts = () => {
           <Skeleton className="w-1/4 h-6 rounded-full mt-2" />
         </View>
       )}
-      <View className="rounded-t-lg bg-background flex-1">
+
+      <View className="rounded-t-3xl bg-background flex-1 px-6 shadow-lg">
         <Text className="text-3xl font-semibold text-primary text-start mb-4">
           My wallets
         </Text>

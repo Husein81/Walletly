@@ -13,8 +13,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 // Local imports
 import { ExpenseForm, ExpensesList, Search } from "~/components/Expense";
-import { AlertDialog, Separator, Text } from "~/components/ui";
-import { Dropdown, Empty, StackedCards } from "~/components/ui-components";
+import { Separator, Text } from "~/components/ui";
+import { Empty, ListSkeleton, StackedCards } from "~/components/ui-components";
+import DateFilter from "~/components/ui-components/DateFilter";
 import { useGetExpenses } from "~/hooks/expense";
 import { NAV_THEME } from "~/lib/config";
 import { Icon } from "~/lib/icons/Icon";
@@ -24,16 +25,6 @@ import { Expense } from "~/types";
 //store imports
 import { useAuthStore } from "~/store/authStore";
 import useModalStore from "~/store/modalStore";
-import {
-  AlertDialogContent,
-  AlertDialogTrigger,
-} from "~/components/ui/alert-dialog";
-import DateFilter from "~/components/ui-components/DateFilter";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "~/components/ui/popover";
 
 const Home = () => {
   const { user } = useAuthStore();
@@ -69,9 +60,14 @@ const Home = () => {
     }, [refetch, selectedDate])
   );
 
-  const handleOpenForm = () => onOpen(<ExpenseForm />);
+  const handleOpenForm = () => onOpen(<ExpenseForm />, "Add Expense");
   const handleOpenSearch = () => onOpen(<Search />, "Search");
-
+  const handleOpenFilter = () =>
+    onOpen(
+      <DateFilter date={selectedDate} onChange={setSelectedDate} />,
+      "",
+      true
+    );
   const groupedMap = new Map<string, { title: string; data: Expense[] }>();
 
   for (const expense of expenses ?? []) {
@@ -92,10 +88,9 @@ const Home = () => {
 
   const totalBalance = useMemo(() => {
     if (!expenses?.length) return 0;
-    return expenses.reduce(
-      (acc, expense) => acc + Number(expense.amount || 0),
-      0
-    );
+    return expenses
+      .filter((expense) => expense.type !== "TRANSFER")
+      .reduce((acc, expense) => acc + Number(expense.amount || 0), 0);
   }, [expenses]);
 
   const totalIncome = useMemo(() => {
@@ -133,7 +128,17 @@ const Home = () => {
             }
             onPress={handleOpenSearch}
           />
-          <DateFilter date={selectedDate} onChange={setSelectedDate} />
+          <Icon
+            name="ListFilter"
+            size={20}
+            color={
+              isDarkColorScheme
+                ? NAV_THEME.dark.primary
+                : NAV_THEME.light.primary
+            }
+            onPress={handleOpenFilter}
+            className="rounded-full bg-iron/65 p-2"
+          />
           <Icon
             onPress={toggleColorScheme}
             name={isDarkColorScheme ? "Moon" : "Sun"}
@@ -145,30 +150,34 @@ const Home = () => {
           />
         </View>
       </View>
-      <ScrollView
-        className="flex-1"
-        showsVerticalScrollIndicator={false}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-      >
-        <StackedCards
-          total={totalBalance ?? 0}
-          income={totalIncome ?? 0}
-          expense={totalExpense ?? 0}
-        />
-        {expensesSections.length > 0 ? (
+
+      {expenses && expenses.length > 0 ? (
+        <ScrollView
+          className="flex-1"
+          showsVerticalScrollIndicator={false}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+        >
+          <StackedCards
+            total={totalBalance ?? 0}
+            income={totalIncome ?? 0}
+            expense={totalExpense ?? 0}
+          />
           <ExpensesList expensesSections={expensesSections ?? []} />
-        ) : (
-          <View className="flex-1 mt-12">
-            <Separator className="my-2" />
-            <Empty
-              title="No expenses found"
-              description="You can add your first expense by clicking the button below."
-              icon="Plus"
-            />
-          </View>
-        )}
-      </ScrollView>
+        </ScrollView>
+      ) : expenses && expenses.length === 0 ? (
+        <ScrollView className="flex-1 ">
+          <StackedCards total={0} income={0} expense={0} />
+          <Separator className="my-2" />
+          <Empty
+            title="No expenses found"
+            description="You can add your first expense by clicking the button below."
+            icon="Plus"
+          />
+        </ScrollView>
+      ) : (
+        <ListSkeleton />
+      )}
       <Animated.View
         style={{
           transform: [

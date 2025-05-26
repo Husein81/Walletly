@@ -19,14 +19,18 @@ type Props = {
 const ExpenseCard = ({ expense }: Props) => {
   const { isDarkColorScheme } = useColorScheme();
 
-  const catColor = getColorByIndex(expense.category.imageUrl || "other");
+  const catColor = getColorByIndex(expense?.category?.imageUrl || "other");
 
   return (
     <Card className="flex-row py-2 px-3 rounded-xl justify-between items-center gap-4 mb-3">
       <View className="flex-row gap-4 items-center">
         <View className="p-2 rounded-xl" style={{ backgroundColor: catColor }}>
           <Icon
-            name={iconsRecord[expense.category.imageUrl || "other"]}
+            name={
+              expense.type === "TRANSFER"
+                ? "ArrowRightLeft"
+                : iconsRecord[expense?.category?.imageUrl || "other"]
+            }
             color={
               isDarkColorScheme
                 ? NAV_THEME.dark.primary
@@ -37,12 +41,28 @@ const ExpenseCard = ({ expense }: Props) => {
         </View>
         <View>
           <Text className="text-primary text-xl capitalize">
-            {expense.category.name}
+            {expense?.category?.name || "Transfer"}
           </Text>
           <View className="flex-row items-center gap-2">
             <Text className="text-primary  capitalize">
-              {expense.account.name}
+              {expense.fromAccount.name}
             </Text>
+            {expense.type === "TRANSFER" && expense.toAccount && (
+              <>
+                <Icon
+                  name="ArrowRight"
+                  size={16}
+                  color={
+                    isDarkColorScheme
+                      ? NAV_THEME.dark.primary
+                      : NAV_THEME.light.primary
+                  }
+                />
+                <Text className="text-primary text-xs capitalize">
+                  {expense.toAccount.name}
+                </Text>
+              </>
+            )}
           </View>
         </View>
       </View>
@@ -50,7 +70,8 @@ const ExpenseCard = ({ expense }: Props) => {
         <Text
           className={cn(
             "text-xl font-semibold",
-            expense.amount < 0 ? "text-red-500" : "text-green-500"
+            expense.amount < 0 ? "text-red-500" : "text-green-500",
+            expense.type === "TRANSFER" && "text-blue-500"
           )}
         >
           {formattedBalance(expense.amount)}

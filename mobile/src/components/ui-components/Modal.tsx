@@ -21,28 +21,35 @@ export const Modal = () => {
   const { open, title, body, transparent, onClose } = useModalStore();
   const { isDarkColorScheme } = useColorScheme();
 
+  const Container = transparent ? Pressable : View;
+
+  const containerProps = transparent
+    ? { onPress: onClose }
+    : ({} as Record<string, any>);
+
   return (
     <RModal
       visible={open}
       transparent={transparent}
-      presentationStyle={"formSheet"}
+      presentationStyle={transparent ? "overFullScreen" : "formSheet"}
       onRequestClose={onClose}
       animationType={transparent ? "fade" : "slide"}
     >
       <GestureHandlerRootView style={{ flex: 1 }}>
         <BottomSheetModalProvider>
-          <Pressable
-            onPress={transparent ? onClose : undefined}
+          <Container
+            {...containerProps}
             className={cn(
-              "flex-1 bg-background p-6",
-              transparent &&
-                "bg-background/65 backdrop-blur justify-center items-center"
+              "flex-1 p-6",
+              transparent
+                ? "bg-background/65 backdrop-blur justify-center items-center"
+                : "bg-background"
             )}
           >
-            <View
+            <SafeAreaView
               className={cn(
                 transparent
-                  ? "bg-card rounded-xl p-6 w-[90%] max-h-[80%]"
+                  ? "bg-card rounded-xl w-[90%] max-h-[80%] p-6"
                   : "flex-1",
                 "gap-4"
               )}
@@ -65,8 +72,8 @@ export const Modal = () => {
               >
                 {body}
               </ScrollView>
-            </View>
-          </Pressable>
+            </SafeAreaView>
+          </Container>
         </BottomSheetModalProvider>
       </GestureHandlerRootView>
     </RModal>

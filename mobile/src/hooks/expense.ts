@@ -6,7 +6,6 @@ const useGetExpenses = (
   userId: string,
   params: { year?: string; month?: string; searchTerm?: string }
 ) => {
-  console.log("useGetExpenses", userId, params);
   return useQuery({
     queryKey: ["expenses"],
     queryFn: async (): Promise<Expense[]> => {

@@ -69,7 +69,7 @@ const TabsLayout = () => {
             tabBarIcon: ({ color }) => (
               <Icon
                 onPress={() => router.replace("/categories")}
-                name="Tag"
+                name="LayoutGrid"
                 color={color}
                 size={28}
               />
