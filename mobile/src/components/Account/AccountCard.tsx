@@ -5,7 +5,7 @@ import { Text, View } from "react-native";
 import { Dropdown } from "~/components/ui-components";
 import { useDeleteAccount } from "~/hooks/accounts";
 import { NAV_THEME, iconsRecord } from "~/lib/config";
-import { getColorByIndex } from "~/lib/functions";
+import { getColorByIndex } from "~/functions";
 import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { cn } from "~/lib/utils";

@@ -68,23 +68,27 @@ const Home = () => {
       "",
       true
     );
-  const groupedMap = new Map<string, { title: string; data: Expense[] }>();
+  const expensesSections = useMemo(() => {
+    if (!expenses) return [];
 
-  for (const expense of expenses ?? []) {
-    const date = new Date(expense.updatedAt);
-    const dateKey = date.toDateString(); // e.g., "Mon May 20 2025"
-    if (!groupedMap.has(dateKey)) {
-      groupedMap.set(dateKey, {
-        title: format(date, "EEE, dd MMM"),
-        data: [],
-      });
+    const groupedMap = new Map<string, { title: string; data: Expense[] }>();
+
+    for (const expense of expenses) {
+      const date = new Date(expense.updatedAt);
+      const dateKey = date.toDateString();
+      if (!groupedMap.has(dateKey)) {
+        groupedMap.set(dateKey, {
+          title: format(date, "EEE, dd MMM"),
+          data: [],
+        });
+      }
+      groupedMap.get(dateKey)!.data.push(expense);
     }
-    groupedMap.get(dateKey)!.data.push(expense);
-  }
 
-  const expensesSections = Array.from(groupedMap.entries())
-    .sort((a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime())
-    .map(([_, value]) => value);
+    return Array.from(groupedMap.entries())
+      .sort((a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime())
+      .map(([_, value]) => value);
+  }, [expenses]);
 
   const totalBalance = useMemo(() => {
     if (!expenses?.length) return 0;
@@ -165,7 +169,7 @@ const Home = () => {
           />
           <ExpensesList expensesSections={expensesSections ?? []} />
         </ScrollView>
-      ) : expenses && expenses.length === 0 ? (
+      ) : expenses?.length === 0 ? (
         <ScrollView className="flex-1 ">
           <StackedCards total={0} income={0} expense={0} />
           <Separator className="my-2" />

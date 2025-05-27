@@ -9,45 +9,57 @@ import NotFoundError from "../error/not-found.js";
 const getExpenses = async (req: Request, res: Response) => {
   try {
     const { userId, month, year, searchTerm } = req.query as {
-      userId: string;
+      userId?: string;
       month?: string;
       year?: string;
       searchTerm?: string;
     };
 
+    if (!userId) {
+      return res.status(400).json({ message: "Missing userId" });
+    }
+
     const parsedYear = year ? parseInt(year, 10) : new Date().getFullYear();
     const parsedMonth = month ? parseInt(month, 10) : new Date().getMonth() + 1;
+
+    if (isNaN(parsedYear) || isNaN(parsedMonth)) {
+      return res.status(400).json({ message: "Invalid year or month" });
+    }
+
     const startDate = new Date(parsedYear, parsedMonth - 1, 1);
-    const endDate = new Date(parsedYear, parsedMonth, 1); // start of next month
+    const endDate = new Date(parsedYear, parsedMonth, 1); // exclusive end
+
+    const whereConditions: any = {
+      userId,
+      updatedAt: {
+        gte: startDate,
+        lt: endDate, // use less-than for exclusive end of month
+      },
+    };
+
+    if (searchTerm) {
+      whereConditions.OR = [
+        {
+          category: {
+            name: {
+              contains: searchTerm,
+              mode: "insensitive",
+            },
+          },
+        },
+        {
+          fromAccount: {
+            name: {
+              contains: searchTerm,
+              mode: "insensitive",
+            },
+          },
+        },
+      ];
+    }
 
     const expenses = await prisma.expense.findMany({
-      where: {
-        userId,
-        updatedAt: {
-          gte: startDate,
-          lte: endDate,
-        },
-        OR: searchTerm
-          ? [
-              {
-                category: {
-                  name: {
-                    contains: searchTerm,
-                    mode: "insensitive",
-                  },
-                },
-              },
-              {
-                fromAccount: {
-                  name: {
-                    contains: searchTerm,
-                    mode: "insensitive",
-                  },
-                },
-              },
-            ]
-          : undefined,
-      },
+      where: whereConditions,
       orderBy: {
         updatedAt: "desc",
       },
@@ -57,9 +69,11 @@ const getExpenses = async (req: Request, res: Response) => {
         toAccount: true,
       },
     });
-    res.status(200).json(expenses);
+
+    return res.status(200).json(expenses);
   } catch (error) {
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Error fetching expenses:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 

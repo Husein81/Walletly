@@ -12,22 +12,33 @@ import {
 import Toast from "react-native-toast-message";
 
 // Local Imports
-import { Card, Input, Label, Textarea } from "~/components/ui";
+import { AlertDialog, Card, Input, Label, Textarea } from "~/components/ui";
 import { Button, FieldInfo } from "~/components/ui-components";
 import BottomSheet, {
   BottomSheetRef,
 } from "~/components/ui-components/BottomSheet";
+import { getColorByIndex } from "~/functions";
 import { useGetAccounts } from "~/hooks/accounts";
 import { useCategories } from "~/hooks/categories";
-import { useCreateExpense, useUpdateExpense } from "~/hooks/expense";
+import {
+  useCreateExpense,
+  useDeleteExpense,
+  useUpdateExpense,
+} from "~/hooks/expense";
 import { iconsRecord, NAV_THEME } from "~/lib/config";
-import { getColorByIndex } from "~/lib/functions";
 import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { cn } from "~/lib/utils";
 import { Account, Category, Expense, ExpenseType } from "~/types";
 
 // store imports
+import {
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "~/components/ui/alert-dialog";
 import { useAuthStore } from "~/store/authStore";
 import useModalStore from "~/store/modalStore";
 
@@ -45,6 +56,7 @@ const ExpenseForm = ({ expense }: Props) => {
   const { onClose } = useModalStore();
   const { isDarkColorScheme } = useColorScheme();
 
+  // Fetch accounts and categories
   const { data: accounts } = useGetAccounts(user?.id || "");
   const { data: categories } = useCategories(user?.id || "");
 
@@ -57,14 +69,14 @@ const ExpenseForm = ({ expense }: Props) => {
     "from" | "to"
   >("from");
   const [selectedAccount, setSelectedAccount] = useState<Account | undefined>(
-    undefined
+    expense?.fromAccount || undefined
   );
   const [selectedToAccount, setSelectedToAccount] = useState<
     Account | undefined
-  >(undefined);
+  >(expense?.toAccount || undefined);
   const [selectedCategory, setSelectedCategory] = useState<
     Category | undefined
-  >(undefined);
+  >(expense?.category || undefined);
   const [bottomSheetType, setBottomSheetType] =
     useState<BottomSheetType | null>(null);
 
@@ -104,8 +116,12 @@ const ExpenseForm = ({ expense }: Props) => {
     bottomSheetRef.current?.present();
   };
 
+  // Create and Update Expense
   const createExpense = useCreateExpense();
   const updateExpense = useUpdateExpense();
+
+  // Delete Expense
+  const deleteExpense = useDeleteExpense();
 
   const form = useForm({
     defaultValues: {
@@ -168,6 +184,24 @@ const ExpenseForm = ({ expense }: Props) => {
     },
   });
 
+  const handleDeleteExpense = async (expenseId: string) => {
+    try {
+      await deleteExpense.mutateAsync(expenseId);
+      Toast.show({
+        type: "success",
+        text1: "Expense deleted successfully",
+      });
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: "Expense error:",
+        text2: (error as Error)?.message,
+      });
+    } finally {
+      onClose();
+    }
+  };
+
   return (
     <View className="flex-1 mt-4">
       <KeyboardAvoidingView
@@ -218,7 +252,7 @@ const ExpenseForm = ({ expense }: Props) => {
               variant="outline"
               onPress={() => openBottomSheet(BottomSheetType.ACCOUNT, "from")}
               iconName={iconsRecord[selectedAccount?.imageUrl || "wallet"]}
-              iconSize="28"
+              iconSize="24"
               className="px-2 w-44"
             >
               <Text className="text-primary text-lg uppercase">
@@ -233,7 +267,7 @@ const ExpenseForm = ({ expense }: Props) => {
               variant="outline"
               onPress={() => openBottomSheet(BottomSheetType.CATEGORY, "to")}
               iconName={iconsRecord[selectedCategory?.imageUrl || "tag"]}
-              iconSize="28"
+              iconSize="24"
               className="px-2 w-44"
             >
               <Text className="text-primary text-lg uppercase">
@@ -247,7 +281,7 @@ const ExpenseForm = ({ expense }: Props) => {
                 variant="outline"
                 onPress={() => openBottomSheet(BottomSheetType.ACCOUNT, "to")}
                 iconName={iconsRecord[selectedToAccount?.imageUrl || "wallet"]}
-                iconSize="28"
+                iconSize="24"
                 className="px-2 w-44"
               >
                 <Text className="text-primary text-lg uppercase">
@@ -404,6 +438,42 @@ const ExpenseForm = ({ expense }: Props) => {
           />
         )}
       />
+      {/* Delete Button */}
+      {expense && expense.id && (
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              variant="destructive"
+              disabled={deleteExpense.isPending}
+              isSubmitting={deleteExpense.isPending}
+              className="w-full mt-4"
+              text="Delete Expense"
+              textColor="white"
+            />
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogTitle>
+              <Text className="text-lg font-semibold mb-4">
+                Are you sure you want to delete this expense?
+              </Text>
+            </AlertDialogTitle>
+            <Text className="text-sm text-foreground mb-6">
+              This action cannot be undone.
+            </Text>
+            <View className="flex-row justify-end gap-2">
+              <AlertDialogCancel>
+                <Text className="text-sm text-foreground">Cancel</Text>
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onPress={() => handleDeleteExpense(expense?.id || "")}
+              >
+                <Text className="text-sm text-secondary">Delete</Text>
+              </AlertDialogAction>
+            </View>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
+
       {/* Bottom Sheet */}
       <BottomSheet
         ref={bottomSheetRef}

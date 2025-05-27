@@ -1,3 +1,5 @@
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { PortalHost } from "@rn-primitives/portal";
 import {
   Pressable,
   Modal as RModal,
@@ -5,17 +7,16 @@ import {
   ScrollView,
   View,
 } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 // local imports
+import { Icon } from "~/lib/icons/Icon";
 import { cn } from "~/lib/utils";
 import { Text } from "../ui";
 
 // store imports
-import useModalStore from "~/store/modalStore";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
+import useModalStore from "~/store/modalStore";
 
 export const Modal = () => {
   const { open, title, body, transparent, onClose } = useModalStore();
@@ -42,14 +43,14 @@ export const Modal = () => {
             className={cn(
               "flex-1 p-6",
               transparent
-                ? "bg-background/65 backdrop-blur justify-center items-center"
+                ? "bg-black/65 backdrop-blur justify-center items-center"
                 : "bg-background"
             )}
           >
             <SafeAreaView
               className={cn(
                 transparent
-                  ? "bg-card rounded-xl w-[90%] max-h-[80%] p-6"
+                  ? "bg-card rounded-xl w-[90%] max-h-[80%] p-4"
                   : "flex-1",
                 "gap-4"
               )}
@@ -76,6 +77,8 @@ export const Modal = () => {
           </Container>
         </BottomSheetModalProvider>
       </GestureHandlerRootView>
+
+      <PortalHost />
     </RModal>
   );
 };

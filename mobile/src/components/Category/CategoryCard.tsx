@@ -3,7 +3,7 @@ import { Text, View } from "react-native";
 // Local imports
 import { useDeleteCategory } from "~/hooks/categories";
 import { NAV_THEME, iconsRecord } from "~/lib/config";
-import { getColorByIndex } from "~/lib/functions";
+import { getColorByIndex } from "~/functions";
 import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
 import useModalStore from "~/store/modalStore";
