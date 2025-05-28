@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { cn } from "~/lib/utils";
 
 type Props = {
   defaultValue?: Option;
@@ -18,6 +19,7 @@ type Props = {
   options: Option[];
   label?: string;
   placeholder?: string;
+  className?: string;
   onValueChange?: (option: Option) => void;
 };
 
@@ -27,6 +29,7 @@ const Selection = ({
   options,
   label,
   placeholder,
+  className,
   onValueChange,
 }: Props) => {
   const insets = useSafeAreaInsets();
@@ -44,7 +47,7 @@ const Selection = ({
       onValueChange={onValueChange}
       className="flex-1"
     >
-      <SelectTrigger className="w-full">
+      <SelectTrigger className={cn("w-full", className)}>
         <SelectValue
           className="text-foreground text-sm native:text-lg flex-1"
           placeholder={placeholder || "Select an option"}
