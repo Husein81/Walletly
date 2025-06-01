@@ -5,12 +5,14 @@ import { useDeleteCategory } from "~/hooks/categories";
 import { NAV_THEME, iconsRecord } from "~/lib/config";
 import { getColorByIndex } from "~/functions";
 import { Icon } from "~/lib/icons/Icon";
-import { useColorScheme } from "~/lib/useColorScheme";
-import useModalStore from "~/store/modalStore";
 import { Category } from "~/types";
 import { Card } from "../ui";
 import { Dropdown } from "../ui-components";
 import CategoryForm from "./CategoryForm";
+
+// Store imports
+import { useColorScheme } from "~/lib/useColorScheme";
+import { useModalStore } from "~/store";
 
 type Props = {
   category: Category;

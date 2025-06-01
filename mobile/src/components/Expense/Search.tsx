@@ -1,15 +1,17 @@
+import { useFocusEffect } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import { KeyboardAvoidingView, Platform, View } from "react-native";
 
 // Local imports
 import { useGetExpenses } from "~/hooks/expense";
-import { useAuthStore } from "~/store/authStore";
 import { Input, Separator } from "../ui";
-import ExpensesList from "./ExpensesList";
 import { Empty, ListSkeleton } from "../ui-components";
-import { useFocusEffect } from "expo-router";
+import { ExpensesList } from "./ExpensesList";
 
-const Search = () => {
+// Store imports
+import { useAuthStore } from "~/store";
+
+export const Search = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { user } = useAuthStore();
 
@@ -22,12 +24,6 @@ const Search = () => {
   const handleSearch = (text: string) => {
     setSearchTerm(text);
   };
-
-  useFocusEffect(
-    useCallback(() => {
-      refetch();
-    }, [refetch])
-  );
 
   const filteredExpenses = useMemo(
     () =>
@@ -72,4 +68,3 @@ const Search = () => {
     </KeyboardAvoidingView>
   );
 };
-export default Search;

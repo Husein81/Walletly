@@ -7,13 +7,15 @@ import { useDeleteAccount } from "~/hooks/accounts";
 import { NAV_THEME, iconsRecord } from "~/lib/config";
 import { getColorByIndex } from "~/functions";
 import { Icon } from "~/lib/icons/Icon";
-import { useColorScheme } from "~/lib/useColorScheme";
 import { cn } from "~/lib/utils";
-import useModalStore from "~/store/modalStore";
 import { Account } from "~/types";
 import { Card } from "../ui/card";
 import AccountForm from "./AccountForm";
 import { formattedBalance } from "~/functions";
+
+// Store imports
+import { useColorScheme } from "~/lib/useColorScheme";
+import { useModalStore } from "~/store";
 
 type Props = {
   account: Account;

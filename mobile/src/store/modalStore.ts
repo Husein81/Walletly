@@ -13,7 +13,7 @@ interface ModalStore {
   ) => void;
 }
 
-const useModalStore = create<ModalStore>((set) => ({
+export const useModalStore = create<ModalStore>((set) => ({
   open: false,
   body: null,
   title: undefined,
@@ -22,5 +22,3 @@ const useModalStore = create<ModalStore>((set) => ({
   onOpen: (body, title, transparent = false) =>
     set({ open: true, body, title, transparent }),
 }));
-
-export default useModalStore;

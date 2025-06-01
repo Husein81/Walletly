@@ -16,7 +16,7 @@ import { Text } from "../ui";
 
 // store imports
 import { useColorScheme } from "~/lib/useColorScheme";
-import useModalStore from "~/store/modalStore";
+import { useModalStore } from "~/store";
 
 export const Modal = () => {
   const { open, title, body, transparent, onClose } = useModalStore();

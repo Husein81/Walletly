@@ -13,13 +13,12 @@ import { Empty, ListSkeleton } from "~/components/ui-components";
 import { useCategories } from "~/hooks/categories";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { ExpenseType } from "~/types";
-
-// store imports
-import { useAuthStore } from "~/store/authStore";
-import useModalStore from "~/store/modalStore";
 import { useGetAccounts } from "~/hooks/accounts";
 import { formattedBalance } from "~/functions";
 import { Skeleton } from "~/components/ui/skeleton";
+
+// store imports
+import { useAuthStore, useModalStore } from "~/store";
 
 const Categories = () => {
   const { user } = useAuthStore();

@@ -1,17 +1,18 @@
 import { useForm } from "@tanstack/react-form";
 import { Text, View } from "react-native";
+import Toast from "react-native-toast-message";
 import { z } from "zod";
 
 // Local Imports
 import { useState } from "react";
 import { useCreateAccount, useUpdateAccount } from "~/hooks/accounts";
 import { useColorScheme } from "~/lib/useColorScheme";
-import { useAuthStore } from "~/store/authStore";
-import useModalStore from "~/store/modalStore";
 import { Account } from "~/types";
 import { Input, Label } from "../ui";
 import { Button, FieldInfo, IconSelector } from "../ui-components";
-import Toast from "react-native-toast-message";
+
+// Store Imports
+import { useAuthStore, useModalStore } from "~/store";
 
 type Props = {
   account?: Account;

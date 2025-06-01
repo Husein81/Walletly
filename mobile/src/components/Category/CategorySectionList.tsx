@@ -1,4 +1,6 @@
 import { View, Text, SectionList } from "react-native";
+
+// Local Imports
 import CategoryCard from "./CategoryCard";
 import { Category } from "~/types";
 import { Separator } from "../ui";

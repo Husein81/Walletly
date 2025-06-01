@@ -17,6 +17,13 @@ import { Button, FieldInfo } from "~/components/ui-components";
 import BottomSheet, {
   BottomSheetRef,
 } from "~/components/ui-components/BottomSheet";
+import {
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "~/components/ui/alert-dialog";
 import { getColorByIndex } from "~/functions";
 import { useGetAccounts } from "~/hooks/accounts";
 import { useCategories } from "~/hooks/categories";
@@ -32,15 +39,7 @@ import { cn } from "~/lib/utils";
 import { Account, Category, Expense, ExpenseType } from "~/types";
 
 // store imports
-import {
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "~/components/ui/alert-dialog";
-import { useAuthStore } from "~/store/authStore";
-import useModalStore from "~/store/modalStore";
+import { useAuthStore, useModalStore } from "~/store";
 
 type Props = {
   expense?: Expense;
@@ -51,7 +50,7 @@ enum BottomSheetType {
   CATEGORY = "CATEGORY",
 }
 
-const ExpenseForm = ({ expense }: Props) => {
+export const ExpenseForm = ({ expense }: Props) => {
   const { user } = useAuthStore();
   const { onClose } = useModalStore();
   const { isDarkColorScheme } = useColorScheme();
@@ -532,4 +531,3 @@ const ExpenseForm = ({ expense }: Props) => {
   );
 };
 
-export default ExpenseForm;

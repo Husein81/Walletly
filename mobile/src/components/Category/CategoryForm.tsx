@@ -1,17 +1,21 @@
-import { Field, useForm } from "@tanstack/react-form";
+// Global imports
+import { useForm } from "@tanstack/react-form";
 import { useCallback, useState } from "react";
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
+import Toast from "react-native-toast-message";
 import { z } from "zod";
+
+// Local imports
 import { useCreateCategory, useUpdateCategory } from "~/hooks/categories";
+import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
-import { useAuthStore } from "~/store/authStore";
-import useModalStore from "~/store/modalStore";
+import { cn } from "~/lib/utils";
 import { Category, ExpenseType } from "~/types";
 import { Button, Input, Label } from "../ui";
 import { FieldInfo, IconSelector } from "../ui-components";
-import { cn } from "~/lib/utils";
-import { Icon } from "~/lib/icons/Icon";
-import Toast from "react-native-toast-message";
+
+// Store imports
+import { useAuthStore, useModalStore } from "~/store";
 
 type Props = {
   category?: Category;

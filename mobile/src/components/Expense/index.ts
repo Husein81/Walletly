@@ -1,3 +1,3 @@
-export { default as ExpenseForm } from "./ExpenseForm";
-export { default as ExpensesList } from "./ExpensesList";
-export { default as Search } from "./Search";
+export { ExpenseForm } from "./ExpenseForm";
+export { ExpensesList } from "./ExpensesList";
+export { Search } from "./Search";

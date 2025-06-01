@@ -33,6 +33,7 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 
 const Overview = ({ pieChartData, progressData }: Props) => {
   const { isDarkColorScheme } = useColorScheme();
+
   const totalExpense: number = useMemo(
     () => (progressData ?? []).reduce((sum, item) => sum + item.amount, 0),
     [progressData]
@@ -47,7 +48,7 @@ const Overview = ({ pieChartData, progressData }: Props) => {
         accessor="population"
         backgroundColor="transparent"
         paddingLeft="16"
-        center={[10, 10]}
+        center={[10, 0]}
         chartConfig={{
           backgroundGradientFrom: isDarkColorScheme
             ? NAV_THEME.dark.background
@@ -55,7 +56,7 @@ const Overview = ({ pieChartData, progressData }: Props) => {
           backgroundGradientTo: isDarkColorScheme
             ? NAV_THEME.dark.background
             : NAV_THEME.light.background,
-          color: () => "#ff5e5e",
+          color: () => "#ff6a6a",
         }}
         hasLegend={true}
       />

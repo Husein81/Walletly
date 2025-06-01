@@ -1,17 +1,19 @@
 import { View, Text } from "react-native";
 import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
+import { cn } from "~/lib/utils";
 
 type Props = {
   title?: string;
   description?: string;
   icon?: string;
+  className?: string;
 };
 
-export const Empty = ({ title, description, icon }: Props) => {
+export const Empty = ({ title, description, icon, className }: Props) => {
   const { isDarkColorScheme } = useColorScheme();
   return (
-    <View className="flex-1 items-center justify-center gap-4">
+    <View className={cn("flex-1 items-center justify-center gap-4", className)}>
       {icon && (
         <Icon
           name={icon}

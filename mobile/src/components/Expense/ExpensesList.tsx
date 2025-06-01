@@ -1,13 +1,16 @@
+//Global Imports
 import { Text, View } from "react-native";
+
+// Local Imports
 import { Expense } from "~/types";
-import ExpenseCard from "./ExpenseCard";
+import { ExpenseCard } from "./ExpenseCard";
 import { Separator } from "../ui";
 
 type Props = {
   expensesSections: Array<{ title: string; data: Expense[] }>;
 };
 
-const ExpensesList = ({ expensesSections }: Props) => {
+export const ExpensesList = ({ expensesSections }: Props) => {
   return (
     <View>
       {expensesSections.map((section) => (
@@ -29,5 +32,3 @@ const ExpensesList = ({ expensesSections }: Props) => {
     </View>
   );
 };
-
-export default ExpensesList;

@@ -1,11 +1,12 @@
 import { Dimensions, ScrollView, View } from "react-native";
-import { LineChart } from "react-native-chart-kit";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // local imports
 import { useMemo, useState } from "react";
+import { LineChart } from "~/components/Analysis";
 import { Overview } from "~/components/Analysis/";
-import Selection from "~/components/ui-components/Selection";
+import { Selection } from "~/components/ui-components";
+import { Header } from "~/components/ui-components/Header";
 import { Option } from "~/components/ui/select";
 import {
   getCategoryChartData,
@@ -35,8 +36,6 @@ const options: Option[] = [
   { label: "Income Flow", value: ExpenseState.INCOME_FLOW },
   { label: "Account Analysis", value: ExpenseState.ACCOUNT_ANALYSIS },
 ];
-
-const screenWidth = Dimensions.get("window").width;
 
 const Analysis = () => {
   const { user } = useAuthStore();
@@ -136,10 +135,10 @@ const Analysis = () => {
   }, [selectedOption, expenseProgressData, incomeProgressData]);
 
   return (
-    <SafeAreaView className="flex-1 gap-8 -z-10">
-      <View className="px-8 items-center justify-center my-8">
+    <SafeAreaView className="flex-1 gap-8 p-4">
+      <Header />
+      <View className="px-8 items-center justify-center mb-8">
         <Selection
-          className="w-2/3"
           defaultValue={selectedOption}
           onValueChange={setSelectedOption}
           options={options}
@@ -160,57 +159,27 @@ const Analysis = () => {
         {selectedOption?.value === ExpenseState.EXPENSE_FLOW && (
           <LineChart
             data={lineChartData}
-            width={screenWidth - 20}
-            height={220}
+            color={isDarkColorScheme ? "#FF5E5E" : "#FF6E6E"}
+            backgroundColor={
+              isDarkColorScheme
+                ? NAV_THEME.dark.background
+                : NAV_THEME.light.background
+            }
             yAxisLabel="$"
-            chartConfig={{
-              backgroundGradientFrom: isDarkColorScheme
-                ? NAV_THEME.dark.background
-                : NAV_THEME.light.background,
-              backgroundGradientTo: isDarkColorScheme
-                ? NAV_THEME.dark.background
-                : NAV_THEME.light.background,
-              color: () => `#ff5e5e`,
-              propsForBackgroundLines: {
-                stroke: "transparent",
-              },
-              propsForDots: {
-                r: "3",
-                strokeWidth: "1",
-                stroke: "#ff5e5e",
-                fill: "transparent", // Makes the dot hollow
-              },
-            }}
-            style={{ borderRadius: 8, marginTop: 16 }}
           />
         )}
 
         {/* Income flow chart */}
-        {selectedOption?.label === "Income flow" && (
+        {selectedOption?.value === ExpenseState.INCOME_FLOW && (
           <LineChart
             data={lineChartData}
-            width={screenWidth - 20}
-            height={220}
+            color={isDarkColorScheme ? "#5c5c" : "#8D8F"}
+            backgroundColor={
+              isDarkColorScheme
+                ? NAV_THEME.dark.background
+                : NAV_THEME.light.background
+            }
             yAxisLabel="$"
-            chartConfig={{
-              backgroundGradientFrom: isDarkColorScheme
-                ? NAV_THEME.dark.background
-                : NAV_THEME.light.background,
-              backgroundGradientTo: isDarkColorScheme
-                ? NAV_THEME.dark.background
-                : NAV_THEME.light.background,
-              color: () => (isDarkColorScheme ? "#5c5c" : "#2A9D8F"),
-              propsForDots: {
-                r: "3",
-                strokeWidth: "1",
-                stroke: isDarkColorScheme ? "#5c5c" : "#2A9D8F",
-                fill: "transparent", // Makes the dot hollow
-              },
-              propsForBackgroundLines: {
-                stroke: "transparent",
-              },
-            }}
-            style={{ borderRadius: 8, marginTop: 16 }}
           />
         )}
       </ScrollView>

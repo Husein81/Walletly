@@ -7,31 +7,28 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
   ScrollView,
-  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // Local imports
-import { ExpenseForm, ExpensesList, Search } from "~/components/Expense";
-import { Separator, Text } from "~/components/ui";
+import { ExpenseForm, ExpensesList } from "~/components/Expense";
+import { Separator } from "~/components/ui";
 import { Empty, ListSkeleton, StackedCards } from "~/components/ui-components";
-import DateFilter from "~/components/ui-components/DateFilter";
+import { Header } from "~/components/ui-components/Header";
 import { useGetExpenses } from "~/hooks/expense";
-import { NAV_THEME } from "~/lib/config";
 import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { Expense } from "~/types";
 
 //store imports
-import { useAuthStore } from "~/store/authStore";
-import useModalStore from "~/store/modalStore";
+import { useAuthStore, useDateStore, useModalStore } from "~/store";
 
 const Home = () => {
   const { user } = useAuthStore();
-  const { isDarkColorScheme, toggleColorScheme } = useColorScheme();
+  const { isDarkColorScheme } = useColorScheme();
   const { onOpen } = useModalStore();
+  const { selectedDate } = useDateStore();
 
-  const [selectedDate, setSelectedDate] = useState(new Date());
   const [prevScrollPos, setPrevScrollPos] = useState(0);
 
   const fadeAnim = useRef(new Animated.Value(0)).current; // 0 = visible, 1 = hidden
@@ -61,13 +58,7 @@ const Home = () => {
   );
 
   const handleOpenForm = () => onOpen(<ExpenseForm />, "Add Expense");
-  const handleOpenSearch = () => onOpen(<Search />, "Search");
-  const handleOpenFilter = () =>
-    onOpen(
-      <DateFilter date={selectedDate} onChange={setSelectedDate} />,
-      "",
-      true
-    );
+
   const expensesSections = useMemo(() => {
     if (!expenses) return [];
 
@@ -113,48 +104,7 @@ const Home = () => {
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 p-4 gap-8">
-      <View className="flex-row justify-between items-center">
-        <View>
-          <Text className="text-primary capitalize ml-2">Hello,</Text>
-          <Text className="text-primary capitalize text-xl font-semibold ml-2">
-            {user?.name}
-          </Text>
-        </View>
-        <View className="flex-row items-center gap-4">
-          <Icon
-            name="Search"
-            className="rounded-full bg-iron/65 p-2"
-            size={20}
-            color={
-              isDarkColorScheme
-                ? NAV_THEME.dark.primary
-                : NAV_THEME.light.primary
-            }
-            onPress={handleOpenSearch}
-          />
-          <Icon
-            name="ListFilter"
-            size={20}
-            color={
-              isDarkColorScheme
-                ? NAV_THEME.dark.primary
-                : NAV_THEME.light.primary
-            }
-            onPress={handleOpenFilter}
-            className="rounded-full bg-iron/65 p-2"
-          />
-          <Icon
-            onPress={toggleColorScheme}
-            name={isDarkColorScheme ? "Moon" : "Sun"}
-            color={
-              isDarkColorScheme
-                ? NAV_THEME.dark.primary
-                : NAV_THEME.light.primary
-            }
-          />
-        </View>
-      </View>
-
+      <Header />
       {expenses && expenses.length > 0 ? (
         <ScrollView
           className="flex-1"

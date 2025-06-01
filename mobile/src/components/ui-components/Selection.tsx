@@ -23,7 +23,7 @@ type Props = {
   onValueChange?: (option: Option) => void;
 };
 
-const Selection = ({
+export const Selection = ({
   value,
   defaultValue,
   options,
@@ -70,5 +70,3 @@ const Selection = ({
     </Select>
   );
 };
-
-export default Selection;

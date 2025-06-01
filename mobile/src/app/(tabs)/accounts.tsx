@@ -14,8 +14,7 @@ import { formattedBalance } from "~/functions";
 import { useGetAccounts } from "~/hooks/accounts";
 
 // store imports
-import { useAuthStore } from "~/store/authStore";
-import useModalStore from "~/store/modalStore";
+import { useAuthStore, useModalStore } from "~/store";
 
 const Accounts = () => {
   const { user } = useAuthStore();

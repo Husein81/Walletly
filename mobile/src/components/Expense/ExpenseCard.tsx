@@ -1,32 +1,25 @@
 // Global imports
 import { format } from "date-fns";
-import { View, Text, Pressable } from "react-native";
+import { Pressable, Text, View } from "react-native";
 
 // local imports
-import { formattedBalance } from "~/functions";
+import { formattedBalance, getColorByIndex } from "~/functions";
 import { iconsRecord, NAV_THEME } from "~/lib/config";
+import { Icon } from "~/lib/icons/Icon";
 import { cn } from "~/lib/utils";
 import { Expense } from "~/types";
-import { AlertDialog, Card } from "../ui";
+import { Card } from "../ui";
+import { ExpenseForm } from "./ExpenseForm";
+
+// Store imports
 import { useColorScheme } from "~/lib/useColorScheme";
-import { getColorByIndex } from "~/functions";
-import useModalStore from "~/store/modalStore";
-import {
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogTrigger,
-} from "../ui/alert-dialog";
-import { Button } from "../ui-components";
-import { CardContent } from "../ui/card";
-import { Icon } from "~/lib/icons/Icon";
-import { useState } from "react";
-import ExpenseForm from "./ExpenseForm";
+import { useModalStore } from "~/store/modalStore";
 
 type Props = {
   expense: Expense;
 };
 
-const ExpenseCard = ({ expense }: Props) => {
+export const ExpenseCard = ({ expense }: Props) => {
   const { isDarkColorScheme } = useColorScheme();
   const { onOpen } = useModalStore();
 
@@ -102,4 +95,3 @@ const ExpenseCard = ({ expense }: Props) => {
     </Pressable>
   );
 };
-export default ExpenseCard;
