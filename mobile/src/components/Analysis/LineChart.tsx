@@ -3,8 +3,7 @@ import { LineChart as RNLineChart } from "react-native-chart-kit";
 import { NAV_THEME } from "~/lib/config";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { Empty } from "../ui-components";
-
-const screenWidth = Dimensions.get("window").width;
+import { SCREEN_WIDTH } from "~/lib/config";
 
 type Props = {
   data: {
@@ -20,7 +19,6 @@ type Props = {
 
 const LineChart = ({ data, yAxisLabel, color, backgroundColor }: Props) => {
   const { isDarkColorScheme } = useColorScheme();
-  console.log("LineChart data:", data);
   if (data.datasets.length === 0 || data.labels.length === 0) {
     return (
       <Empty
@@ -35,7 +33,7 @@ const LineChart = ({ data, yAxisLabel, color, backgroundColor }: Props) => {
   return (
     <RNLineChart
       data={data}
-      width={screenWidth - 20}
+      width={SCREEN_WIDTH - 20}
       height={220}
       yAxisLabel={yAxisLabel}
       chartConfig={{

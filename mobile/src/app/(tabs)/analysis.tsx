@@ -1,8 +1,8 @@
-import { Dimensions, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // local imports
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { LineChart } from "~/components/Analysis";
 import { Overview } from "~/components/Analysis/";
 import { Selection } from "~/components/ui-components";
@@ -11,6 +11,7 @@ import { Option } from "~/components/ui/select";
 import {
   getCategoryChartData,
   getColorByIndex,
+  getGroupedBarChartData,
   groupExpensesByCategory,
   transformExpensesToChartData,
 } from "~/functions";
@@ -18,7 +19,10 @@ import { useGetExpenses } from "~/hooks/expense";
 import { NAV_THEME } from "~/lib/config";
 
 //store imports
+import { useFocusEffect } from "expo-router";
+import BarChart from "~/components/Analysis/BarChart";
 import { useColorScheme } from "~/lib/useColorScheme";
+import { useDateStore } from "~/store";
 import { useAuthStore } from "~/store/authStore";
 
 enum ExpenseState {
@@ -42,13 +46,18 @@ const Analysis = () => {
   const { isDarkColorScheme } = useColorScheme();
 
   const [selectedOption, setSelectedOption] = useState<Option>(options[0]);
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const { selectedDate } = useDateStore();
 
-  const { data: expenses } = useGetExpenses(user?.id || "", {
+  const { data: expenses, refetch } = useGetExpenses(user?.id || "", {
     month: (selectedDate.getMonth() + 1).toString(),
     year: selectedDate.getFullYear().toString(),
   });
 
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [user?.id, refetch, selectedDate])
+  );
   // Expense type data
   const expenseData = useMemo(() => {
     return expenses
@@ -134,6 +143,7 @@ const Analysis = () => {
     return [];
   }, [selectedOption, expenseProgressData, incomeProgressData]);
 
+  const barChartData = getGroupedBarChartData(expenses || []);
   return (
     <SafeAreaView className="flex-1 gap-8 p-4">
       <Header />
@@ -145,7 +155,7 @@ const Analysis = () => {
         />
       </View>
 
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         {/* Expense overview */}
         {selectedOption?.value === ExpenseState.EXPENSE_OVERVIEW && (
           <Overview progressData={progressData} pieChartData={pieChartData} />
@@ -180,6 +190,19 @@ const Analysis = () => {
                 : NAV_THEME.light.background
             }
             yAxisLabel="$"
+          />
+        )}
+
+        {selectedOption?.value === ExpenseState.ACCOUNT_ANALYSIS && (
+          <BarChart
+            data={barChartData}
+            yAxisLabel="$"
+            backgroundColor={
+              isDarkColorScheme
+                ? NAV_THEME.dark.background
+                : NAV_THEME.light.background
+            }
+            color={isDarkColorScheme ? "#4D96FF" : "#4D96FF"}
           />
         )}
       </ScrollView>

@@ -464,6 +464,7 @@ export const ExpenseForm = ({ expense }: Props) => {
                 <Text className="text-sm text-foreground">Cancel</Text>
               </AlertDialogCancel>
               <AlertDialogAction
+                className="bg-destructive"
                 onPress={() => handleDeleteExpense(expense?.id || "")}
               >
                 <Text className="text-sm text-secondary">Delete</Text>
@@ -530,4 +531,3 @@ export const ExpenseForm = ({ expense }: Props) => {
     </View>
   );
 };
-

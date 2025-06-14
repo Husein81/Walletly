@@ -13,8 +13,20 @@
       "resizeMode": "contain",
       "backgroundColor": "#1e1e1e"
     },
+    "notification": {
+      "icon": "./assets/images/wallet.png",
+      "color": "#2563EB" // optional accent color
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yourcompany.yourapp",
+      "infoPlist": {
+        "NSUserTrackingUsageDescription": "This identifier will be used to send you reminders.",
+        "UIBackgroundModes": [
+          "fetch",
+          "remote-notification"
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {

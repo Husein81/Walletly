@@ -61,7 +61,6 @@ const AccountCard = ({ account }: Props) => {
                 ? NAV_THEME.dark.primary
                 : NAV_THEME.light.primary
             }
-            size={32}
           />
         </View>
         <View>

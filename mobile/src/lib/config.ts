@@ -1,3 +1,5 @@
+import { Dimensions } from "react-native";
+
 export const NAV_THEME = {
   light: {
     background: "hsl(220 20% 98%)", // soft light gray background
@@ -53,6 +55,7 @@ export const iconsRecord: Record<string, string> = {
   dollar: "DollarSign",
   handCoins: "HandCoins",
   health: "Activity",
+  house: "House",
   food: "Utensils",
   education: "Book",
   phone: "Smartphone",
@@ -221,3 +224,5 @@ export const currencies: Record<string, string> = {
   ZMW: "Zambian Kwacha",
   ZWL: "Zimbabwean Dollar",
 };
+
+export const SCREEN_WIDTH = Dimensions.get("window").width;

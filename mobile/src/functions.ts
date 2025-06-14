@@ -110,10 +110,53 @@ function groupExpensesByCategory(expenses: Expense[]) {
   }));
 }
 
+function getGroupedBarChartData(expenses: Expense[]) {
+  const accountNames = [
+    ...new Set(expenses.map((exp) => exp.fromAccount?.name || "Unknown")),
+  ];
+
+  const incomeByAccount: Record<string, number> = {};
+  const expenseByAccount: Record<string, number> = {};
+
+  accountNames.forEach((name) => {
+    incomeByAccount[name] = 0;
+    expenseByAccount[name] = 0;
+  });
+
+  expenses.forEach((exp) => {
+    const name = exp.fromAccount?.name || "Unknown";
+    const amount = Math.abs(exp.amount);
+
+    if (exp.type === "INCOME") {
+      incomeByAccount[name] += amount;
+    } else if (exp.type === "EXPENSE") {
+      expenseByAccount[name] += amount;
+    }
+  });
+
+  // Flatten bars: [income1, expense1, income2, expense2, ...]
+  const labels: string[] = [];
+  const data: number[] = [];
+
+  accountNames.forEach((name) => {
+    labels.push(`${name}-IN`);
+    data.push(incomeByAccount[name]);
+
+    labels.push(`${name}-EX`);
+    data.push(expenseByAccount[name]);
+  });
+
+  return {
+    labels,
+    datasets: [{ data }],
+  };
+}
+
 export {
   formattedBalance,
   getColorByIndex,
   transformExpensesToChartData,
   getCategoryChartData,
   groupExpensesByCategory,
+  getGroupedBarChartData,
 };

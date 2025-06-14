@@ -17,9 +17,7 @@ export const ExpensesList = ({ expensesSections }: Props) => {
         <View key={section.title} className="mb-6">
           {/* Section Header */}
           <View className="py-4 gap-2">
-            <Text className="text-lg font-bold text-primary">
-              {section.title}
-            </Text>
+            <Text className=" font-bold text-primary">{section.title}</Text>
             <Separator />
           </View>
 

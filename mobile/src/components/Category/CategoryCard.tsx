@@ -53,7 +53,6 @@ const CategoryCard = ({ category }: Props) => {
                 ? NAV_THEME.dark.primary
                 : NAV_THEME.light.primary
             }
-            size={32}
           />
         </View>
         <Text className="text-primary text-xl capitalize">{category.name}</Text>

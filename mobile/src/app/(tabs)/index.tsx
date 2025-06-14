@@ -12,7 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 // Local imports
 import { ExpenseForm, ExpensesList } from "~/components/Expense";
-import { Separator } from "~/components/ui";
+import { Separator, Text } from "~/components/ui";
 import { Empty, ListSkeleton, StackedCards } from "~/components/ui-components";
 import { Header } from "~/components/ui-components/Header";
 import { useGetExpenses } from "~/hooks/expense";
@@ -35,7 +35,7 @@ const Home = () => {
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const currentOffset = event.nativeEvent.contentOffset.y;
-    const isScrollingDown = currentOffset > prevScrollPos;
+    const isScrollingDown = currentOffset > 0 && currentOffset > prevScrollPos;
 
     Animated.timing(fadeAnim, {
       toValue: isScrollingDown ? 1 : 0,
@@ -117,6 +117,9 @@ const Home = () => {
             income={totalIncome ?? 0}
             expense={totalExpense ?? 0}
           />
+          <Text className="text-text text-primary text-2xl font-semibold my-2">
+            Recent Transaction
+          </Text>
           <ExpensesList expensesSections={expensesSections ?? []} />
         </ScrollView>
       ) : expenses?.length === 0 ? (

@@ -30,7 +30,7 @@ export const ExpenseCard = ({ expense }: Props) => {
 
   return (
     <Pressable onPress={() => handleOpen(expense)}>
-      <Card className="flex-row py-2 shadow px-3 rounded-xl justify-between items-center gap-4 mb-3">
+      <Card className="flex-row py-2 shadow px-3 rounded-xl justify-between items-center gap-4 mb-4">
         <View className="flex-row gap-4 items-center">
           <View
             className="p-2 rounded-xl"
@@ -47,7 +47,6 @@ export const ExpenseCard = ({ expense }: Props) => {
                   ? NAV_THEME.dark.primary
                   : NAV_THEME.light.primary
               }
-              size={32}
             />
           </View>
           <View>
@@ -55,7 +54,7 @@ export const ExpenseCard = ({ expense }: Props) => {
               {expense?.category?.name || "Transfer"}
             </Text>
             <View className="flex-row items-center gap-2">
-              <Text className="text-primary  capitalize">
+              <Text className="text-primary text-sm capitalize">
                 {expense.fromAccount.name}
               </Text>
               {expense.type === "TRANSFER" && expense.toAccount && (
@@ -80,7 +79,7 @@ export const ExpenseCard = ({ expense }: Props) => {
         <View className="flex-1 justify-center items-end">
           <Text
             className={cn(
-              "text-xl font-semibold",
+              "font-semibold",
               expense.amount < 0 ? "text-red-500" : "text-green-500",
               expense.type === "TRANSFER" && "text-blue-500"
             )}

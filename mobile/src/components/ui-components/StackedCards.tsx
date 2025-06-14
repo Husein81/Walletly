@@ -21,7 +21,7 @@ export const StackedCards = ({
       <View className="absolute top-[4%] w-72 h-44 rounded-3xl bg-primary/30 z-20" />
 
       {/* Main Card */}
-      <View className="w-80 h-44 rounded-3xl p-4 bg-slate-200 shadow-lg z-30">
+      <View className="w-80 h-44 rounded-3xl p-4 dark:bg-iron/95 bg-slate-200 shadow z-30">
         {/* Total Balance */}
         <View className="mb-4">
           <Text className="text-text text-lg font-semibold">Total Balance</Text>
@@ -33,10 +33,10 @@ export const StackedCards = ({
           {/* Income */}
           <View>
             <View className="flex-row items-center gap-2">
-              <Icon size={22} name="TrendingUp" />
-              <Text className="capitalize text-sm">income</Text>
+              <Icon size={18} name="TrendingUp" />
+              <Text className="capitalize text-xs">income</Text>
             </View>
-            <Text className="text-lg text-success text-center">
+            <Text className="text-xl text-success text-center">
               {formattedBalance(income)}
             </Text>
           </View>
@@ -44,10 +44,10 @@ export const StackedCards = ({
           {/* Expense */}
           <View>
             <View className="flex-row items-center gap-2">
-              <Icon size={22} name="TrendingDown" />
-              <Text className="capitalize text-sm">expense</Text>
+              <Icon size={18} name="TrendingDown" />
+              <Text className="capitalize text-xs">expense</Text>
             </View>
-            <Text className="text-lg text-danger text-center">
+            <Text className="text-xl text-danger text-center">
               {formattedBalance(expense)}
             </Text>
           </View>

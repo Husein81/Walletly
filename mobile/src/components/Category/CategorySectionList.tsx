@@ -16,7 +16,7 @@ const CategorySectionList = ({ categorySections }: Props) => {
       keyExtractor={(item) => item.id || Math.random().toString()}
       stickySectionHeadersEnabled={false}
       showsVerticalScrollIndicator={false}
-      ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+      ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
       renderSectionHeader={({ section: { title } }) => (
         <View className="py-4 gap-2">
           <Text className="text-2xl font-bold text-primary">{title}</Text>
