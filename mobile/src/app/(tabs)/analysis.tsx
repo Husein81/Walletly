@@ -20,25 +20,26 @@ import { NAV_THEME } from "~/lib/config";
 
 //store imports
 import { useFocusEffect } from "expo-router";
-import BarChart from "~/components/Analysis/BarChart";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { useDateStore } from "~/store";
 import { useAuthStore } from "~/store/authStore";
+import AccountAnalysis from "~/components/Analysis/AccountAnalysis";
+import { useGetAccounts } from "~/hooks/accounts";
 
 enum ExpenseState {
-  EXPENSE_OVERVIEW = "EXPENSE_OVERVIEW",
-  INCOME_OVERVIEW = "INCOME_OVERVIEW",
-  EXPENSE_FLOW = "EXPENSE_FLOW",
-  INCOME_FLOW = "INCOME_FLOW",
-  ACCOUNT_ANALYSIS = "ACCOUNT_ANALYSIS",
+  ExpenseOverview = "EXPENSE_OVERVIEW",
+  IncomeOverview = "INCOME_OVERVIEW",
+  ExpenseFlow = "EXPENSE_FLOW",
+  IncomeFlow = "INCOME_FLOW",
+  AccountAnalysis = "ACCOUNT_ANALYSIS",
 }
 
 const options: Option[] = [
-  { label: "Expense Overview", value: ExpenseState.EXPENSE_OVERVIEW },
-  { label: "Income Overview", value: ExpenseState.INCOME_OVERVIEW },
-  { label: "Expense Flow", value: ExpenseState.EXPENSE_FLOW },
-  { label: "Income Flow", value: ExpenseState.INCOME_FLOW },
-  { label: "Account Analysis", value: ExpenseState.ACCOUNT_ANALYSIS },
+  { label: "Expense Overview", value: ExpenseState.ExpenseOverview },
+  { label: "Income Overview", value: ExpenseState.IncomeOverview },
+  { label: "Expense Flow", value: ExpenseState.ExpenseFlow },
+  { label: "Income Flow", value: ExpenseState.IncomeFlow },
+  { label: "Account Analysis", value: ExpenseState.AccountAnalysis },
 ];
 
 const Analysis = () => {
@@ -52,12 +53,14 @@ const Analysis = () => {
     month: (selectedDate.getMonth() + 1).toString(),
     year: selectedDate.getFullYear().toString(),
   });
+  const { data: accounts } = useGetAccounts(user?.id || "");
 
   useFocusEffect(
     useCallback(() => {
       refetch();
     }, [user?.id, refetch, selectedDate])
   );
+
   // Expense type data
   const expenseData = useMemo(() => {
     return expenses
@@ -88,9 +91,9 @@ const Analysis = () => {
   }, [incomeData]);
 
   const lineChartData = useMemo(() => {
-    if (selectedOption?.value === ExpenseState.EXPENSE_FLOW) {
+    if (selectedOption?.value === ExpenseState.ExpenseFlow) {
       return expenseLineChartData;
-    } else if (selectedOption?.value === ExpenseState.INCOME_FLOW) {
+    } else if (selectedOption?.value === ExpenseState.IncomeFlow) {
       return incomeLineChartData;
     }
     return { labels: [], datasets: [{ data: [] }] };
@@ -106,9 +109,9 @@ const Analysis = () => {
   }, [incomeData]);
 
   const chartData = useMemo(() => {
-    if (selectedOption?.value === ExpenseState.EXPENSE_OVERVIEW) {
+    if (selectedOption?.value === ExpenseState.ExpenseOverview) {
       return expenseChartData;
-    } else if (selectedOption?.value === ExpenseState.INCOME_OVERVIEW) {
+    } else if (selectedOption?.value === ExpenseState.IncomeOverview) {
       return incomeChartData;
     }
     return { labels: [], data: [] };
@@ -117,11 +120,12 @@ const Analysis = () => {
   // Prepare pie chart data
   const pieChartData = useMemo(() => {
     return chartData.labels.map((label, index) => ({
-      name: label.charAt(0).toUpperCase() + label.slice(1),
-      population: chartData.data[index],
-      color: getColorByIndex(index.toString()), // Random color for each category
-      legendFontColor: isDarkColorScheme ? "#fff" : "#000",
-      legendFontSize: 12,
+      key: `pie-${index}`, // required for the chart
+      value: chartData.data[index] * 100,
+      svg: {
+        fill: getColorByIndex(index.toString()),
+      },
+      label,
     }));
   }, [chartData, isDarkColorScheme]);
 
@@ -135,15 +139,14 @@ const Analysis = () => {
   }, [incomeData]);
 
   const progressData = useMemo(() => {
-    if (selectedOption?.value === ExpenseState.EXPENSE_OVERVIEW) {
+    if (selectedOption?.value === ExpenseState.ExpenseOverview) {
       return expenseProgressData;
-    } else if (selectedOption?.value === ExpenseState.INCOME_OVERVIEW) {
+    } else if (selectedOption?.value === ExpenseState.IncomeOverview) {
       return incomeProgressData;
     }
     return [];
   }, [selectedOption, expenseProgressData, incomeProgressData]);
 
-  const barChartData = getGroupedBarChartData(expenses || []);
   return (
     <SafeAreaView className="flex-1 gap-8 p-4">
       <Header />
@@ -157,53 +160,34 @@ const Analysis = () => {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Expense overview */}
-        {selectedOption?.value === ExpenseState.EXPENSE_OVERVIEW && (
+        {selectedOption?.value === ExpenseState.ExpenseOverview && (
           <Overview progressData={progressData} pieChartData={pieChartData} />
         )}
         {/* Income overview */}
-        {selectedOption?.value === ExpenseState.INCOME_OVERVIEW && (
+        {selectedOption?.value === ExpenseState.IncomeOverview && (
           <Overview progressData={progressData} pieChartData={pieChartData} />
         )}
 
         {/* Expense flow chart */}
-        {selectedOption?.value === ExpenseState.EXPENSE_FLOW && (
+        {selectedOption?.value === ExpenseState.ExpenseFlow && (
           <LineChart
             data={lineChartData}
             color={isDarkColorScheme ? "#FF5E5E" : "#FF6E6E"}
-            backgroundColor={
-              isDarkColorScheme
-                ? NAV_THEME.dark.background
-                : NAV_THEME.light.background
-            }
             yAxisLabel="$"
           />
         )}
 
         {/* Income flow chart */}
-        {selectedOption?.value === ExpenseState.INCOME_FLOW && (
+        {selectedOption?.value === ExpenseState.IncomeFlow && (
           <LineChart
             data={lineChartData}
-            color={isDarkColorScheme ? "#5c5c" : "#8D8F"}
-            backgroundColor={
-              isDarkColorScheme
-                ? NAV_THEME.dark.background
-                : NAV_THEME.light.background
-            }
+            color={isDarkColorScheme ? "#5c5c" : "#3c3c"}
             yAxisLabel="$"
           />
         )}
 
-        {selectedOption?.value === ExpenseState.ACCOUNT_ANALYSIS && (
-          <BarChart
-            data={barChartData}
-            yAxisLabel="$"
-            backgroundColor={
-              isDarkColorScheme
-                ? NAV_THEME.dark.background
-                : NAV_THEME.light.background
-            }
-            color={isDarkColorScheme ? "#4D96FF" : "#4D96FF"}
-          />
+        {selectedOption?.value === ExpenseState.AccountAnalysis && (
+          <AccountAnalysis expenses={expenses} accounts={accounts} />
         )}
       </ScrollView>
     </SafeAreaView>

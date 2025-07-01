@@ -1,6 +1,7 @@
 import { COLOR_PALETTE } from "~/lib/config";
 import { addDays, endOfMonth, format, isBefore, startOfMonth } from "date-fns";
 import { Expense } from "./types";
+import { SvgData } from "react-native-svg-charts";
 
 const formattedBalance = (balance: number, currency = "$") =>
   balance >= 0
@@ -45,14 +46,14 @@ function transformExpensesToChartData(
 
   while (isBefore(current, addDays(lastDay, 1))) {
     const dateKey = format(current, "yyyy-MM-dd");
-    const label = dayIndex % 8 === 0 ? format(current, "dd/MMM") : "";
+    const label = dayIndex % 8 === 0 ? format(current, "MMM dd") : "";
     labels.push(label);
     dataPoints.push(grouped[dateKey] || 0);
     current = addDays(current, 1);
     dayIndex++;
   }
 
-  labels.push(format(lastDay, "dd/MMM"));
+  labels.push(format(lastDay, "MMM dd"));
   return {
     labels,
     datasets: [{ data: dataPoints }],
@@ -110,7 +111,10 @@ function groupExpensesByCategory(expenses: Expense[]) {
   }));
 }
 
-function getGroupedBarChartData(expenses: Expense[]) {
+function getGroupedBarChartData(expenses: Expense[]): {
+  data: SvgData[][];
+  labels: string[];
+} {
   const accountNames = [
     ...new Set(expenses.map((exp) => exp.fromAccount?.name || "Unknown")),
   ];
@@ -123,7 +127,7 @@ function getGroupedBarChartData(expenses: Expense[]) {
     expenseByAccount[name] = 0;
   });
 
-  expenses.forEach((exp) => {
+  expenses.map((exp) => {
     const name = exp.fromAccount?.name || "Unknown";
     const amount = Math.abs(exp.amount);
 
@@ -134,21 +138,28 @@ function getGroupedBarChartData(expenses: Expense[]) {
     }
   });
 
-  // Flatten bars: [income1, expense1, income2, expense2, ...]
+  const data: SvgData[][] = [];
   const labels: string[] = [];
-  const data: number[] = [];
 
-  accountNames.forEach((name) => {
-    labels.push(`${name}-IN`);
-    data.push(incomeByAccount[name]);
-
-    labels.push(`${name}-EX`);
-    data.push(expenseByAccount[name]);
+  accountNames.map((name) => {
+    labels.push(name);
+    data.push([
+      {
+        value: incomeByAccount[name],
+        svg: { fill: "#4ade80" }, // green
+        label: "Income",
+      },
+      {
+        value: expenseByAccount[name],
+        svg: { fill: "#f87171" }, // red
+        label: "Expense",
+      },
+    ]);
   });
 
   return {
+    data,
     labels,
-    datasets: [{ data }],
   };
 }
 

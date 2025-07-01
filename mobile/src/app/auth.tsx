@@ -1,4 +1,3 @@
-import { Redirect } from "expo-router";
 import { useState } from "react";
 import {
   Image,
@@ -14,16 +13,9 @@ import AuthToggle from "~/components/Auth/AuthToggle";
 import LoginForm from "~/components/Auth/LoginForm";
 import RegisterForm from "~/components/Auth/RegisterForm";
 import { Text } from "~/components/ui";
-import { useAuthStore } from "~/store/authStore";
 
 const Auth = () => {
-  const { user, token } = useAuthStore();
-
   const [isActive, setIsActive] = useState(false);
-
-  if (user && token) {
-    return <Redirect href={"/"} />;
-  }
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-background">

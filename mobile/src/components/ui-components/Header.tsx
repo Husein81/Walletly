@@ -12,7 +12,7 @@ import { Text } from "../ui/text";
 import { useDateStore, useModalStore, useAuthStore } from "~/store";
 
 export const Header = () => {
-  const { user } = useAuthStore();
+  const { user, clearAuth } = useAuthStore();
   const { onOpen } = useModalStore();
   const { isDarkColorScheme, toggleColorScheme } = useColorScheme();
   const { selectedDate, setSelectedDate } = useDateStore();
@@ -43,6 +43,7 @@ export const Header = () => {
             onPress={toggleColorScheme}
             name={isDarkColorScheme ? "Moon" : "Sun"}
             className="rounded-full bg-iron/65 p-2"
+            size={20}
             color={
               isDarkColorScheme
                 ? NAV_THEME.dark.primary
@@ -57,7 +58,7 @@ export const Header = () => {
                 ? NAV_THEME.dark.primary
                 : NAV_THEME.light.primary
             }
-            onPress={() => {}}
+            onPress={clearAuth}
           />
         </View>
       </View>

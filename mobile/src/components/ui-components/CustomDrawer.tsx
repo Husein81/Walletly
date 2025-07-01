@@ -6,7 +6,6 @@ import {
 import { View } from "react-native";
 
 // Local Imports
-import { useLogout } from "~/hooks/auth";
 import { NAV_THEME } from "~/lib/config";
 import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
@@ -15,7 +14,6 @@ import { Switch } from "../ui/switch";
 import { useEffect, useRef } from "react";
 
 export const CustomDrawer = (props: any) => {
-  const { mutateAsync } = useLogout();
   const { clearAuth } = useAuthStore();
 
   const { isDarkColorScheme, toggleColorScheme } = useColorScheme();
@@ -31,7 +29,6 @@ export const CustomDrawer = (props: any) => {
 
   const handleLogout = async () => {
     try {
-      await mutateAsync();
       if (isMounted.current) {
         clearAuth();
         props.navigation?.closeDrawer?.();

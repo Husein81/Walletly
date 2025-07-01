@@ -26,7 +26,7 @@ const login = async (req: Request, res: Response): Promise<void> => {
       throw res.status(401).json({ message: "Invalid credentials" });
     }
     // Generate token and set it in the cookie
-    const token = generateToken(res, user.id);
+    const token = generateToken(user.id);
 
     const { password: _, ...rest } = user;
     res.status(200).json({ user: rest, token });
@@ -60,7 +60,7 @@ const register = async (req: Request, res: Response): Promise<void> => {
     });
 
     // Generate token and set it in the cookie
-    const token = generateToken(res, newUser.id);
+    const token = generateToken(newUser.id);
 
     const { password: _, ...rest } = newUser;
     res.status(201).json({ user: rest, token });
@@ -69,13 +69,4 @@ const register = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-const logout = async (req: Request, res: Response): Promise<void> => {
-  try {
-    res.clearCookie("token");
-    res.status(200).json({ message: "Logged out successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Internal server error" });
-  }
-};
-
-export { login, register, logout };
+export { login, register };

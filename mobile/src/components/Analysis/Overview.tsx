@@ -1,26 +1,17 @@
-// Global imports
-import { useMemo } from "react";
-import { Dimensions, Text, View } from "react-native";
-import { PieChart } from "react-native-chart-kit";
-
-// local imports
-import { Progress, Separator } from "~/components/ui";
+import React, { useMemo } from "react";
+import { View } from "react-native";
+import { PieChart, SvgData } from "react-native-svg-charts";
 import { getColorByIndex } from "~/functions";
-import { iconsRecord, NAV_THEME } from "~/lib/config";
+import { iconsRecord, SCREEN_WIDTH } from "~/lib/config";
 import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
+import { Progress, Separator, Text } from "../ui";
+import { Text as TextSVG } from "react-native-svg";
 import { Expense } from "~/types";
-
-type PieChartData = {
-  name: string;
-  population: number;
-  color: string;
-  legendFontColor: string;
-  legendFontSize: number;
-};
+import { Empty } from "../ui-components";
 
 type Props = {
-  pieChartData: PieChartData[];
+  pieChartData: SvgData[];
   progressData: {
     id: string;
     name: string;
@@ -29,40 +20,69 @@ type Props = {
   }[];
 };
 
-const SCREEN_WIDTH = Dimensions.get("window").width;
-
 const Overview = ({ pieChartData, progressData }: Props) => {
   const { isDarkColorScheme } = useColorScheme();
 
-  const totalExpense: number = useMemo(
+  const totalExpense = useMemo(
     () => (progressData ?? []).reduce((sum, item) => sum + item.amount, 0),
     [progressData]
   );
 
+  // Donut center text
+  const Labels = ({
+    slices,
+    height,
+    width,
+  }: {
+    slices?: any[];
+    height?: number;
+    width?: number;
+  }) => {
+    return slices?.map((slice, index) => {
+      const { labelCentroid, pieCentroid, data } = slice;
+      return (
+        <TextSVG
+          key={index}
+          x={pieCentroid[0]}
+          y={pieCentroid[1]}
+          fill={"white"}
+          textAnchor={"middle"}
+          alignmentBaseline={"middle"}
+          fontSize={16}
+          stroke={"black"}
+          strokeWidth={0.2}
+        >
+          {data.value.toFixed(2)}
+        </TextSVG>
+      );
+    });
+  };
+
+  if (!pieChartData || pieChartData.length === 0) {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <Empty
+          title="No Data"
+          description="There are no expenses to analyze for this month."
+          icon="ChartPie"
+        />
+      </View>
+    );
+  }
+
   return (
     <View>
       <PieChart
+        style={{ height: 220, width: SCREEN_WIDTH - 20 }}
         data={pieChartData}
-        width={SCREEN_WIDTH}
-        height={220}
-        accessor="population"
-        backgroundColor="transparent"
-        paddingLeft="16"
-        center={[10, 0]}
-        chartConfig={{
-          backgroundGradientFrom: isDarkColorScheme
-            ? NAV_THEME.dark.background
-            : NAV_THEME.light.background,
-          backgroundGradientTo: isDarkColorScheme
-            ? NAV_THEME.dark.background
-            : NAV_THEME.light.background,
-          color: () => "#ff6a6a",
-        }}
-        hasLegend={true}
-      />
+        valueAccessor={({ item }) => item.value}
+        outerRadius={"95%"}
+      >
+        <Labels />
+      </PieChart>
 
-      <View className=" px-4 gap-4">
-        <Separator className="my-4 " />
+      <View className="px-4 gap-4">
+        <Separator className="my-4" />
         {progressData?.map((item, index) => (
           <View key={item.id} className="w-full gap-2">
             <View className="flex-1 flex-row items-center justify-between gap-4">

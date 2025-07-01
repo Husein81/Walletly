@@ -58,16 +58,4 @@ const useRegister = () => {
   });
 };
 
-const useLogout = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async () => {
-      await api.post("/auth/logout");
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user"] });
-    },
-  });
-};
-
-export { useLogin, useRegister, useLogout };
+export { useLogin, useRegister };
