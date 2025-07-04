@@ -158,7 +158,7 @@ const Analysis = () => {
         />
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         {/* Expense overview */}
         {selectedOption?.value === ExpenseState.ExpenseOverview && (
           <Overview progressData={progressData} pieChartData={pieChartData} />

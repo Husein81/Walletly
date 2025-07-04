@@ -42,12 +42,13 @@ const queryClient = new QueryClient();
 const MainLayout = () => {
   const { user, token } = useAuthStore();
 
+  const isAuthenticated = Boolean(user && token);
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Protected guard={!!user && !!token}>
+      <Stack.Protected guard={isAuthenticated}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack.Protected>
-      <Stack.Protected guard={!user || !token ? true : false}>
+      <Stack.Protected guard={!isAuthenticated}>
         <Stack.Screen name="auth" options={{ headerShown: false }} />
       </Stack.Protected>
     </Stack>
@@ -55,7 +56,7 @@ const MainLayout = () => {
 };
 
 export default function RootLayout() {
-  const { loadUser, isReady } = useAuthStore();
+  const { loadUser } = useAuthStore();
   const hasMounted = React.useRef(false);
   const { isDarkColorScheme } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);

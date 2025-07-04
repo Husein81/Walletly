@@ -125,9 +125,9 @@ export const ExpenseForm = ({ expense }: Props) => {
   const form = useForm({
     defaultValues: {
       type: expense?.type || selectedExpenseType,
-      category: expense?.category || selectedCategory || "",
-      fromAccount: expense?.fromAccount || selectedAccount,
-      toAccount: expense?.toAccount || selectedToAccount,
+      category: expense?.category || selectedCategory || undefined,
+      fromAccount: expense?.fromAccount || selectedAccount || undefined,
+      toAccount: expense?.toAccount || selectedToAccount || undefined,
       amount: expense?.amount || "",
       description: expense?.description || "",
       updatedAt: expense?.updatedAt || new Date(),

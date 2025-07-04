@@ -63,7 +63,6 @@ const AccountAnalysis = ({ expenses, accounts }: Props) => {
               }}
             >
               <Icon
-                size={28}
                 color={isDarkColorScheme ? "#fff" : "#000"}
                 name={iconsRecord[icon(i)]}
               />

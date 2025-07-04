@@ -1,11 +1,12 @@
-import { ActivityIndicator, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
 // local imports
 import { Icon } from "~/lib/icons/Icon";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { cn } from "~/lib/utils";
-import { Button as SButton } from "../ui/button";
+import { buttonVariants, Button as SButton } from "../ui/button";
 import { NAV_THEME } from "~/lib/config";
+import { VariantProps } from "class-variance-authority";
 
 type Props = {
   onPress?: (args?: any) => void;
@@ -29,10 +30,14 @@ type Props = {
     | undefined;
 };
 
+type ButtonProps = React.ComponentPropsWithoutRef<typeof Pressable> &
+  VariantProps<typeof buttonVariants>;
+
 export const Button = ({
   onPress,
   iconName,
   iconSize,
+  size,
   text,
   textColor,
   isSubmitting,
@@ -41,11 +46,12 @@ export const Button = ({
   disabled,
   className,
   children,
-}: Props) => {
+}: ButtonProps & Props) => {
   const { isDarkColorScheme } = useColorScheme();
 
   return (
     <SButton
+      size={size}
       variant={variant ?? "default"}
       onPress={onPress}
       className={cn("flex-row gap-2 items-center", className)}

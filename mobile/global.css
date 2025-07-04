@@ -4,46 +4,57 @@
 
 @layer base {
   :root {
-    --background: 220 20% 98%; /* NAV_THEME.light.background */
-    --foreground: 240 10% 3.9%; /* NAV_THEME.light.text */
-    --card: 0 0% 100%; /* NAV_THEME.light.card */
-    --card-foreground: 240 10% 3.9%;
+    --background: 220 20% 98%;
+    --foreground: 240 10% 2.5%; /* darker foreground */
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 2.5%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%; /* NAV_THEME.light.primary */
+    --popover-foreground: 240 10% 2.5%;
+    --primary: 240 5.9% 10%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 220 14% 89%; /* Using light border as secondary bg */
+    --secondary: 220 14% 89%;
     --secondary-foreground: 240 5.9% 10%;
-    --muted: 220 14% 89%;
-    --muted-foreground: 220 10% 50%;
+    --text: 240 5.9% 10%;
+    --muted: 220 14% 79%; /* slightly darker muted */
+    --muted-foreground: 220 10% 45%; /* slightly darker muted-foreground */
     --accent: 220 14% 89%;
     --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%; /* NAV_THEME.light.notification */
+    --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 220 14% 89%; /* NAV_THEME.light.border */
+    --border: 220 14% 89%;
     --input: 220 14% 89%;
     --ring: 240 5.9% 10%;
   }
 
   .dark:root {
-    --background: 220 15% 10%; /* NAV_THEME.dark.background */
-    --foreground: 0 0% 98%; /* NAV_THEME.dark.text */
-    --card: 220 15% 12%; /* NAV_THEME.dark.card */
+    --background:208 10% 15%;
+    --foreground: 0 0% 92%; /* slightly lighter foreground */
+     --card: 220 15% 12%; /* NAV_THEME.dark.card */
     --card-foreground: 0 0% 98%;
     --popover: 220 15% 12%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%; /* NAV_THEME.dark.primary */
+    --popover-foreground: 0 0% 92%;
+    --primary: 0 0% 98%;
     --primary-foreground: 240 5.9% 10%;
-    --secondary: 220 12% 20%; /* NAV_THEME.dark.border */
+    --secondary: 220 12% 20%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 220 12% 20%;
-    --muted-foreground: 220 5% 70%;
+  
+   
     --accent: 220 12% 20%;
     --accent-foreground: 0 0% 98%;
-    --destructive: 0 72% 51%; /* NAV_THEME.dark.notification */
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
-    --border: 220 12% 20%; /* NAV_THEME.dark.border */
-    --input: 220 12% 20%;
+    --border: 208 10% 35%;
+
+    /* Input */
+    --input: 208 10% 25%;
+
+    /* Text */
+    --text: 213 32% 95%;
+    --text-secondary: 213 32% 80%;
+
+    --muted: 208 10% 35%;
+    --muted-foreground: 213 14% 77%;
+
     --ring: 0 0% 98%;
   }
 }

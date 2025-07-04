@@ -9,8 +9,8 @@ import {
 
 const router = express.Router();
 
-router.post("/sendOtp", sendOtp);
-router.post("/verifyOtp", verifyOtp);
+router.post("/send-otp", sendOtp);
+router.post("/verify-otp", verifyOtp);
 router.put("/complete-registration/:userId", completeRegistration);
 
 export default router;

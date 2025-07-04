@@ -30,7 +30,10 @@ const sendOtp = async (req: Request, res: Response) => {
   });
 };
 
-const verifyOtp = async (req: Request, res: Response) => {
+const verifyOtp = async (
+  req: Request<{}, {}, { phone: string; code: string }>,
+  res: Response
+) => {
   const { phone, code } = req.body;
   const otp = await prisma.otp.findFirst({
     where: {
@@ -43,7 +46,8 @@ const verifyOtp = async (req: Request, res: Response) => {
   });
 
   if (!otp) {
-    throw new UnauthenticatedError("Invalid or expired OTP");
+    res.status(401).json({ message: "Invalid or expired OTP" });
+    return;
   }
 
   await prisma.otp.update({

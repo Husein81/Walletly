@@ -24,7 +24,7 @@ export const Header = () => {
         <View>
           <Text className="text-primary capitalize ml-2">Hello,</Text>
           <Text className="text-primary capitalize text-xl font-semibold ml-2">
-            {user?.name}
+            {user?.name ?? "User" + user?.id?.slice(-4)}
           </Text>
         </View>
         <View className="flex-row items-center gap-4">

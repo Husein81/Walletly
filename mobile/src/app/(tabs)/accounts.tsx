@@ -69,7 +69,7 @@ const Accounts = () => {
         </View>
       )}
 
-      <View className="rounded-t-3xl bg-background flex-1 px-6 shadow-lg">
+      <View className="rounded-t-3xl bg-card flex-1 py-4 px-6 shadow-lg">
         <Text className="text-3xl font-semibold text-primary text-start mb-4">
           My wallets
         </Text>
