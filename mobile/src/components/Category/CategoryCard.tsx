@@ -51,7 +51,6 @@ const CategoryCard = ({ category }: Props) => {
         }}
         className="flex-row items-center gap-4 mb-4"
       >
-        {" "}
         <View className="flex-row items-center gap-4 flex-1">
           <View
             className="p-3 rounded-2xl shadow-sm"

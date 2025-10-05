@@ -104,7 +104,7 @@ const Categories = () => {
         {/* Stats Cards */}
         <View className="px-5 pt-4 pb-2">
           <View className="flex-row gap-3">
-            <View className="flex-1 bg-card rounded-2xl p-4 border border-border">
+            <View className="flex-1 bg-card shadow-md rounded-2xl p-4 border border-border">
               <Text className="text-muted-foreground text-xs font-medium mb-1">
                 EXPENSE
               </Text>
@@ -113,7 +113,7 @@ const Categories = () => {
               </Text>
               <Text className="text-red-500 text-xs mt-1">Categories</Text>
             </View>
-            <View className="flex-1 bg-card rounded-2xl p-4 border border-border">
+            <View className="flex-1 bg-card shadow-md rounded-2xl p-4 border border-border">
               <Text className="text-muted-foreground text-xs font-medium mb-1">
                 INCOME
               </Text>
