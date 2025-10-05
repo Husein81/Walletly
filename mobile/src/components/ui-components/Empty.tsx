@@ -1,7 +1,7 @@
 import { View, Text } from "react-native";
-import { Icon } from "~/lib/icons/Icon";
-import { useColorScheme } from "~/lib/useColorScheme";
-import { cn } from "~/lib/utils";
+import { Icon } from "@/lib/icons/Icon";
+import { useColorScheme } from "@/lib/useColorScheme";
+import { cn } from "@/lib/utils";
 
 type Props = {
   title?: string;

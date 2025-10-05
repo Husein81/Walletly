@@ -6,10 +6,10 @@ import {
 import { View } from "react-native";
 
 // Local Imports
-import { NAV_THEME } from "~/lib/config";
-import { Icon } from "~/lib/icons/Icon";
-import { useColorScheme } from "~/lib/useColorScheme";
-import { useAuthStore } from "~/store/authStore";
+import { NAV_THEME } from "@/lib/config";
+import { Icon } from "@/lib/icons/Icon";
+import { useColorScheme } from "@/lib/useColorScheme";
+import { useAuthStore } from "@/store/authStore";
 import { Switch } from "../ui/switch";
 import { useEffect, useRef } from "react";
 

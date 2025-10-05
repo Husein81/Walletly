@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from ".";
-import { Expense } from "~/types";
+import { Expense } from "@/types";
 
 const useGetExpenses = (
   userId: string,

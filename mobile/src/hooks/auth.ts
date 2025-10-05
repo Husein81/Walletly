@@ -2,8 +2,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Toast from "react-native-toast-message";
 
 // Local imports
-import { api } from "~/hooks";
-import { useAuthStore } from "~/store/authStore";
+import { api } from "@/hooks";
+import { useAuthStore } from "@/store/authStore";
 
 const useSendOtp = () => {
   const queryClient = useQueryClient();
@@ -85,4 +85,43 @@ const useCompleteRegistration = () => {
   });
 };
 
-export { useSendOtp, useVerifyOtp, useCompleteRegistration };
+const useUpdateProfile = () => {
+  const queryClient = useQueryClient();
+  const { setUser } = useAuthStore();
+  return useMutation({
+    mutationFn: async ({
+      userId,
+      name,
+      email,
+    }: {
+      userId: string;
+      name?: string;
+      email?: string;
+    }) => {
+      const response = await api.put(`/auth/complete-registration/${userId}`, {
+        name,
+        email,
+      });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      setUser(data.user);
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: "Profile updated successfully",
+      });
+    },
+    onError: (error: Error) => {
+      Toast.show({
+        type: "error",
+        text1: "Error updating profile",
+        text2: error.message,
+      });
+      throw error;
+    },
+  });
+};
+
+export { useSendOtp, useVerifyOtp, useCompleteRegistration, useUpdateProfile };

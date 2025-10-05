@@ -1,18 +1,23 @@
 import { useForm } from "@tanstack/react-form";
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
 import { z } from "zod";
 
 // Local Imports
+import {
+  useCreateAccount,
+  useDeleteAccount,
+  useUpdateAccount,
+} from "@/hooks/accounts";
+import { useColorScheme } from "@/lib/useColorScheme";
+import { Account } from "@/types";
 import { useState } from "react";
-import { useCreateAccount, useUpdateAccount } from "~/hooks/accounts";
-import { useColorScheme } from "~/lib/useColorScheme";
-import { Account } from "~/types";
-import { Input, Label } from "../ui";
-import { Button, FieldInfo, IconSelector } from "../ui-components";
+import { Label } from "../ui";
+import { Button, IconSelector, InputField } from "../ui-components";
 
 // Store Imports
-import { useAuthStore, useModalStore } from "~/store";
+import { useAuthStore, useModalStore } from "@/store";
+import { Icon } from "@/lib/icons/Icon";
 
 type Props = {
   account?: Account;
@@ -33,11 +38,14 @@ const AccountForm = ({ account }: Props) => {
 
   const createAccount = useCreateAccount();
   const updateAccount = useUpdateAccount();
+  const deleteAccount = useDeleteAccount(account?.id ?? "");
+
+  const handleDelete = async () => await deleteAccount.mutateAsync();
 
   const form = useForm({
     defaultValues: {
       name: account?.name || "",
-      balance: account?.balance || "0",
+      balance: account?.balance || "",
     },
     onSubmit: async ({ value }) => {
       const payload = {
@@ -64,21 +72,17 @@ const AccountForm = ({ account }: Props) => {
   });
 
   return (
-    <View className="gap-8 flex">
+    <View className="gap-4 flex">
       <form.Field
         name="name"
         validators={{ onChange: accountSchema.shape.name }}
         children={(field) => (
-          <View className="gap-2">
-            <Label>Name</Label>
-            <Input
-              value={field.state.value}
-              onChangeText={field.handleChange}
-              placeholder="Account name"
-              autoCapitalize="none"
-            />
-            <FieldInfo field={field} />
-          </View>
+          <InputField
+            label="Name"
+            type="text"
+            field={field}
+            placeholder="Name"
+          />
         )}
       />
 
@@ -86,55 +90,31 @@ const AccountForm = ({ account }: Props) => {
         name="balance"
         validators={{ onChange: accountSchema.shape.balance }}
         children={(field) => (
-          <View className="gap-2">
-            <Label>Balance</Label>
-            <Input
-              placeholder="Enter balance"
-              keyboardType="numeric"
-              value={field.state.value?.toString() ?? ""}
-              onChangeText={(text) => {
-                // Accept negative, positive, and decimals
-                const numericValue = parseFloat(text);
-                if (
-                  !isNaN(numericValue) ||
-                  text.includes("") ||
-                  text.includes("-") ||
-                  text.includes(".")
-                ) {
-                  // Allow empty string or negative sign
-                  field.handleChange(
-                    text.includes("") ||
-                      text.includes("-") ||
-                      text.includes(".")
-                      ? text
-                      : numericValue
-                  );
-                }
-              }}
-            />
-            <FieldInfo field={field} />
-          </View>
+          <InputField
+            label="Balance"
+            field={field}
+            type="number"
+            placeholder="0.00"
+            keyboardType="numeric"
+          />
         )}
       />
-      <View className="gap-2 ">
+      <View className="gap-2 mb-4">
         <Label>Icon</Label>
         <IconSelector
           selectedIcon={selectedIcon}
           setSelectedIcon={setSelectedIcon}
         />
+        <Text className="text-muted-foreground text-xs">
+          Select an icon that represents this category
+        </Text>
       </View>
 
-      <View className="flex-row gap-4">
-        <Button
-          variant={"outline"}
-          className="border-primary border"
-          onPress={onClose}
-        >
-          <Text className="text-primary">Cancel</Text>
-        </Button>
-        <form.Subscribe
-          selector={(state) => [state.canSubmit, state.isSubmitting]}
-          children={([canSubmit, isSubmitting]) => (
+      <form.Subscribe
+        selector={(state) => [state.canSubmit, state.isSubmitting]}
+      >
+        {([canSubmit, isSubmitting]) => (
+          <View className="gap-4 ">
             <Button
               disabled={!canSubmit}
               onPress={(e) => {
@@ -145,9 +125,19 @@ const AccountForm = ({ account }: Props) => {
             >
               <Text className="text-secondary font-semibold">Save</Text>
             </Button>
-          )}
-        />
-      </View>
+            {account && (
+              <Pressable onPress={handleDelete} className="active:scale-95">
+                <View className="bg-destructive/10 rounded-2xl py-4 border border-destructive/30 flex-row items-center justify-center gap-2">
+                  <Icon name="Trash2" size={20} color="#ef4444" />
+                  <Text className="text-destructive text-base font-semibold">
+                    Delete Category
+                  </Text>
+                </View>
+              </Pressable>
+            )}
+          </View>
+        )}
+      </form.Subscribe>
     </View>
   );
 };

@@ -1,17 +1,10 @@
 import { router } from "expo-router";
-import { useState } from "react";
-import {
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  View,
-} from "react-native";
+import { Image, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // Local Imports
-import { Text } from "~/components/ui";
-import { Button } from "~/components/ui-components";
+import { Text } from "@/components/ui";
+import { Button } from "@/components/ui-components";
 
 const Auth = () => {
   return (
@@ -20,7 +13,9 @@ const Auth = () => {
       className="flex-1 bg-background p-8"
     >
       <View className="flex items-center flex-1">
-        <Text className="text-4xl font-bold text-primary mb-2">Welcome to My Money Tracker!</Text>
+        <Text className="text-4xl text-center font-bold text-primary mt-4 mb-2">
+          Welcome to My Money Tracker!
+        </Text>
         <View className="flex-1 justify-center items-center">
           <Image
             source={require("../../../assets/images/homeScreen.png")}
@@ -32,7 +27,7 @@ const Auth = () => {
           Please login to continue
         </Text>
       </View>
-      <Button size={'lg'} onPress={() => router.push("/auth/phone")}>
+      <Button size={"lg"} onPress={() => router.push("/auth/phone")}>
         <Text className="text-background">Continue with Phone</Text>
       </Button>
     </SafeAreaView>

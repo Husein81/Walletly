@@ -6,15 +6,15 @@ export const NAV_THEME = {
     border: "hsl(220 14% 89%)", // light border
     card: "hsl(0 0% 100%)", // white card
     notification: "hsl(0 84.2% 60.2%)", // destructive
-    primary: "hsl(240 5.9% 10%)", // primary
+    primary: "#3b82f6", // primary
     text: "hsl(240 10% 3.9%)", // foreground
     iron: "#c0c4c9",
     shuttleGray: "#6A6D70",
   },
   dark: {
-    background: "hsl(220 15% 10%)", // deep navy background
+    background: "#000", // deep navy background
     border: "hsl(220 12% 20%)", // dark border
-    card: "hsl(220 15% 12%)", // dark card background
+    card: "#18181b", // dark card background
     notification: "hsl(0 72% 51%)", // destructive
     primary: "hsl(220 10% 90%)", // slightly blueish off-white
     text: "hsl(220 10% 90%)", // slightly blueish off-white
@@ -63,7 +63,8 @@ export const iconsRecord: Record<string, string> = {
   piggy: "PiggyBank",
   money: "Banknote",
   transportation: "BusFront",
-  rental: "Landmark",
+  rental: "Building2",
+  bank: "Landmark",
   grant: "Gift",
   sale: "Receipt",
   cigarette: "Cigarette",

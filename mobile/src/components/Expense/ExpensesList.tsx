@@ -2,7 +2,7 @@
 import { Text, View } from "react-native";
 
 // Local Imports
-import { Expense } from "~/types";
+import { Expense } from "@/types";
 import { ExpenseCard } from "./ExpenseCard";
 import { Separator } from "../ui";
 

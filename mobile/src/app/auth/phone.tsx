@@ -14,11 +14,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
 
 // local imports
-import { Input, Label } from "~/components/ui";
-import { Button, FieldInfo } from "~/components/ui-components";
-import { useSendOtp } from "~/hooks/auth";
-import { countryCallingCodes, NAV_THEME } from "~/lib/config";
-import { useColorScheme } from "~/lib/useColorScheme";
+import { Input, Label } from "@/components/ui";
+import { Button, FieldInfo } from "@/components/ui-components";
+import { useSendOtp } from "@/hooks/auth";
+import { countryCallingCodes, NAV_THEME } from "@/lib/config";
+import { useColorScheme } from "@/lib/useColorScheme";
 
 const Phone = () => {
   const { mutateAsync } = useSendOtp();
@@ -65,7 +65,7 @@ const Phone = () => {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <Text className="text-4xl font-bold mb-4 text-text">
+          <Text className="text-4xl font-bold mb-4 text-primary">
             Enter your phone number
           </Text>
 

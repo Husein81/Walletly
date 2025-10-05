@@ -4,57 +4,76 @@
 
 @layer base {
   :root {
-    --background: 220 20% 98%;
-    --foreground: 240 10% 2.5%; /* darker foreground */
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 2.5%;
+    /* Vercel Light Mode - Zinc palette */
+    --background: 0 0% 98%; /* zinc-50 #fafafa */
+    --foreground: 240 5.3% 11.2%; /* zinc-900 #18181b */
+    --card: 0 0% 100%; /* white */
+    --card-foreground: 240 5.3% 11.2%; /* zinc-900 */
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 2.5%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 220 14% 89%;
-    --secondary-foreground: 240 5.9% 10%;
-    --text: 240 5.9% 10%;
-    --muted: 220 14% 79%; /* slightly darker muted */
-    --muted-foreground: 220 10% 45%; /* slightly darker muted-foreground */
-    --accent: 220 14% 89%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 220 14% 89%;
-    --input: 220 14% 89%;
-    --ring: 240 5.9% 10%;
+    --popover-foreground: 240 5.3% 11.2%;
+    --primary: 221.2 83.2% 53.3%; /* blue-500 #3b82f6 - Vercel blue */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 4.8% 95.9%; /* zinc-100 #f4f4f5 */
+    --secondary-foreground: 240 5.3% 11.2%;
+    --muted: 240 4.8% 95.9%; /* zinc-100 */
+    --muted-foreground: 240 3.8% 46.1%; /* zinc-600 #52525b */
+    --accent: 240 4.8% 95.9%; /* zinc-100 */
+    --accent-foreground: 240 5.3% 11.2%;
+    --destructive: 0 78.2% 60.2%; /* red-500 #ef3444 */
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 5.9% 90%; /* zinc-200 #e4e4e7 */
+    --input: 240 5.9% 90%;
+    --ring: 221.2 83.2% 53.3%; /* blue-500 */
+    --success: 142.1 76.2% 36.3%; /* green-600 #16a34a */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 221.2 83.2% 53.3%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.3% 11.2%;
+    --sidebar-border: 240 5.9% 90%;
+    --sidebar-ring: 221.2 83.2% 53.3%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
   }
 
   .dark:root {
-    --background:208 10% 15%;
-    --foreground: 0 0% 92%; /* slightly lighter foreground */
-     --card: 220 15% 12%; /* NAV_THEME.dark.card */
-    --card-foreground: 0 0% 98%;
-    --popover: 220 15% 12%;
-    --popover-foreground: 0 0% 92%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 220 12% 20%;
-    --secondary-foreground: 0 0% 98%;
-  
-   
-    --accent: 220 12% 20%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 208 10% 35%;
-
-    /* Input */
-    --input: 208 10% 25%;
-
-    /* Text */
-    --text: 213 32% 95%;
-    --text-secondary: 213 32% 80%;
-
-    --muted: 208 10% 35%;
-    --muted-foreground: 213 14% 77%;
-
-    --ring: 0 0% 98%;
+    /* Vercel Dark Mode - Pure black to zinc */
+    --background: 0 0% 0%; /* pure black #000000 */
+    --foreground: 0 0% 100%; /* white #ffffff */
+    --card: 240 5.9% 10%; /* zinc-900 #18181b */
+    --card-foreground: 0 0% 100%;
+    --popover: 240 5.9% 10%; /* zinc-900 */
+    --popover-foreground: 0 0% 100%;
+    --primary: 0 0% 100%; /* blue-500 #3b82f6 - Vercel blue */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 3.7% 15.9%; /* zinc-800 #27272a */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 240 3.7% 15.9%; /* zinc-800 */
+    --muted-foreground: 240 5% 64.9%; /* zinc-400 #a1a1aa */
+    --accent: 240 3.7% 15.9%; /* zinc-800 */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%; /* red-500 #ef4444 */
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 3.7% 15.9%; /* zinc-800 #27272a */
+    --input: 240 3.7% 15.9%; /* zinc-800 */
+    --ring: 0 0% 100%; /* blue-500 */
+    --success: 142.1 76.2% 36.3%; /* green-600 #16a34a */
+    --sidebar-background: 0 0% 0%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 0 0% 100%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 0 0% 100%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
   }
 }

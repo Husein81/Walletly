@@ -6,12 +6,12 @@ import {
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
-import { Text, ViewStyle } from "react-native";
+import { Text, View, ViewStyle } from "react-native";
 
 // Local Imports
-import { NAV_THEME } from "~/lib/config";
-import { useColorScheme } from "~/lib/useColorScheme";
-import { Account, Category } from "~/types";
+import { NAV_THEME } from "@/lib/config";
+import { useColorScheme } from "@/lib/useColorScheme";
+import { Account, Category } from "@/types";
 
 type T = Account | Category;
 
@@ -90,12 +90,11 @@ const BottomSheet = forwardRef(
           }}
         >
           <BottomSheetView className="p-4">
-            <Text className="text-primary text-center text-4xl font-semibold mb-4">
+            <Text className="text-black dark:text-white text-center text-4xl font-semibold mb-4">
               {title}
             </Text>
+            <View>{data.map((item, index) => renderItem(item, index))}</View>
           </BottomSheetView>
-
-          {data.map((item, index) => renderItem(item, index))}
         </BottomSheetScrollView>
       </BottomSheetModal>
     );

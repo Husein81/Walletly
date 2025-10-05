@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "~/hooks";
-import { Account } from "~/types";
+import { api } from "@/hooks";
+import { Account } from "@/types";
 
 const useGetAccounts = (userId: string) => {
   return useQuery({

@@ -8,10 +8,10 @@ import {
   DropdownMenuItem,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
-import { Icon } from "~/lib/icons/Icon";
-import { useColorScheme } from "~/lib/useColorScheme";
-import { Button } from "~/components/ui";
+} from "@/components/ui/dropdown-menu";
+import { Icon } from "@/lib/icons/Icon";
+import { useColorScheme } from "@/lib/useColorScheme";
+import { Button } from "@/components/ui";
 import { useState } from "react";
 
 type Option = {

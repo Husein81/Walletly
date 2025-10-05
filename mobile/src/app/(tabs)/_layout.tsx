@@ -1,10 +1,10 @@
 // Global Imports
-import { router, Stack, Tabs } from "expo-router";
+import { Modal } from "@/components/ui-components";
+import { router, Tabs } from "expo-router";
 import { Platform } from "react-native";
-import { Modal } from "~/components/ui-components";
 
 // Local Imports
-import { Icon } from "~/lib/icons/Icon";
+import { Icon } from "@/lib/icons/Icon";
 
 const TabsLayout = () => {
   return (
@@ -13,6 +13,10 @@ const TabsLayout = () => {
         screenOptions={{
           tabBarStyle: {
             height: Platform.OS === "ios" ? 80 : 70,
+            elevation: 0,
+            borderTopWidth: 0,
+            opacity: 0.95,
+            position: "absolute",
           },
         }}
       >
@@ -77,7 +81,7 @@ const TabsLayout = () => {
           }}
         />
         <Tabs.Screen
-          name="(user)"
+          name="user"
           options={{
             headerShown: false,
             title: "User",

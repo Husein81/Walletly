@@ -9,9 +9,9 @@ import {
   View,
   type ViewStyle,
 } from "react-native";
-import { Icon } from "~/lib/icons/Icon";
-import { TextClassContext } from "~/components/ui/text";
-import { cn } from "~/lib/utils";
+import { Icon } from "@/lib/icons/Icon";
+import { TextClassContext } from "@/components/ui/text";
+import { cn } from "@/lib/utils";
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
 

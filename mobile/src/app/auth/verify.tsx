@@ -9,9 +9,8 @@ import {
   ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Input } from "~/components/ui";
-import { Button } from "~/components/ui-components";
-import { useVerifyOtp } from "~/hooks/auth";
+import { Button, OtpInputField } from "@/components/ui-components";
+import { useVerifyOtp } from "@/hooks/auth";
 
 const Verify = () => {
   const { code, phone } = useLocalSearchParams<{
@@ -58,39 +57,32 @@ const Verify = () => {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <Text className="text-text text-2xl font-semibold mb-4">
+          <Text className="text-primary text-2xl font-semibold mb-4">
             Verify Phone Number
           </Text>
-          <Text className="text-text text-lg mb-8">
+          <Text className="text-primary text-lg mb-8">
             Enter the verification code sent to {phone}
           </Text>
           <form.Field
             name="code"
             children={(field) => (
-              <View className="flex-row justify-between mb-4">
-                {[0, 1, 2, 3, 4, 5].map((i) => (
-                  <Input
-                    key={i}
-                    ref={(ref) => {
-                      inputRef.current[i] = ref;
-                    }}
-                    keyboardType="number-pad"
-                    maxLength={1}
-                    className="border border-border rounded-md p-2 text-center text-xl w-12"
-                    value={field.state.value[i] || ""}
-                    onChangeText={(val) => handleChange(val, i, field)}
-                  />
-                ))}
+              <View>
+                <OtpInputField
+                  value={field.state.value}
+                  onChangeText={(text) => field.handleChange(text)}
+                />
+                {code && (
+                  <Text className="text-primary text-lg">DevOtp: {code}</Text>
+                )}
               </View>
             )}
           />
-          {code && <Text className="text-text text-lg">DevOtp: {code}</Text>}
         </ScrollView>
         <form.Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
             <Button
-            size={"lg"}
+              size={"lg"}
               onPress={() => form.handleSubmit()}
               isSubmitting={isSubmitting}
               disabled={!canSubmit || isSubmitting}

@@ -3,11 +3,11 @@ import { Pressable, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 
 // Local imports
-import { iconsRecord, NAV_THEME } from "~/lib/config";
-import { getColorByIndex } from "~/functions";
-import { Icon } from "~/lib/icons/Icon";
-import { useColorScheme } from "~/lib/useColorScheme";
-import { cn } from "~/lib/utils";
+import { iconsRecord, NAV_THEME } from "@/lib/config";
+import { getColorByIndex } from "@/functions";
+import { Icon } from "@/lib/icons/Icon";
+import { useColorScheme } from "@/lib/useColorScheme";
+import { cn } from "@/lib/utils";
 
 type Props = {
   selectedIcon: string;
@@ -18,7 +18,7 @@ export const IconSelector = ({ selectedIcon, setSelectedIcon }: Props) => {
   const { isDarkColorScheme } = useColorScheme();
 
   return (
-    <View className="mb-4 border-2 p-2 border-primary rounded-xl">
+    <View className="bg-card shadow-lg border-2 border-border p-3 rounded-2xl">
       <FlatList
         data={Object.entries(iconsRecord)}
         keyExtractor={([key]) => key}
@@ -30,7 +30,7 @@ export const IconSelector = ({ selectedIcon, setSelectedIcon }: Props) => {
             <Pressable
               onPress={() => setSelectedIcon(key)}
               className={cn(
-                "p-2 rounded-xl mx-1",
+                "p-2 rounded-xl mx-1 mt-0.5",
                 isSelected && "border-2 border-primary"
               )}
               style={{ backgroundColor }}
@@ -41,10 +41,19 @@ export const IconSelector = ({ selectedIcon, setSelectedIcon }: Props) => {
                 color={
                   isDarkColorScheme
                     ? NAV_THEME.dark.primary
-                    : NAV_THEME.light.primary
+                    : NAV_THEME.light.border
                 }
                 size={28}
               />
+              {isSelected && (
+                <View className="absolute -top-1 -right-1 bg-primary rounded-full p-0.5">
+                  <Icon
+                    name="Check"
+                    size={10}
+                    color={isDarkColorScheme ? "#22c55e" : "#16a34a"}
+                  />
+                </View>
+              )}
             </Pressable>
           );
         }}

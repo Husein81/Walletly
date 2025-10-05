@@ -1,11 +1,11 @@
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
 // local imports
-import { Icon } from "~/lib/icons/Icon";
-import { useColorScheme } from "~/lib/useColorScheme";
-import { cn } from "~/lib/utils";
+import { Icon } from "@/lib/icons/Icon";
+import { useColorScheme } from "@/lib/useColorScheme";
+import { cn } from "@/lib/utils";
 import { buttonVariants, Button as SButton } from "../ui/button";
-import { NAV_THEME } from "~/lib/config";
+import { NAV_THEME } from "@/lib/config";
 import { VariantProps } from "class-variance-authority";
 
 type Props = {

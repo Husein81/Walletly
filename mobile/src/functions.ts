@@ -1,4 +1,4 @@
-import { COLOR_PALETTE } from "~/lib/config";
+import { COLOR_PALETTE } from "@/lib/config";
 import { addDays, endOfMonth, format, isBefore, startOfMonth } from "date-fns";
 import { Expense } from "./types";
 import { SvgData } from "react-native-svg-charts";

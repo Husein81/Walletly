@@ -1,7 +1,7 @@
 import * as ProgressPrimitive from "@rn-primitives/progress";
 import React, { useEffect, useRef } from "react";
 import { Animated, Platform, View } from "react-native";
-import { cn } from "~/lib/utils";
+import { cn } from "@/lib/utils";
 
 function Progress({
   className,
