@@ -7,8 +7,8 @@ import {
   XAxis,
   YAxis,
 } from "react-native-svg-charts";
-import { COLOR_PALETTE, NAV_THEME, SCREEN_WIDTH } from "~/lib/config";
-import { useColorScheme } from "~/lib/useColorScheme";
+import { COLOR_PALETTE, NAV_THEME, SCREEN_WIDTH } from "@/lib/config";
+import { useColorScheme } from "@/lib/useColorScheme";
 
 type Props = {
   data: {

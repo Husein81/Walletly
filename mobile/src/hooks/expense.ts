@@ -1,13 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from ".";
-import { Expense } from "~/types";
+import { Expense } from "@/types";
 
 const useGetExpenses = (
   userId: string,
   params: { year?: string; month?: string; searchTerm?: string }
 ) => {
   return useQuery({
-    queryKey: ["expenses"],
+    queryKey: ["expenses", userId, params],
     queryFn: async (): Promise<Expense[]> => {
       const response = await api.get("/expense", {
         params: {

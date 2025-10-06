@@ -3,43 +3,41 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { useForm } from "@tanstack/react-form";
 import { useCallback, useMemo, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 import Toast from "react-native-toast-message";
 
 // Local Imports
-import { AlertDialog, Card, Input, Label, Textarea } from "~/components/ui";
-import { Button, FieldInfo } from "~/components/ui-components";
+import { Label, Rn } from "@/components/ui";
+import {
+  AlertDialog,
+  InputField,
+  TextareaField,
+} from "@/components/ui-components";
 import BottomSheet, {
   BottomSheetRef,
-} from "~/components/ui-components/BottomSheet";
-import {
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "~/components/ui/alert-dialog";
-import { getColorByIndex } from "~/functions";
-import { useGetAccounts } from "~/hooks/accounts";
-import { useCategories } from "~/hooks/categories";
+} from "@/components/ui-components/BottomSheet";
+import { getColorByIndex } from "@/functions";
+import { useGetAccounts } from "@/hooks/accounts";
+import { useCategories } from "@/hooks/categories";
 import {
   useCreateExpense,
   useDeleteExpense,
   useUpdateExpense,
-} from "~/hooks/expense";
-import { iconsRecord, NAV_THEME } from "~/lib/config";
-import { Icon } from "~/lib/icons/Icon";
-import { useColorScheme } from "~/lib/useColorScheme";
-import { cn } from "~/lib/utils";
-import { Account, Category, Expense, ExpenseType } from "~/types";
+} from "@/hooks/expense";
+import { iconsRecord, NAV_THEME } from "@/lib/config";
+import { Icon } from "@/lib/icons/Icon";
+import { useColorScheme } from "@/lib/useColorScheme";
+import { cn } from "@/lib/utils";
+import { Account, Category, Expense, ExpenseType } from "@/types";
 
 // store imports
-import { useAuthStore, useModalStore } from "~/store";
+import { useAuthStore, useModalStore } from "@/store";
 
 type Props = {
   expense?: Expense;
@@ -125,9 +123,9 @@ export const ExpenseForm = ({ expense }: Props) => {
   const form = useForm({
     defaultValues: {
       type: expense?.type || selectedExpenseType,
-      category: expense?.category || selectedCategory || "",
-      fromAccount: expense?.fromAccount || selectedAccount,
-      toAccount: expense?.toAccount || selectedToAccount,
+      category: expense?.category || selectedCategory || undefined,
+      fromAccount: expense?.fromAccount || selectedAccount || undefined,
+      toAccount: expense?.toAccount || selectedToAccount || undefined,
       amount: expense?.amount || "",
       description: expense?.description || "",
       updatedAt: expense?.updatedAt || new Date(),
@@ -204,182 +202,247 @@ export const ExpenseForm = ({ expense }: Props) => {
   return (
     <View className="flex-1 mt-4">
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
         className="flex-1"
         keyboardVerticalOffset={100}
         style={{ flex: 1 }}
       >
-        {/* Expense Type Selection */}
-        <View className="flex-row gap-4 justify-center items-center mb-8">
-          {expenseTypes.map((expenseType, index) => (
-            <View key={expenseType.value} className="flex-row gap-2">
-              <TouchableOpacity
-                className="flex-row gap-2 items-center justify-center mr-2"
-                onPress={() => handleExpenseTypePress(expenseType.value)}
-              >
-                {isSelected(expenseType.value) && (
-                  <Icon
-                    name="Check"
-                    color={isDarkColorScheme ? "white" : "black"}
-                  />
-                )}
-                <Text
-                  className={cn(
-                    "text-primary text-lg uppercase",
-                    isSelected(expenseType.value) && "text-xl font-semibold"
-                  )}
+        {/* Expense Type Selection - Modern Toggle Pills */}
+        <View className="mb-6">
+          <Label className="mb-3 text-base font-semibold">
+            Transaction Type
+          </Label>
+          <View className="flex-row gap-2">
+            {expenseTypes.map((expenseType) => {
+              const isSelectedType = isSelected(expenseType.value);
+              const isExpenseType = expenseType.value === ExpenseType.EXPENSE;
+              const isIncomeType = expenseType.value === ExpenseType.INCOME;
+
+              return (
+                <Pressable
+                  key={expenseType.value}
+                  onPress={() => handleExpenseTypePress(expenseType.value)}
+                  className="flex-1 active:scale-95"
                 >
-                  {expenseType.label}
-                </Text>
-              </TouchableOpacity>
-              <View
-                className={cn(
-                  "w-px h-8 bg-primary",
-                  index === expenseTypes.length - 1 && "hidden"
-                )}
-              />
-            </View>
-          ))}
+                  <View
+                    className={cn(
+                      "py-3 px-4 rounded-xl items-center border border-border bg-card/50",
+                      {
+                        "bg-red-600/30 border-red-600":
+                          isSelectedType && isExpenseType,
+                      },
+                      {
+                        "bg-green-600/30 border-green-600":
+                          isSelectedType && isIncomeType,
+                      },
+                      {
+                        "bg-blue-600/30 border-blue-600":
+                          isSelectedType && isTransfer,
+                      }
+                    )}
+                  >
+                    <Text
+                      className={cn(
+                        "text-muted-foreground font-medium text-sm",
+                        { "text-red-600": isSelectedType && isExpenseType },
+                        { "text-green-600": isSelectedType && isIncomeType },
+                        { "text-blue-600": isSelectedType && isTransfer }
+                      )}
+                    >
+                      {expenseType.label}
+                    </Text>
+                  </View>
+                </Pressable>
+              );
+            })}
+          </View>
         </View>
 
         {/* Account / Category / Transfer Selection */}
-        <View className="flex-row gap-4 justify-center items-center mb-8">
+        <View className="mb-6 gap-4">
           {/* From Account */}
           <View>
-            {isTransfer && <Label>From</Label>}
-            <Button
-              variant="outline"
+            <Label className="mb-2 text-sm font-medium">
+              {isTransfer ? "From Account" : "Account"}
+            </Label>
+            <Pressable
               onPress={() => openBottomSheet(BottomSheetType.ACCOUNT, "from")}
-              iconName={iconsRecord[selectedAccount?.imageUrl || "wallet"]}
-              iconSize="24"
-              className="px-2 w-44"
+              className="bg-card border border-border rounded-xl p-4 flex-row items-center justify-between"
             >
-              <Text className="text-primary text-lg uppercase">
-                {selectedAccount?.name || "Account"}
-              </Text>
-            </Button>
+              <View className="flex-row items-center gap-3">
+                <View
+                  className="p-2 rounded-lg"
+                  style={{
+                    backgroundColor: getColorByIndex(
+                      selectedAccount?.name || "default"
+                    ),
+                  }}
+                >
+                  <Icon
+                    name={iconsRecord[selectedAccount?.imageUrl || "wallet"]}
+                    color="#fff"
+                    size={20}
+                  />
+                </View>
+                <Text className="text-foreground font-medium">
+                  {selectedAccount?.name || "Select Account"}
+                </Text>
+              </View>
+              <Icon name="ChevronRight" size={20} color="#9ca3af" />
+            </Pressable>
           </View>
 
           {/* Category or To Account */}
           {!isTransfer ? (
-            <Button
-              variant="outline"
-              onPress={() => openBottomSheet(BottomSheetType.CATEGORY, "to")}
-              iconName={iconsRecord[selectedCategory?.imageUrl || "tag"]}
-              iconSize="24"
-              className="px-2 w-44"
-            >
-              <Text className="text-primary text-lg uppercase">
-                {selectedCategory?.name || "Category"}
-              </Text>
-            </Button>
+            <View>
+              <Label className="mb-2 text-sm font-medium">Category</Label>
+              <Pressable
+                onPress={() => openBottomSheet(BottomSheetType.CATEGORY, "to")}
+                className="bg-card border border-border rounded-xl p-4 flex-row items-center justify-between"
+              >
+                <View className="flex-row items-center gap-3">
+                  <View
+                    className="p-2 rounded-lg"
+                    style={{
+                      backgroundColor: getColorByIndex(
+                        selectedCategory?.name || "default"
+                      ),
+                    }}
+                  >
+                    <Icon
+                      name={iconsRecord[selectedCategory?.imageUrl || "tag"]}
+                      color="#fff"
+                      size={20}
+                    />
+                  </View>
+                  <Text className="text-foreground font-medium">
+                    {selectedCategory?.name || "Select Category"}
+                  </Text>
+                </View>
+                <Icon name="ChevronRight" size={20} color="#9ca3af" />
+              </Pressable>
+            </View>
           ) : (
             <View>
-              <Label>To</Label>
-              <Button
-                variant="outline"
+              <Label className="mb-2 text-sm font-medium">To Account</Label>
+              <Pressable
                 onPress={() => openBottomSheet(BottomSheetType.ACCOUNT, "to")}
-                iconName={iconsRecord[selectedToAccount?.imageUrl || "wallet"]}
-                iconSize="24"
-                className="px-2 w-44"
+                className="bg-card border border-border rounded-xl p-4 flex-row items-center justify-between"
               >
-                <Text className="text-primary text-lg uppercase">
-                  {selectedToAccount?.name || "Account"}
-                </Text>
-              </Button>
+                <View className="flex-row items-center gap-3">
+                  <View
+                    className="p-2 rounded-lg"
+                    style={{
+                      backgroundColor: getColorByIndex(
+                        selectedToAccount?.name || "default"
+                      ),
+                    }}
+                  >
+                    <Icon
+                      name={
+                        iconsRecord[selectedToAccount?.imageUrl || "wallet"]
+                      }
+                      color="#fff"
+                      size={20}
+                    />
+                  </View>
+                  <Text className="text-foreground font-medium">
+                    {selectedToAccount?.name || "Select Account"}
+                  </Text>
+                </View>
+                <Icon name="ChevronRight" size={20} color="#9ca3af" />
+              </Pressable>
             </View>
           )}
         </View>
+        {/* Amount */}
+        <form.Field
+          name="amount"
+          children={(field) => (
+            <InputField
+              type="number"
+              label="Amount"
+              field={field}
+              placeholder="Enter amount"
+              keyboardType="numeric"
+            />
+          )}
+        />
 
         {/* Description */}
         <form.Field
           name="description"
           children={(field) => (
-            <View className="gap-2 w-full">
-              <Label>Description</Label>
-              <Textarea
-                placeholder="Enter description"
-                value={field.state.value}
-                onChangeText={field.handleChange}
-                autoCapitalize="none"
-              />
-              <FieldInfo field={field} />
-            </View>
-          )}
-        />
-
-        {/* Amount */}
-        <form.Field
-          name="amount"
-          children={(field) => (
-            <View className="gap-2 mb-8">
-              <Label>Amount</Label>
-              <Input
-                placeholder="Enter amount"
-                keyboardType="numeric"
-                value={field.state.value?.toString() ?? ""}
-                onChangeText={(text) => {
-                  field.handleChange(text);
-                }}
-              />
-              {/* <FieldInfo field={field} /> */}
-            </View>
+            <TextareaField
+              label="Description"
+              field={field}
+              placeholder="Add a note (optional)"
+              autoCapitalize="none"
+            />
           )}
         />
 
         <form.Field
           name="updatedAt"
           children={(field) => (
-            <View className="gap-2">
-              <View className="flex-row justify-between items-center">
-                <Button
-                  variant="outline"
+            <View className="gap-2 mb-6">
+              <Label className="mb-2 text-sm font-medium">Date & Time</Label>
+              <View className="flex-row gap-3">
+                <Pressable
                   onPress={() => {
                     setMode("date");
                     setShowDatePicker(true);
                   }}
-                  className="px-2 "
-                  text={
-                    field.state.value
-                      ? new Date(field.state.value).toLocaleDateString("en-GB")
-                      : new Date().toLocaleDateString("en-GB")
-                  }
-                  textColor={
-                    isDarkColorScheme
-                      ? NAV_THEME.dark.primary
-                      : NAV_THEME.light.primary
-                  }
-                />
+                  className="flex-1 bg-card border border-border rounded-xl p-4 flex-row items-center justify-between"
+                >
+                  <View className="flex-row items-center gap-2">
+                    <Icon name="Calendar" size={18} color="#9ca3af" />
+                    <Text className="text-foreground font-medium">
+                      {field.state.value
+                        ? new Date(field.state.value).toLocaleDateString(
+                            "en-GB",
+                            {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            }
+                          )
+                        : new Date().toLocaleDateString("en-GB", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                    </Text>
+                  </View>
+                </Pressable>
 
-                <Button
-                  variant="outline"
+                <Pressable
                   onPress={() => {
                     setMode("time");
                     setShowDatePicker(true);
                   }}
-                  className="px-2 "
-                  text={
-                    field.state.value
-                      ? new Date(field.state.value).toLocaleTimeString(
-                          "en-US",
-                          {
+                  className="flex-1 bg-card border border-border rounded-xl p-4 flex-row items-center justify-between"
+                >
+                  <View className="flex-row items-center gap-2">
+                    <Icon name="Clock" size={18} color="#9ca3af" />
+                    <Text className="text-foreground font-medium">
+                      {field.state.value
+                        ? new Date(field.state.value).toLocaleTimeString(
+                            "en-US",
+                            {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true,
+                            }
+                          )
+                        : new Date().toLocaleTimeString("en-US", {
                             hour: "2-digit",
                             minute: "2-digit",
                             hour12: true,
-                          }
-                        )
-                      : new Date().toLocaleTimeString("en-US", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: true,
-                        })
-                  }
-                  textColor={
-                    isDarkColorScheme
-                      ? NAV_THEME.dark.primary
-                      : NAV_THEME.light.primary
-                  }
-                />
+                          })}
+                    </Text>
+                  </View>
+                </Pressable>
               </View>
               {showDatePicker && (
                 <DateTimePicker
@@ -423,55 +486,51 @@ export const ExpenseForm = ({ expense }: Props) => {
       <form.Subscribe
         selector={(state) => [state.canSubmit, state.isSubmitting]}
         children={([canSubmit, isSubmitting]) => (
-          <Button
-            className="w-full mt-4"
+          <Pressable
             onPress={form.handleSubmit}
             disabled={!canSubmit || isSubmitting}
-            isSubmitting={isSubmitting}
-            text="Save"
-            textColor={
-              isDarkColorScheme
-                ? NAV_THEME.dark.background
-                : NAV_THEME.light.background
-            }
-          />
+            className="mt-6"
+          >
+            <View
+              className={cn(
+                "py-4 rounded-xl items-center",
+                {
+                  "bg-green-500": selectedExpenseType === ExpenseType.INCOME,
+                },
+                { "bg-red-500": selectedExpenseType === ExpenseType.EXPENSE },
+                { "bg-blue-500": selectedExpenseType === ExpenseType.TRANSFER },
+                (!canSubmit || isSubmitting) && "opacity-50"
+              )}
+            >
+              <Text className="text-white font-bold text-base">
+                {isSubmitting ? (
+                  <ActivityIndicator
+                    color={
+                      isDarkColorScheme
+                        ? NAV_THEME.dark.background
+                        : NAV_THEME.light.background
+                    }
+                  />
+                ) : expense ? (
+                  "Update"
+                ) : (
+                  "Save"
+                )}
+              </Text>
+            </View>
+          </Pressable>
         )}
       />
       {/* Delete Button */}
       {expense && expense.id && (
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button
-              variant="destructive"
-              disabled={deleteExpense.isPending}
-              isSubmitting={deleteExpense.isPending}
-              className="w-full mt-4"
-              text="Delete Expense"
-              textColor="white"
-            />
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogTitle>
-              <Text className="text-lg font-semibold mb-4">
-                Are you sure you want to delete this expense?
-              </Text>
-            </AlertDialogTitle>
-            <Text className="text-sm text-foreground mb-6">
-              This action cannot be undone.
-            </Text>
-            <View className="flex-row justify-end gap-2">
-              <AlertDialogCancel>
-                <Text className="text-sm text-foreground">Cancel</Text>
-              </AlertDialogCancel>
-              <AlertDialogAction
-                className="bg-destructive"
-                onPress={() => handleDeleteExpense(expense?.id || "")}
-              >
-                <Text className="text-sm text-secondary">Delete</Text>
-              </AlertDialogAction>
-            </View>
-          </AlertDialogContent>
-        </AlertDialog>
+        <AlertDialog
+          title="Delete Expense?"
+          description="Are you sure you want to delete this expense?"
+          action="Delete"
+          icon="Trash2"
+          iconColor="#f87171"
+          onPress={() => handleDeleteExpense(expense?.id ?? "")}
+        />
       )}
 
       {/* Bottom Sheet */}
@@ -484,47 +543,68 @@ export const ExpenseForm = ({ expense }: Props) => {
         }
         title={
           bottomSheetType === BottomSheetType.ACCOUNT
-            ? "Accounts"
-            : "Categories"
+            ? "Select Account"
+            : "Select Category"
         }
         renderItem={(item: Account | Category, index: number) => {
           const color = getColorByIndex(item.name);
+          const isAccountType = bottomSheetType === BottomSheetType.ACCOUNT;
+          const isSelectedItem = isAccountType
+            ? accountSelectionTarget === "from"
+              ? selectedAccount?.id === item.id
+              : selectedToAccount?.id === item.id
+            : selectedCategory?.id === item.id;
+
           return (
-            <Card key={item.id ?? index} className="mx-4 p-2 mb-8 bg-card">
-              <TouchableOpacity
-                onPress={() => {
-                  if (bottomSheetType === BottomSheetType.ACCOUNT) {
-                    if (accountSelectionTarget === "from") {
-                      setSelectedAccount(item as Account);
-                    } else {
-                      setSelectedToAccount(item as Account);
-                    }
+            <Pressable
+              key={item.id ?? index}
+              onPress={() => {
+                if (bottomSheetType === BottomSheetType.ACCOUNT) {
+                  if (accountSelectionTarget === "from") {
+                    setSelectedAccount(item as Account);
                   } else {
-                    setSelectedCategory(item as Category);
+                    setSelectedToAccount(item as Account);
                   }
-                  bottomSheetRef.current?.dismiss();
-                }}
-                className="flex-row gap-4 items-center"
-              >
+                } else {
+                  setSelectedCategory(item as Category);
+                }
+                bottomSheetRef.current?.dismiss();
+              }}
+              className={cn(
+                "mx-4 mb-3 p-4 rounded-xl flex-row items-center justify-between bg-card border",
+                isSelectedItem
+                  ? "border-primary bg-primary/10"
+                  : "border-border"
+              )}
+            >
+              <View className="flex-row items-center gap-3">
                 <View
-                  className="p-2 rounded-xl"
+                  className="p-3 rounded-xl"
                   style={{ backgroundColor: color }}
                 >
                   <Icon
-                    name={iconsRecord[item.imageUrl || "other"]}
-                    color={
-                      isDarkColorScheme
-                        ? NAV_THEME.dark.primary
-                        : NAV_THEME.light.primary
-                    }
-                    size={32}
+                    name={iconsRecord[item.imageUrl || "Wallet"]}
+                    color="#fff"
+                    size={24}
                   />
                 </View>
-                <Text className="text-xl text-primary font-semibold capitalize">
-                  {item.name}
-                </Text>
-              </TouchableOpacity>
-            </Card>
+                <View>
+                  <Text className="text-base font-semibold text-foreground capitalize">
+                    {item.name}
+                  </Text>
+                  {isAccountType && (item as Account).balance !== undefined && (
+                    <Text className="text-sm text-muted-foreground">
+                      Balance: ${Number((item as Account).balance).toFixed(2)}
+                    </Text>
+                  )}
+                </View>
+              </View>
+              {isSelectedItem && (
+                <View className="bg-primary rounded-full p-1">
+                  <Icon name="Check" size={16} color="white" />
+                </View>
+              )}
+            </Pressable>
           );
         }}
       />

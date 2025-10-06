@@ -1,24 +1,25 @@
 // Global imports
+import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useMemo } from "react";
-import { View } from "react-native";
+import { View, Pressable, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import CategoryForm from "~/components/Category/CategoryForm";
-import CategorySectionList from "~/components/Category/CategorySectionList";
-import { Button, Text } from "~/components/ui";
-import { Empty, ListSkeleton } from "~/components/ui-components";
+import CategoryForm from "@/components/Category/CategoryForm";
+import CategorySectionList from "@/components/Category/CategorySectionList";
+import { Button, Text } from "@/components/ui";
+import { ListSkeleton, StatsCard } from "@/components/ui-components";
 
 // Local imports
-import { useCategories } from "~/hooks/categories";
-import { useColorScheme } from "~/lib/useColorScheme";
-import { ExpenseType } from "~/types";
-import { useGetAccounts } from "~/hooks/accounts";
-import { formattedBalance } from "~/functions";
-import { Skeleton } from "~/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
+import { formattedBalance } from "@/functions";
+import { useGetAccounts } from "@/hooks/accounts";
+import { useCategories } from "@/hooks/categories";
+import { useColorScheme } from "@/lib/useColorScheme";
+import { ExpenseType } from "@/types";
 
 // store imports
-import { useAuthStore, useModalStore } from "~/store";
+import { useAuthStore, useModalStore } from "@/store";
 
 const Categories = () => {
   const { user } = useAuthStore();
@@ -64,48 +65,126 @@ const Categories = () => {
   const handleOpenCategory = () => onOpen(<CategoryForm />, "Add new Category");
 
   return (
-    <SafeAreaView edges={["top"]} className="px-6 mt-14 flex-1 ">
-      <View className="">
-        {totalBalance ? (
-          <View className="w-full items-center justify-center">
-            <Text className="text-primary text-5xl font-semibold mt-2 ml-2">
-              {formattedBalance(totalBalance)}
-            </Text>
-            <Text className="text-primary text-xl">Total Balance</Text>
-          </View>
-        ) : totalBalance === 0 ? (
-          <View className="w-full items-center justify-center">
-            <Text className="text-primary text-5xl font-semibold mt-2 ml-2">
-              {formattedBalance(0)}
-            </Text>
-            <Text className="text-primary text-xl">Total Balance</Text>
-          </View>
-        ) : (
-          <View className="w-full items-center justify-center">
-            <Skeleton className="w-1/2 h-8 rounded-full" />
-            <Skeleton className="w-1/4 h-6 rounded-full mt-2" />
-          </View>
-        )}
-      </View>
-      <View className="flex-1">
-        {categories && categories.length > 0 ? (
-          <CategorySectionList categorySections={categorySections} />
-        ) : categories && categories.length === 0 ? (
-          <Empty
-            title="No categories found"
-            description="Add your first category to get started"
-            icon="Info"
-          />
-        ) : (
-          <ListSkeleton />
-        )}
-      </View>
+    <SafeAreaView edges={["top"]} className="flex-1 bg-background">
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        {/* Quick Add Category Card */}
+        <View className="px-5 pt-6 pb-2">
+          <Pressable onPress={handleOpenCategory}>
+            <LinearGradient
+              colors={["#8b5cf6", "#7c3aed"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{
+                borderRadius: 20,
+                padding: 24,
+                shadowColor: "#8b5cf6",
+                shadowOffset: { width: 0, height: 8 },
+                shadowOpacity: 0.3,
+                shadowRadius: 16,
+                elevation: 8,
+              }}
+            >
+              <View className="flex-row items-center justify-between">
+                <View className="flex-1">
+                  <Text className="text-white text-xl font-bold mb-1">
+                    Create Category
+                  </Text>
+                  <Text className="text-white/80 text-sm">
+                    Organize your expenses and income
+                  </Text>
+                </View>
+                <View className="bg-white/20 p-4 rounded-2xl">
+                  <Text className="text-white text-2xl">📁</Text>
+                </View>
+              </View>
+            </LinearGradient>
+          </Pressable>
+        </View>
 
-      <Button className="rounded-xl mb-4" onPress={handleOpenCategory}>
-        <Text className="text-secondary uppercase font-semibold">
-          add new category
-        </Text>
-      </Button>
+        {/* Stats Cards */}
+        <View className="px-5 pt-4 pb-2">
+          <View className="flex-row gap-3">
+            <StatsCard
+              title="INCOME"
+              value={incomeCategories?.length ?? 0}
+              subTitle="Categories"
+              subTitleColor="text-green-500"
+            />
+            <StatsCard
+              title="EXPENSE"
+              value={expenseCategories?.length ?? 0}
+              subTitle="Categories"
+              subTitleColor="text-red-500"
+            />
+          </View>
+        </View>
+
+        {/* Categories Section */}
+        <View className="px-5 mt-6">
+          <View className="flex-row items-center justify-between mb-4">
+            <View>
+              <Text className="text-foreground text-2xl font-bold">
+                All Categories
+              </Text>
+              <Text className="text-muted-foreground text-sm mt-1">
+                {categories?.length || 0} total categories
+              </Text>
+            </View>
+            <Pressable
+              onPress={handleOpenCategory}
+              className="bg-purple-500/85 px-4 py-2 rounded-full active:scale-95"
+            >
+              <Text className="text-primary text-sm font-semibold">+ Add</Text>
+            </Pressable>
+          </View>
+
+          {categories && categories.length > 0 ? (
+            <CategorySectionList categorySections={categorySections} />
+          ) : categories && categories.length === 0 ? (
+            <View className="items-center py-16">
+              <LinearGradient
+                colors={["#f3e8ff", "#e9d5ff"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                  borderRadius: 100,
+                  padding: 32,
+                  marginBottom: 16,
+                }}
+              >
+                <Text className="text-7xl">📁</Text>
+              </LinearGradient>
+              <Text className="text-foreground text-xl font-bold mb-2">
+                No Categories Yet
+              </Text>
+              <Text className="text-muted-foreground text-center px-8 mb-8">
+                Create categories to organize your expenses and income
+              </Text>
+              <Pressable
+                onPress={handleOpenCategory}
+                className="active:scale-95"
+              >
+                <LinearGradient
+                  colors={["#8b5cf6", "#7c3aed"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={{
+                    borderRadius: 16,
+                    paddingVertical: 14,
+                    paddingHorizontal: 32,
+                  }}
+                >
+                  <Text className="text-white text-base font-semibold">
+                    Create Your First Category
+                  </Text>
+                </LinearGradient>
+              </Pressable>
+            </View>
+          ) : (
+            <ListSkeleton />
+          )}
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

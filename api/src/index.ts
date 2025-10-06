@@ -32,6 +32,17 @@ app.use("/api/account", accountRouter);
 // prisma connection
 await prisma.$connect();
 
+const cleanupExpiredOtp = async () => {
+  const result = await prisma.otp.deleteMany({
+    where: {
+      expiresAt: { lt: new Date() },
+    },
+  });
+  console.log(`Deleted ${result.count} expired OTPs`);
+};
+
+await cleanupExpiredOtp();
+
 // listen to the server
 app.listen(Number(process.env.PORT), "0.0.0.0", () => {
   console.log(`Server is running on ${process.env.PORT}`);

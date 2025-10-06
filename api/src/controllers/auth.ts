@@ -6,67 +6,103 @@ import bcrypt from "bcryptjs";
 import prisma from "../util/prisma.js";
 import generateToken from "../util/generateToken.js";
 import { User, UserRole } from "../types.js";
+import UnauthenticatedError from "../error/unauthenticated.js";
 
-const login = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { email, password } = req.body;
+function generateCode(): string {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
 
-    const user = await prisma.user.findUnique({
-      where: {
-        email,
-      },
-    });
+const sendOtp = async (req: Request, res: Response) => {
+  const { phone } = req.body;
+  const code = generateCode();
 
-    if (!user) {
-      throw res.status(401).json({ message: "Invalid credentials" });
-    }
+  await prisma.otp.create({
+    data: {
+      phone,
+      code,
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000), // 10 minutes
+    },
+  });
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      throw res.status(401).json({ message: "Invalid credentials" });
-    }
-    // Generate token and set it in the cookie
-    const token = generateToken(user.id);
-
-    const { password: _, ...rest } = user;
-    res.status(200).json({ user: rest, token });
-  } catch (error) {
-    res.status(500).json({ message: "Internal server error" });
-  }
+  res.status(200).json({
+    message: "OTP sent successfully",
+    code,
+  });
 };
 
-const register = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { name, email, password } = req.body as User;
-
-    const existingUser = await prisma.user.findUnique({
-      where: {
-        email,
+const verifyOtp = async (
+  req: Request<{}, {}, { phone: string; code: string }>,
+  res: Response
+) => {
+  const { phone, code } = req.body;
+  const otp = await prisma.otp.findFirst({
+    where: {
+      phone,
+      code,
+      expiresAt: {
+        gt: new Date(),
       },
-    });
+    },
+  });
 
-    if (existingUser) {
-      throw res.status(400).json({ message: "User already exists" });
-    }
+  if (!otp) {
+    res.status(401).json({ message: "Invalid or expired OTP" });
+    return;
+  }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+  await prisma.otp.update({
+    where: { id: otp.id },
+    data: { verified: true },
+  });
 
-    const newUser = await prisma.user.create({
+  let user = await prisma.user.findUnique({
+    where: { phone },
+  });
+
+  if (!user) {
+    user = await prisma.user.create({
       data: {
-        name,
-        email,
-        password: hashedPassword,
+        phone,
+        phoneVerified: true,
+        role: UserRole.USER,
       },
     });
-
-    // Generate token and set it in the cookie
-    const token = generateToken(newUser.id);
-
-    const { password: _, ...rest } = newUser;
-    res.status(201).json({ user: rest, token });
-  } catch (error) {
-    res.status(500).json({ message: "Internal server error" });
   }
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      phoneVerified: true,
+      updatedAt: new Date(),
+    },
+  });
+
+  const token = generateToken(user.id);
+
+  res.status(200).json({
+    message: "OTP verified successfully",
+    user,
+    token,
+  });
 };
 
-export { login, register };
+const completeRegistration = async (req: Request, res: Response) => {
+  const userId = req.params.userId;
+  const { name, email } = req.body;
+
+  const user = await prisma.user.update({
+    where: { id: userId },
+    data: {
+      name,
+      email,
+      updatedAt: new Date(),
+    },
+  });
+
+  res.status(200).json({
+    message: "Registration completed successfully",
+    user,
+  });
+};
+
+export { sendOtp, verifyOtp, completeRegistration };

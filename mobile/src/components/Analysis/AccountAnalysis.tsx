@@ -4,12 +4,12 @@ import {
   formattedBalance,
   getColorByIndex,
   getGroupedBarChartData,
-} from "~/functions";
-import { Account, Expense } from "~/types";
+} from "@/functions";
+import { Account, Expense } from "@/types";
 import { Separator, Text } from "../ui";
-import { Icon } from "~/lib/icons/Icon";
-import { iconsRecord } from "~/lib/config";
-import { useColorScheme } from "~/lib/useColorScheme";
+import { Icon } from "@/lib/icons/Icon";
+import { iconsRecord } from "@/lib/config";
+import { useColorScheme } from "@/lib/useColorScheme";
 import { Empty } from "../ui-components";
 import { useCallback, useMemo } from "react";
 
@@ -63,7 +63,6 @@ const AccountAnalysis = ({ expenses, accounts }: Props) => {
               }}
             >
               <Icon
-                size={28}
                 color={isDarkColorScheme ? "#fff" : "#000"}
                 name={iconsRecord[icon(i)]}
               />

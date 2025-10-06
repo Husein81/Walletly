@@ -1,13 +1,13 @@
 import React, { useMemo } from "react";
 import { View } from "react-native";
 import { PieChart, SvgData } from "react-native-svg-charts";
-import { getColorByIndex } from "~/functions";
-import { iconsRecord, SCREEN_WIDTH } from "~/lib/config";
-import { Icon } from "~/lib/icons/Icon";
-import { useColorScheme } from "~/lib/useColorScheme";
+import { getColorByIndex } from "@/functions";
+import { iconsRecord, SCREEN_WIDTH } from "@/lib/config";
+import { Icon } from "@/lib/icons/Icon";
+import { useColorScheme } from "@/lib/useColorScheme";
 import { Progress, Separator, Text } from "../ui";
 import { Text as TextSVG } from "react-native-svg";
-import { Expense } from "~/types";
+import { Expense } from "@/types";
 import { Empty } from "../ui-components";
 
 type Props = {
@@ -27,19 +27,17 @@ const Overview = ({ pieChartData, progressData }: Props) => {
     () => (progressData ?? []).reduce((sum, item) => sum + item.amount, 0),
     [progressData]
   );
-
   // Donut center text
   const Labels = ({
     slices,
-    height,
-    width,
   }: {
-    slices?: any[];
-    height?: number;
-    width?: number;
+    slices?: {
+      pieCentroid: number[];
+      data: { value: number };
+    }[];
   }) => {
     return slices?.map((slice, index) => {
-      const { labelCentroid, pieCentroid, data } = slice;
+      const { pieCentroid, data } = slice;
       return (
         <TextSVG
           key={index}
@@ -76,7 +74,7 @@ const Overview = ({ pieChartData, progressData }: Props) => {
         style={{ height: 220, width: SCREEN_WIDTH - 20 }}
         data={pieChartData}
         valueAccessor={({ item }) => item.value}
-        outerRadius={"95%"}
+        outerRadius={"80%"}
       >
         <Labels />
       </PieChart>
@@ -90,7 +88,7 @@ const Overview = ({ pieChartData, progressData }: Props) => {
                 style={{
                   backgroundColor: getColorByIndex(index.toString()),
                 }}
-                className="h-10 w-10 rounded-lg items-center justify-center"
+                className="h-10 w-10 rounded-xl items-center justify-center"
               >
                 <Icon
                   name={iconsRecord[item.category?.imageUrl || "other"]}
@@ -111,7 +109,9 @@ const Overview = ({ pieChartData, progressData }: Props) => {
                 </Text>
               </View>
             </View>
-            <Separator />
+            <Separator
+              className={index === progressData.length - 1 ? "hidden" : ""}
+            />
           </View>
         ))}
       </View>

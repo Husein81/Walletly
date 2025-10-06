@@ -1,22 +1,17 @@
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { PortalHost } from "@rn-primitives/portal";
-import {
-  Pressable,
-  Modal as RModal,
-  SafeAreaView,
-  ScrollView,
-  View,
-} from "react-native";
+import { Pressable, Modal as RModal, ScrollView, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 // local imports
-import { Icon } from "~/lib/icons/Icon";
-import { cn } from "~/lib/utils";
+import { Icon } from "@/lib/icons/Icon";
+import { cn } from "@/lib/utils";
 import { Text } from "../ui";
 
 // store imports
-import { useColorScheme } from "~/lib/useColorScheme";
-import { useModalStore } from "~/store";
+import { useColorScheme } from "@/lib/useColorScheme";
+import { useModalStore } from "@/store";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export const Modal = () => {
   const { open, title, body, transparent, onClose } = useModalStore();
@@ -57,13 +52,18 @@ export const Modal = () => {
             >
               {title && (
                 <View className="w-full flex-row items-center justify-center">
-                  <Icon
-                    name="ChevronLeft"
-                    size={28}
+                  <Pressable
                     onPress={onClose}
-                    className="absolute left-0 bg-primary  rounded-lg"
-                    color={isDarkColorScheme ? "#000" : "#fff"}
-                  />
+                    className="bg-card rounded-full p-2 border border-border absolute left-0"
+                  >
+                    <Icon
+                      name="ChevronLeft"
+                      color={isDarkColorScheme ? "#71717a" : "#a1a1aa"}
+                      size={24}
+                      onPress={onClose}
+                      className="text-foreground"
+                    />
+                  </Pressable>
                   <Text className="text-2xl font-semibold ">{title}</Text>
                 </View>
               )}

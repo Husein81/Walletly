@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 // Local imports
-import { Category } from "~/types";
+import { Category } from "@/types";
 import { api } from ".";
 
 const useCategories = (userId: string) => {

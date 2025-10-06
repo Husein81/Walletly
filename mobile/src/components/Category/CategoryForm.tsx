@@ -1,21 +1,25 @@
 // Global imports
 import { useForm } from "@tanstack/react-form";
-import { useCallback, useState } from "react";
-import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { useState } from "react";
+import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
 import { z } from "zod";
 
 // Local imports
-import { useCreateCategory, useUpdateCategory } from "~/hooks/categories";
-import { Icon } from "~/lib/icons/Icon";
-import { useColorScheme } from "~/lib/useColorScheme";
-import { cn } from "~/lib/utils";
-import { Category, ExpenseType } from "~/types";
-import { Button, Input, Label } from "../ui";
-import { FieldInfo, IconSelector } from "../ui-components";
+import {
+  useCreateCategory,
+  useDeleteCategory,
+  useUpdateCategory,
+} from "@/hooks/categories";
+import { Icon } from "@/lib/icons/Icon";
+import { cn } from "@/lib/utils";
+import { Category, ExpenseType } from "@/types";
+import { Button, Label } from "../ui";
+import { FieldInfo, IconSelector, InputField } from "../ui-components";
 
 // Store imports
-import { useAuthStore, useModalStore } from "~/store";
+import { useAuthStore, useModalStore } from "@/store";
 
 type Props = {
   category?: Category;
@@ -30,7 +34,6 @@ const categorySchema = z.object({
 const CategoryForm = ({ category }: Props) => {
   const { user } = useAuthStore();
   const { onClose } = useModalStore();
-  const { isDarkColorScheme } = useColorScheme();
 
   const [selectedIcon, setSelectedIcon] = useState(category?.imageUrl || "pc");
   const [selectedType, setSelectedType] = useState<ExpenseType>(
@@ -39,6 +42,33 @@ const CategoryForm = ({ category }: Props) => {
 
   const createCategory = useCreateCategory();
   const upgradeCategory = useUpdateCategory();
+  const deleteCategory = useDeleteCategory(category?.id ?? "");
+
+  const handleDelete = () => {
+    Alert.alert(
+      "Delete Category",
+      "Are you sure you want to delete this category? This action cannot be undone.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await deleteCategory.mutateAsync();
+              onClose();
+            } catch (error) {
+              Toast.show({
+                type: "error",
+                text1: "Error deleting category",
+                text2: (error as Error)?.message,
+              });
+            }
+          },
+        },
+      ]
+    );
+  };
 
   const form = useForm({
     defaultValues: {
@@ -82,119 +112,183 @@ const CategoryForm = ({ category }: Props) => {
     },
   });
 
-  const isSelectedType = useCallback(
-    (type: ExpenseType) => {
-      return type === selectedType;
-    },
-    [selectedType]
-  );
-
   return (
-    <View className="gap-8 flex">
+    <View className="gap-4 flex">
+      {/* Type Selection - Modern Toggle */}
       <form.Field
         name="type"
         validators={{ onChange: categorySchema.shape.type }}
         children={(field) => (
-          <View className="gap-2 flex-row items-center justify-between ">
-            <Label>Type</Label>
-            <TouchableOpacity
-              className="flex-row items-center gap-2"
-              onPress={() => setSelectedType(ExpenseType.EXPENSE)}
-            >
-              {isSelectedType(ExpenseType.EXPENSE) && (
-                <Icon
-                  name="Check"
-                  color={isDarkColorScheme ? "white" : "black"}
-                />
-              )}
-              <Text
-                className={cn(
-                  "text-primary text-lg",
-                  isSelectedType(ExpenseType.EXPENSE) && "font-bold text-xl"
-                )}
+          <View className="gap-3">
+            <Label className="text-foreground text-base font-semibold">
+              Category Type
+            </Label>
+            <View className="flex-row gap-3 px-2">
+              <Pressable
+                onPress={() => setSelectedType(ExpenseType.EXPENSE)}
+                className="flex-1 active:scale-95"
               >
-                Expense
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className="flex-row items-center gap-2"
-              onPress={() => setSelectedType(ExpenseType.INCOME)}
-            >
-              {isSelectedType(ExpenseType.INCOME) && (
-                <Icon
-                  name="Check"
-                  color={isDarkColorScheme ? "white" : "black"}
-                />
-              )}
+                <View
+                  className={cn(
+                    "p-4 rounded-2xl border-2 flex-row items-center justify-center gap-2",
+                    selectedType === ExpenseType.EXPENSE
+                      ? "bg-red-500/10 border-red-500"
+                      : "bg-card border-border"
+                  )}
+                >
+                  <Icon
+                    name="TrendingDown"
+                    size={20}
+                    color={
+                      selectedType === ExpenseType.EXPENSE
+                        ? "#ef4444"
+                        : "#a1a1aa"
+                    }
+                  />
+                  <Text
+                    className={cn(
+                      "text-base font-semibold",
+                      selectedType === ExpenseType.EXPENSE
+                        ? "text-red-500"
+                        : "text-muted-foreground"
+                    )}
+                  >
+                    Expense
+                  </Text>
+                  {selectedType === ExpenseType.EXPENSE && (
+                    <View className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1">
+                      <Icon name="Check" size={12} color="white" />
+                    </View>
+                  )}
+                </View>
+              </Pressable>
 
-              <Text
-                className={cn(
-                  "text-primary text-lg",
-                  isSelectedType(ExpenseType.INCOME) && "font-bold text-xl"
-                )}
+              <Pressable
+                onPress={() => setSelectedType(ExpenseType.INCOME)}
+                className="flex-1 active:scale-95"
               >
-                Income
-              </Text>
-            </TouchableOpacity>
+                <View
+                  className={cn(
+                    "p-4 rounded-2xl border-2 flex-row items-center justify-center gap-2",
+                    selectedType === ExpenseType.INCOME
+                      ? "bg-green-500/10 border-green-500"
+                      : "bg-card border-border"
+                  )}
+                >
+                  <Icon
+                    name="TrendingUp"
+                    size={20}
+                    color={
+                      selectedType === ExpenseType.INCOME
+                        ? "#22c55e"
+                        : "#a1a1aa"
+                    }
+                  />
+                  <Text
+                    className={cn(
+                      "text-base font-semibold",
+                      selectedType === ExpenseType.INCOME
+                        ? "text-green-500"
+                        : "text-muted-foreground"
+                    )}
+                  >
+                    Income
+                  </Text>
+                  {selectedType === ExpenseType.INCOME && (
+                    <View className="absolute -top-2 -right-2 bg-green-500 rounded-full p-1">
+                      <Icon name="Check" size={12} color="white" />
+                    </View>
+                  )}
+                </View>
+              </Pressable>
+            </View>
             <FieldInfo field={field} />
           </View>
         )}
       />
-
+      {/* Category Name Input */}
       <form.Field
         name="name"
         validators={{ onChange: categorySchema.shape.name }}
         children={(field) => (
-          <View className="gap-2">
-            <Label>Name</Label>
-            <Input
-              value={field.state.value}
-              onChangeText={field.handleChange}
-              placeholder="Category name"
-              autoCapitalize="none"
-            />
-            <FieldInfo field={field} />
-          </View>
+          <InputField
+            placeholder="e.g., Food, Salary"
+            label="Category Name *"
+            icon="Tag"
+            field={field}
+          />
         )}
       />
 
-      <View className="gap-2 ">
-        <Label>Icon</Label>
+      {/* Icon Selection */}
+      <View className="gap-3">
+        <Label className="text-foreground text-base font-semibold">
+          Choose Icon
+        </Label>
         <IconSelector
           selectedIcon={selectedIcon}
           setSelectedIcon={setSelectedIcon}
         />
+        <Text className="text-muted-foreground text-xs">
+          Select an icon that represents this category
+        </Text>
       </View>
 
-      <View className="flex-row gap-4">
-        <Button
-          variant={"outline"}
-          className="border-primary border"
-          onPress={onClose}
-        >
-          <Text className="text-primary">Cancel</Text>
-        </Button>
-        <form.Subscribe
-          selector={(state) => [state.canSubmit, state.isSubmitting]}
-          children={([canSubmit, isSubmitting]) => (
-            <Button
-              disabled={!canSubmit}
+      {/* Action Buttons */}
+      <form.Subscribe
+        selector={(state) => [state.canSubmit, state.isSubmitting]}
+      >
+        {([canSubmit, isSubmitting]) => (
+          <View className="gap-3 pt-2">
+            <Pressable
+              disabled={!canSubmit || isSubmitting}
               onPress={(e) => {
                 e.preventDefault();
                 form.handleSubmit();
               }}
+              className="active:scale-95"
             >
-              {isSubmitting ? (
-                <ActivityIndicator
-                  color={isDarkColorScheme ? "black" : "white"}
-                />
-              ) : (
-                <Text className="text-secondary font-semibold">Save</Text>
-              )}
-            </Button>
-          )}
-        />
-      </View>
+              <LinearGradient
+                colors={
+                  selectedType === ExpenseType.EXPENSE
+                    ? ["#ef4444", "#dc2626"]
+                    : ["#22c55e", "#16a34a"]
+                }
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                  borderRadius: 16,
+                  paddingVertical: 16,
+                  opacity: !canSubmit || isSubmitting ? 0.5 : 1,
+                }}
+              >
+                <View className="flex-row items-center justify-center gap-2">
+                  {isSubmitting ? (
+                    <ActivityIndicator color="white" />
+                  ) : (
+                    <>
+                      <Text className="text-white text-base font-semibold">
+                        {category ? "Update" : "Save"}
+                      </Text>
+                    </>
+                  )}
+                </View>
+              </LinearGradient>
+            </Pressable>
+
+            {category && (
+              <Pressable onPress={handleDelete} className="active:scale-95">
+                <View className="bg-destructive/10 rounded-2xl py-4 border border-destructive/30 flex-row items-center justify-center gap-2">
+                  <Icon name="Trash2" size={20} color="#ef4444" />
+                  <Text className="text-destructive text-base font-semibold">
+                    Delete Category
+                  </Text>
+                </View>
+              </Pressable>
+            )}
+          </View>
+        )}
+      </form.Subscribe>
     </View>
   );
 };

@@ -10,8 +10,8 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "~/components/ui/select";
-import { cn } from "~/lib/utils";
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 type Props = {
   defaultValue?: Option;

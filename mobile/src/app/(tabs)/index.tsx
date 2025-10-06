@@ -1,31 +1,37 @@
 // Global imports
 import { format } from "date-fns";
 import { useFocusEffect } from "expo-router";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
   NativeScrollEvent,
   NativeSyntheticEvent,
+  Platform,
+  Pressable,
   ScrollView,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // Local imports
-import { ExpenseForm, ExpensesList } from "~/components/Expense";
-import { Separator, Text } from "~/components/ui";
-import { Empty, ListSkeleton, StackedCards } from "~/components/ui-components";
-import { Header } from "~/components/ui-components/Header";
-import { useGetExpenses } from "~/hooks/expense";
-import { Icon } from "~/lib/icons/Icon";
-import { useColorScheme } from "~/lib/useColorScheme";
-import { Expense } from "~/types";
+import {
+  AddTransactionSection,
+  ExpenseForm,
+  ExpensesList,
+  QuickStats,
+} from "@/components/Expense";
+import { Text } from "@/components/ui";
+import { ListSkeleton, TransactionsCard } from "@/components/ui-components";
+import { Header } from "@/components/ui-components/Header";
+import { useGetExpenses } from "@/hooks/expense";
+import { Icon } from "@/lib/icons/Icon";
+import { Expense } from "@/types";
 
 //store imports
-import { useAuthStore, useDateStore, useModalStore } from "~/store";
+import { useAuthStore, useDateStore, useModalStore } from "@/store";
 
 const Home = () => {
   const { user } = useAuthStore();
-  const { isDarkColorScheme } = useColorScheme();
   const { onOpen } = useModalStore();
   const { selectedDate } = useDateStore();
 
@@ -51,11 +57,9 @@ const Home = () => {
     month: (selectedDate.getMonth() + 1).toString(),
   });
 
-  useFocusEffect(
-    useCallback(() => {
-      refetch();
-    }, [refetch, selectedDate])
-  );
+  useEffect(() => {
+    refetch();
+  }, [expenses, refetch, selectedDate]);
 
   const handleOpenForm = () => onOpen(<ExpenseForm />, "Add Expense");
 
@@ -103,61 +107,106 @@ const Home = () => {
   }, [expenses]);
 
   return (
-    <SafeAreaView edges={["top"]} className="flex-1 p-4 gap-8">
-      <Header />
-      {expenses && expenses.length > 0 ? (
-        <ScrollView
-          className="flex-1"
-          showsVerticalScrollIndicator={false}
-          onScroll={handleScroll}
-          scrollEventThrottle={16}
-        >
-          <StackedCards
-            total={totalBalance ?? 0}
-            income={totalIncome ?? 0}
-            expense={totalExpense ?? 0}
-          />
-          <Text className="text-text text-primary text-2xl font-semibold my-2">
-            Recent Transaction
-          </Text>
-          <ExpensesList expensesSections={expensesSections ?? []} />
-        </ScrollView>
-      ) : expenses?.length === 0 ? (
-        <ScrollView className="flex-1 ">
-          <StackedCards total={0} income={0} expense={0} />
-          <Separator className="my-2" />
-          <Empty
-            title="No expenses found"
-            description="You can add your first expense by clicking the button below."
-            icon="Plus"
-          />
-        </ScrollView>
-      ) : (
-        <ListSkeleton />
-      )}
-      <Animated.View
-        style={{
-          transform: [
-            {
-              translateY: fadeAnim.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0, 100], // slide down by 100 when hidden
-              }),
-            },
-          ],
-          position: "absolute",
-          bottom: 40,
-          right: 16,
+    <SafeAreaView edges={["top"]} className="flex-1 bg-background">
+      <ScrollView
+        className="flex-1 px-5"
+        contentContainerStyle={{
+          paddingBottom: Platform.OS === "ios" ? 80 : 70,
         }}
+        showsVerticalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
       >
-        <Icon
-          name="Plus"
-          size={32}
-          onPress={handleOpenForm}
-          className="bg-primary rounded-full p-3"
-          color={isDarkColorScheme ? "#000" : "#fff"}
+        <Header />
+
+        {/* Modern Quick Add Section - Always Visible at Top */}
+        <AddTransactionSection onPress={handleOpenForm} />
+
+        <TransactionsCard
+          total={totalBalance ?? 0}
+          income={totalIncome ?? 0}
+          expense={totalExpense ?? 0}
         />
-      </Animated.View>
+        {expenses && expenses.length > 0 ? (
+          <View>
+            {/* Quick Stats Section */}
+            <QuickStats
+              numOfExpenses={expenses.length}
+              selectedDate={selectedDate}
+            />
+
+            {/* Recent Transactions Header */}
+            <View className="flex-row items-center justify-between mb-4">
+              <View>
+                <Text className="text-foreground text-2xl font-bold">
+                  Recent Transactions
+                </Text>
+                <Text className="text-muted-foreground text-sm mt-1">
+                  {expenses.length} transaction
+                  {expenses.length !== 1 ? "s" : ""} this month
+                </Text>
+              </View>
+              <Pressable
+                onPress={handleOpenForm}
+                className="bg-blue-500/85 px-4 py-2 rounded-full active:scale-95"
+              >
+                <Text className="text-primary text-sm font-semibold">
+                  + Add
+                </Text>
+              </Pressable>
+            </View>
+
+            <ExpensesList expensesSections={expensesSections ?? []} />
+          </View>
+        ) : expenses?.length === 0 ? (
+          <View className="flex-1 px-5">
+            {/* Empty State with Better Design */}
+            <View className="mt-8 items-center">
+              <View className="bg-muted/30 rounded-full p-8 mb-6">
+                <Icon name="Wallet" size={48} color="#9ca3af" />
+              </View>
+              <Text className="text-foreground text-2xl font-bold mb-2 text-center">
+                No Transactions Yet
+              </Text>
+              <Text className="text-muted-foreground text-base text-center mb-8 px-8">
+                Start tracking your expenses by adding your first transaction
+                below
+              </Text>
+
+              {/* Quick Action Cards */}
+              <View className="w-full gap-3 ">
+                {/* Primary Add Button */}
+                <Pressable
+                  onPress={handleOpenForm}
+                  className="shadow-lg opacity-100 pb-4"
+                >
+                  <View className="items-center flex-row px-2 gap-4 border border-blue-500/50 bg-primary/10 rounded-2xl">
+                    <Icon
+                      name="Plus"
+                      size={24}
+                      color="#1fa3e3"
+                      className="rounded-full border-blue-500 border bg-blue-500/30 p-2"
+                      strokeWidth={2.5}
+                    />
+
+                    <View className="flex-1 py-4 text-center">
+                      <Text className="text-white text-sm font-bold">
+                        Add Your First Transaction
+                      </Text>
+                      <Text className="text-white/80 text-xs">
+                        Start tracking by adding an expense, income, or transfer
+                      </Text>
+                    </View>
+                    <Icon name="ChevronRight" size={20} color="white" />
+                  </View>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        ) : (
+          <ListSkeleton />
+        )}
+      </ScrollView>
     </SafeAreaView>
   );
 };

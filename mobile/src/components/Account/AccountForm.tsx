@@ -1,18 +1,27 @@
 import { useForm } from "@tanstack/react-form";
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
 import { z } from "zod";
 
 // Local Imports
+import {
+  useCreateAccount,
+  useDeleteAccount,
+  useUpdateAccount,
+} from "@/hooks/accounts";
+import { Account } from "@/types";
 import { useState } from "react";
-import { useCreateAccount, useUpdateAccount } from "~/hooks/accounts";
-import { useColorScheme } from "~/lib/useColorScheme";
-import { Account } from "~/types";
-import { Input, Label } from "../ui";
-import { Button, FieldInfo, IconSelector } from "../ui-components";
+import { Label } from "../ui";
+import {
+  AlertDialog,
+  Button,
+  IconSelector,
+  InputField,
+} from "../ui-components";
 
 // Store Imports
-import { useAuthStore, useModalStore } from "~/store";
+import { Icon } from "@/lib/icons/Icon";
+import { useAuthStore, useModalStore } from "@/store";
 
 type Props = {
   account?: Account;
@@ -27,24 +36,30 @@ const AccountForm = ({ account }: Props) => {
   const { onClose } = useModalStore();
   const { user } = useAuthStore();
 
-  const { isDarkColorScheme } = useColorScheme();
-
   const [selectedIcon, setSelectedIcon] = useState(account?.imageUrl || "pc");
 
   const createAccount = useCreateAccount();
   const updateAccount = useUpdateAccount();
+  const deleteAccount = useDeleteAccount(account?.id ?? "");
+
+  const handleDelete = async () => {
+    try {
+      await deleteAccount.mutateAsync();
+      onClose();
+    } catch (error) {}
+  };
 
   const form = useForm({
     defaultValues: {
       name: account?.name || "",
-      balance: account?.balance || "0",
+      balance: account?.balance || 0,
     },
     onSubmit: async ({ value }) => {
       const payload = {
         ...value,
         imageUrl: selectedIcon,
         userId: user?.id || "",
-        balance: parseFloat(value.balance.toString()),
+        balance: Number(value.balance),
       };
       try {
         if (account) {
@@ -64,78 +79,53 @@ const AccountForm = ({ account }: Props) => {
   });
 
   return (
-    <View className="gap-8 flex">
+    <View className="gap-4 flex">
       <form.Field
         name="name"
         validators={{ onChange: accountSchema.shape.name }}
         children={(field) => (
-          <View className="gap-2">
-            <Label>Name</Label>
-            <Input
-              value={field.state.value}
-              onChangeText={field.handleChange}
-              placeholder="Account name"
-              autoCapitalize="none"
-            />
-            <FieldInfo field={field} />
-          </View>
+          <InputField
+            label="Name"
+            type="text"
+            field={field}
+            placeholder="Name"
+          />
         )}
       />
 
       <form.Field
         name="balance"
-        validators={{ onChange: accountSchema.shape.balance }}
+        validators={{
+          onChange: (value) => accountSchema.shape.balance.parse(value),
+        }}
         children={(field) => (
-          <View className="gap-2">
-            <Label>Balance</Label>
-            <Input
-              placeholder="Enter balance"
-              keyboardType="numeric"
-              value={field.state.value?.toString() ?? ""}
-              onChangeText={(text) => {
-                // Accept negative, positive, and decimals
-                const numericValue = parseFloat(text);
-                if (
-                  !isNaN(numericValue) ||
-                  text.includes("") ||
-                  text.includes("-") ||
-                  text.includes(".")
-                ) {
-                  // Allow empty string or negative sign
-                  field.handleChange(
-                    text.includes("") ||
-                      text.includes("-") ||
-                      text.includes(".")
-                      ? text
-                      : numericValue
-                  );
-                }
-              }}
-            />
-            <FieldInfo field={field} />
-          </View>
+          <InputField
+            label="Balance"
+            field={field}
+            type="number"
+            placeholder="0.00"
+            keyboardType="numeric"
+          />
         )}
       />
-      <View className="gap-2 ">
+      <View className="gap-2 mb-4">
         <Label>Icon</Label>
         <IconSelector
           selectedIcon={selectedIcon}
           setSelectedIcon={setSelectedIcon}
         />
+        <Text className="text-muted-foreground text-xs">
+          Select an icon that represents this category
+        </Text>
       </View>
 
-      <View className="flex-row gap-4">
-        <Button
-          variant={"outline"}
-          className="border-primary border"
-          onPress={onClose}
-        >
-          <Text className="text-primary">Cancel</Text>
-        </Button>
-        <form.Subscribe
-          selector={(state) => [state.canSubmit, state.isSubmitting]}
-          children={([canSubmit, isSubmitting]) => (
+      <form.Subscribe
+        selector={(state) => [state.canSubmit, state.isSubmitting]}
+      >
+        {([canSubmit, isSubmitting]) => (
+          <View className="gap-1 ">
             <Button
+              className="bg-green-500"
               disabled={!canSubmit}
               onPress={(e) => {
                 e.preventDefault();
@@ -143,11 +133,23 @@ const AccountForm = ({ account }: Props) => {
               }}
               isSubmitting={isSubmitting}
             >
-              <Text className="text-secondary font-semibold">Save</Text>
+              <Text className="text-white font-semibold">
+                {account ? "Update" : "Save"}
+              </Text>
             </Button>
-          )}
-        />
-      </View>
+            {account && (
+              <AlertDialog
+                title="Delete Account?"
+                description="Are you sure you want to delete this account? This action cannot be undone."
+                action="Delete"
+                icon="Trash2"
+                iconColor="#f87171"
+                onPress={handleDelete}
+              />
+            )}
+          </View>
+        )}
+      </form.Subscribe>
     </View>
   );
 };

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "My Money",
-    "slug": "MyMoneyWallet",
+    "name": "Walletly",
+    "slug": "Walletly",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/wallet.png",
@@ -15,7 +15,7 @@
     },
     "notification": {
       "icon": "./assets/images/wallet.png",
-      "color": "#2563EB" // optional accent color
+      "color": "#2563EB"
     },
     "ios": {
       "supportsTablet": true,
@@ -34,12 +34,7 @@
         "backgroundColor": "#1e1e1e"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.MyMoneyWallet"
-    },
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "package": "com.anonymous.Walletly"
     },
     "plugins": [
       [
@@ -53,31 +48,6 @@
             "translucent": true,
             "style": "light",
             "backgroundColor": "#1e1e1e"
-          }
-        }
-      ],
-      [
-        "@react-native-community/datetimepicker",
-        {
-          "android": {
-            "datePicker": {
-              "colorAccent": {
-                "light": "#FF5722"
-              },
-              "textColorPrimary": {
-                "light": "#FF5722"
-              }
-            },
-            "timePicker": {
-              "background": {
-                "light": "#FF5722",
-                "dark": "#383838"
-              },
-              "numbersBackgroundColor": {
-                "light": "#FF5722",
-                "dark": "#383838"
-              }
-            }
           }
         }
       ],

@@ -1,11 +1,16 @@
 import express from "express";
 
 // Local imports
-import { login, register } from "../controllers/auth.js";
+import {
+  completeRegistration,
+  sendOtp,
+  verifyOtp,
+} from "../controllers/auth.js";
 
 const router = express.Router();
 
-router.post("/login", login);
-router.post("/register", register);
+router.post("/send-otp", sendOtp);
+router.post("/verify-otp", verifyOtp);
+router.put("/complete-registration/:userId", completeRegistration);
 
 export default router;

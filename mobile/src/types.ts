@@ -14,9 +14,10 @@ export enum ExpenseType {
 // Schemas
 export const userSchema = z.object({
   id: z.string().optional(),
-  name: z.string().min(1).max(50),
-  email: z.string().email(),
-  password: z.string().min(6).max(50),
+  name: z.string().min(1).max(50).optional(),
+  phone: z.string().min(6),
+  phoneVerified: z.boolean().default(false),
+  email: z.string().email().optional(),
   role: z.nativeEnum(UserRole).optional().default(UserRole.USER),
   createdAt: z.date().default(() => new Date()),
   updatedAt: z.date().default(() => new Date()),

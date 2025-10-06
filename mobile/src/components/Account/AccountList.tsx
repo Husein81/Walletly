@@ -1,5 +1,5 @@
-import { FlatList, View } from "react-native";
-import { Account } from "~/types";
+import { Account } from "@/types";
+import { FlatList, Platform, View } from "react-native";
 import AccountCard from "./AccountCard";
 
 type Props = {
@@ -8,15 +8,10 @@ type Props = {
 
 const AccountList = ({ accounts }: Props) => {
   return (
-    <View>
-      <FlatList
-        data={accounts}
-        keyExtractor={(item) => item.id || Math.random().toString()}
-        className="gap-4"
-        renderItem={({ item }) => <AccountCard account={item} />}
-        showsVerticalScrollIndicator={false}
-        ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-      />
+    <View className="pt-4 pb-16 gap-4">
+      {accounts.map((account) => (
+        <AccountCard key={account.id} account={account} />
+      ))}
     </View>
   );
 };

@@ -16,6 +16,7 @@ interface AuthStore {
   token: string | null;
   isReady: boolean;
   setAuth: (data: { user: User; token: string }) => Promise<void>;
+  setUser: (user: User) => Promise<void>;
   clearAuth: () => Promise<void>;
   loadUser: () => Promise<void>;
 }
@@ -32,6 +33,15 @@ export const useAuthStore = create<AuthStore>((set) => ({
         await AsyncStorage.setItem("authUser", JSON.stringify(data.user));
         set({ user: data.user, token: data.token });
       }
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  setUser: async (user) => {
+    try {
+      await AsyncStorage.setItem("authUser", JSON.stringify(user));
+      set({ user });
     } catch (error) {
       throw error;
     }

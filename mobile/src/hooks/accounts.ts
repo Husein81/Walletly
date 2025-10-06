@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "~/hooks";
-import { Account } from "~/types";
+import { api } from "@/hooks";
+import { Account } from "@/types";
+import Toast from "react-native-toast-message";
 
 const useGetAccounts = (userId: string) => {
   return useQuery({
@@ -57,9 +58,18 @@ const useDeleteAccount = (accountId: string) => {
     onSuccess: () => {
       // Invalidate and refetch
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
+      Toast.show({
+        type: "success",
+        text1: "Account deleted successfully",
+      });
     },
     onError: (error) => {
       console.error("Error deleting account:", error);
+      Toast.show({
+        type: "error",
+        text1: "Error deleting account",
+        text2: error.message,
+      });
     },
   });
 };

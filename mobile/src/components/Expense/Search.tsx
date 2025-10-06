@@ -3,13 +3,13 @@ import { useCallback, useMemo, useState } from "react";
 import { KeyboardAvoidingView, Platform, View } from "react-native";
 
 // Local imports
-import { useGetExpenses } from "~/hooks/expense";
+import { useGetExpenses } from "@/hooks/expense";
 import { Input, Separator } from "../ui";
 import { Empty, ListSkeleton } from "../ui-components";
 import { ExpensesList } from "./ExpensesList";
 
 // Store imports
-import { useAuthStore } from "~/store";
+import { useAuthStore } from "@/store";
 
 export const Search = () => {
   const [searchTerm, setSearchTerm] = useState("");

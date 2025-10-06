@@ -1,10 +1,10 @@
 import { Stack } from "expo-router";
 import { View, Text } from "react-native";
-const UserLayout = () => {
+const AuthLayout = () => {
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="user" />
+      <Stack.Screen name="index" />
     </Stack>
   );
 };
-export default UserLayout;
+export default AuthLayout;
