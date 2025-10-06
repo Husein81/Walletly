@@ -11,20 +11,6 @@ type Props = {
 
 const CategorySectionList = ({ categorySections }: Props) => {
   return (
-    // <SectionList
-    //   sections={categorySections}
-    //   keyExtractor={(item) => item.id || Math.random().toString()}
-    //   stickySectionHeadersEnabled={false}
-    //   showsVerticalScrollIndicator={false}
-    //   ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
-    //   renderSectionHeader={({ section: { title } }) => (
-    //     <View className="py-4 gap-2">
-    //       <Text className="text-2xl font-bold text-primary">{title}</Text>
-    //       <Separator />
-    //     </View>
-    //   )}
-    //   renderItem={({ item }) => <CategoryCard category={item} />}
-    // />
     <View className="pt-4 pb-16 gap-4">
       {categorySections.map((section) => (
         <View key={section.title}>

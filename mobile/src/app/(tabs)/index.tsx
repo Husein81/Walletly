@@ -1,7 +1,7 @@
 // Global imports
 import { format } from "date-fns";
 import { useFocusEffect } from "expo-router";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
   NativeScrollEvent,
@@ -57,11 +57,9 @@ const Home = () => {
     month: (selectedDate.getMonth() + 1).toString(),
   });
 
-  useFocusEffect(
-    useCallback(() => {
-      refetch();
-    }, [refetch, selectedDate])
-  );
+  useEffect(() => {
+    refetch();
+  }, [expenses, refetch, selectedDate]);
 
   const handleOpenForm = () => onOpen(<ExpenseForm />, "Add Expense");
 
@@ -148,6 +146,14 @@ const Home = () => {
                   {expenses.length !== 1 ? "s" : ""} this month
                 </Text>
               </View>
+              <Pressable
+                onPress={handleOpenForm}
+                className="bg-blue-500/85 px-4 py-2 rounded-full active:scale-95"
+              >
+                <Text className="text-primary text-sm font-semibold">
+                  + Add
+                </Text>
+              </Pressable>
             </View>
 
             <ExpensesList expensesSections={expensesSections ?? []} />
@@ -168,18 +174,18 @@ const Home = () => {
               </Text>
 
               {/* Quick Action Cards */}
-              <View className="w-full gap-3 px-4">
+              <View className="w-full gap-3 ">
                 {/* Primary Add Button */}
                 <Pressable
                   onPress={handleOpenForm}
                   className="shadow-lg opacity-100 pb-4"
                 >
-                  <View className="items-center flex-row px-2 gap-4 border border-primary/30 bg-primary/10 rounded-2xl">
+                  <View className="items-center flex-row px-2 gap-4 border border-blue-500/50 bg-primary/10 rounded-2xl">
                     <Icon
                       name="Plus"
                       size={24}
-                      color="#ffffff"
-                      className="rounded-full bg-primary/30 p-2"
+                      color="#1fa3e3"
+                      className="rounded-full border-blue-500 border bg-blue-500/30 p-2"
                       strokeWidth={2.5}
                     />
 
@@ -191,6 +197,7 @@ const Home = () => {
                         Start tracking by adding an expense, income, or transfer
                       </Text>
                     </View>
+                    <Icon name="ChevronRight" size={20} color="white" />
                   </View>
                 </Pressable>
               </View>

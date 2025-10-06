@@ -150,7 +150,7 @@ const Accounts = () => {
             </View>
             <Pressable
               onPress={handleOpenForm}
-              className="bg-primary/10 px-4 py-2 rounded-full active:scale-95"
+              className="bg-green-500/80 px-4 py-2 rounded-full active:scale-95"
             >
               <Text className="text-primary text-sm font-semibold">+ Add</Text>
             </Pressable>

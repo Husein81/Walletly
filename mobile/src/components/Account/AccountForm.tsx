@@ -9,15 +9,19 @@ import {
   useDeleteAccount,
   useUpdateAccount,
 } from "@/hooks/accounts";
-import { useColorScheme } from "@/lib/useColorScheme";
 import { Account } from "@/types";
 import { useState } from "react";
 import { Label } from "../ui";
-import { Button, IconSelector, InputField } from "../ui-components";
+import {
+  AlertDialog,
+  Button,
+  IconSelector,
+  InputField,
+} from "../ui-components";
 
 // Store Imports
-import { useAuthStore, useModalStore } from "@/store";
 import { Icon } from "@/lib/icons/Icon";
+import { useAuthStore, useModalStore } from "@/store";
 
 type Props = {
   account?: Account;
@@ -32,27 +36,30 @@ const AccountForm = ({ account }: Props) => {
   const { onClose } = useModalStore();
   const { user } = useAuthStore();
 
-  const { isDarkColorScheme } = useColorScheme();
-
   const [selectedIcon, setSelectedIcon] = useState(account?.imageUrl || "pc");
 
   const createAccount = useCreateAccount();
   const updateAccount = useUpdateAccount();
   const deleteAccount = useDeleteAccount(account?.id ?? "");
 
-  const handleDelete = async () => await deleteAccount.mutateAsync();
+  const handleDelete = async () => {
+    try {
+      await deleteAccount.mutateAsync();
+      onClose();
+    } catch (error) {}
+  };
 
   const form = useForm({
     defaultValues: {
       name: account?.name || "",
-      balance: account?.balance || "",
+      balance: account?.balance || 0,
     },
     onSubmit: async ({ value }) => {
       const payload = {
         ...value,
         imageUrl: selectedIcon,
         userId: user?.id || "",
-        balance: parseFloat(value.balance.toString()),
+        balance: Number(value.balance),
       };
       try {
         if (account) {
@@ -88,7 +95,9 @@ const AccountForm = ({ account }: Props) => {
 
       <form.Field
         name="balance"
-        validators={{ onChange: accountSchema.shape.balance }}
+        validators={{
+          onChange: (value) => accountSchema.shape.balance.parse(value),
+        }}
         children={(field) => (
           <InputField
             label="Balance"
@@ -114,8 +123,9 @@ const AccountForm = ({ account }: Props) => {
         selector={(state) => [state.canSubmit, state.isSubmitting]}
       >
         {([canSubmit, isSubmitting]) => (
-          <View className="gap-4 ">
+          <View className="gap-1 ">
             <Button
+              className="bg-green-500"
               disabled={!canSubmit}
               onPress={(e) => {
                 e.preventDefault();
@@ -123,17 +133,19 @@ const AccountForm = ({ account }: Props) => {
               }}
               isSubmitting={isSubmitting}
             >
-              <Text className="text-secondary font-semibold">Save</Text>
+              <Text className="text-white font-semibold">
+                {account ? "Update" : "Save"}
+              </Text>
             </Button>
             {account && (
-              <Pressable onPress={handleDelete} className="active:scale-95">
-                <View className="bg-destructive/10 rounded-2xl py-4 border border-destructive/30 flex-row items-center justify-center gap-2">
-                  <Icon name="Trash2" size={20} color="#ef4444" />
-                  <Text className="text-destructive text-base font-semibold">
-                    Delete Category
-                  </Text>
-                </View>
-              </Pressable>
+              <AlertDialog
+                title="Delete Account?"
+                description="Are you sure you want to delete this account? This action cannot be undone."
+                action="Delete"
+                icon="Trash2"
+                iconColor="#f87171"
+                onPress={handleDelete}
+              />
             )}
           </View>
         )}

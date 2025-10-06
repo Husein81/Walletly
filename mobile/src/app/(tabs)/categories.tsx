@@ -8,7 +8,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import CategoryForm from "@/components/Category/CategoryForm";
 import CategorySectionList from "@/components/Category/CategorySectionList";
 import { Button, Text } from "@/components/ui";
-import { ListSkeleton } from "@/components/ui-components";
+import { ListSkeleton, StatsCard } from "@/components/ui-components";
 
 // Local imports
 import { Skeleton } from "@/components/ui/skeleton";
@@ -104,24 +104,18 @@ const Categories = () => {
         {/* Stats Cards */}
         <View className="px-5 pt-4 pb-2">
           <View className="flex-row gap-3">
-            <View className="flex-1 bg-card shadow-md rounded-2xl p-4 border border-border">
-              <Text className="text-muted-foreground text-xs font-medium mb-1">
-                EXPENSE
-              </Text>
-              <Text className="text-foreground text-2xl font-bold">
-                {expenseCategories?.length || 0}
-              </Text>
-              <Text className="text-red-500 text-xs mt-1">Categories</Text>
-            </View>
-            <View className="flex-1 bg-card shadow-md rounded-2xl p-4 border border-border">
-              <Text className="text-muted-foreground text-xs font-medium mb-1">
-                INCOME
-              </Text>
-              <Text className="text-foreground text-2xl font-bold">
-                {incomeCategories?.length || 0}
-              </Text>
-              <Text className="text-green-500 text-xs mt-1">Categories</Text>
-            </View>
+            <StatsCard
+              title="INCOME"
+              value={incomeCategories?.length ?? 0}
+              subTitle="Categories"
+              subTitleColor="text-green-500"
+            />
+            <StatsCard
+              title="EXPENSE"
+              value={expenseCategories?.length ?? 0}
+              subTitle="Categories"
+              subTitleColor="text-red-500"
+            />
           </View>
         </View>
 
@@ -138,7 +132,7 @@ const Categories = () => {
             </View>
             <Pressable
               onPress={handleOpenCategory}
-              className="bg-primary/10 px-4 py-2 rounded-full active:scale-95"
+              className="bg-purple-500/85 px-4 py-2 rounded-full active:scale-95"
             >
               <Text className="text-primary text-sm font-semibold">+ Add</Text>
             </Pressable>

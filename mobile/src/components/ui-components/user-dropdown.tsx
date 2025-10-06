@@ -29,14 +29,7 @@ const UserDropdown = () => {
   };
 
   const handleLogout = () => {
-    Alert.alert("Logout", "Are you sure you want to logout?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Logout",
-        style: "destructive",
-        onPress: () => clearAuth(),
-      },
-    ]);
+    clearAuth();
   };
 
   return (
@@ -64,7 +57,10 @@ const UserDropdown = () => {
           </Rn.Avatar>
         </Button>
       </Rn.DropdownMenuTrigger>
-      <Rn.DropdownMenuContent insets={contentInsets} className="w-64">
+      <Rn.DropdownMenuContent
+        insets={contentInsets}
+        className="w-64 rounded-2xl"
+      >
         {/* User Info Header */}
         <View className="px-2 py-3 border-b border-border/50">
           <Text className="text-foreground font-bold text-base capitalize">

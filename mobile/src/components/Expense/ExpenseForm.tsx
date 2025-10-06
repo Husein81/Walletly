@@ -3,6 +3,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { useForm } from "@tanstack/react-form";
 import { useCallback, useMemo, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -13,7 +14,11 @@ import Toast from "react-native-toast-message";
 
 // Local Imports
 import { Label, Rn } from "@/components/ui";
-import { InputField, TextareaField } from "@/components/ui-components";
+import {
+  AlertDialog,
+  InputField,
+  TextareaField,
+} from "@/components/ui-components";
 import BottomSheet, {
   BottomSheetRef,
 } from "@/components/ui-components/BottomSheet";
@@ -25,7 +30,7 @@ import {
   useDeleteExpense,
   useUpdateExpense,
 } from "@/hooks/expense";
-import { iconsRecord } from "@/lib/config";
+import { iconsRecord, NAV_THEME } from "@/lib/config";
 import { Icon } from "@/lib/icons/Icon";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { cn } from "@/lib/utils";
@@ -498,11 +503,19 @@ export const ExpenseForm = ({ expense }: Props) => {
               )}
             >
               <Text className="text-white font-bold text-base">
-                {isSubmitting
-                  ? "Saving..."
-                  : expense
-                  ? "Update Transaction"
-                  : "Save Transaction"}
+                {isSubmitting ? (
+                  <ActivityIndicator
+                    color={
+                      isDarkColorScheme
+                        ? NAV_THEME.dark.background
+                        : NAV_THEME.light.background
+                    }
+                  />
+                ) : expense ? (
+                  "Update"
+                ) : (
+                  "Save"
+                )}
               </Text>
             </View>
           </Pressable>
@@ -510,41 +523,14 @@ export const ExpenseForm = ({ expense }: Props) => {
       />
       {/* Delete Button */}
       {expense && expense.id && (
-        <Rn.AlertDialog>
-          <Rn.AlertDialogTrigger asChild>
-            <Pressable className="mt-4 py-4 border-2 border-destructive rounded-xl items-center">
-              <Text className="text-destructive font-semibold text-base">
-                {deleteExpense.isPending ? "Deleting..." : "Delete Transaction"}
-              </Text>
-            </Pressable>
-          </Rn.AlertDialogTrigger>
-          <Rn.AlertDialogContent>
-            <Rn.AlertDialogTitle>
-              <Text className="text-lg font-semibold mb-4">
-                Delete Transaction?
-              </Text>
-            </Rn.AlertDialogTitle>
-            <Text className="text-sm text-muted-foreground mb-6">
-              This action cannot be undone. This will permanently delete your
-              transaction.
-            </Text>
-            <View className="flex-row justify-end gap-3">
-              <Rn.AlertDialogCancel>
-                <View className="px-6 py-2 rounded-lg bg-card">
-                  <Text className="text-sm font-medium text-foreground">
-                    Cancel
-                  </Text>
-                </View>
-              </Rn.AlertDialogCancel>
-              <Rn.AlertDialogAction
-                className="px-6 py-2 rounded-lg bg-destructive"
-                onPress={() => handleDeleteExpense(expense?.id || "")}
-              >
-                <Text className="text-sm font-medium text-white">Delete</Text>
-              </Rn.AlertDialogAction>
-            </View>
-          </Rn.AlertDialogContent>
-        </Rn.AlertDialog>
+        <AlertDialog
+          title="Delete Expense?"
+          description="Are you sure you want to delete this expense?"
+          action="Delete"
+          icon="Trash2"
+          iconColor="#f87171"
+          onPress={() => handleDeleteExpense(expense?.id ?? "")}
+        />
       )}
 
       {/* Bottom Sheet */}

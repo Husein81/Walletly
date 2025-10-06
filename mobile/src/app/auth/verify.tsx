@@ -50,14 +50,14 @@ const Verify = () => {
     },
   });
   return (
-    <SafeAreaView edges={["top"]} className="flex-1 bg-background p-8">
+    <SafeAreaView edges={["top"]} className="flex-1 bg-background p-8 ">
       <KeyboardAvoidingView className="flex-1">
         <ScrollView
           className="flex-1 gap-8"
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <Text className="text-primary text-2xl font-semibold mb-4">
+          <Text className="text-primary text-4xl font-semibold mb-4">
             Verify Phone Number
           </Text>
           <Text className="text-primary text-lg mb-8">

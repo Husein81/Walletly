@@ -13,7 +13,7 @@ const Auth = () => {
       className="flex-1 bg-background p-8"
     >
       <View className="flex items-center flex-1">
-        <Text className="text-4xl text-center font-bold text-primary mt-4 mb-2">
+        <Text className="text-6xl text-center font-bold text-primary mt-4 mb-2">
           Welcome to My Money Tracker!
         </Text>
         <View className="flex-1 justify-center items-center">
@@ -23,7 +23,7 @@ const Auth = () => {
             resizeMode="contain"
           />
         </View>
-        <Text className="text-base text-muted mb-6">
+        <Text className="text-base text-muted-foreground mb-6">
           Please login to continue
         </Text>
       </View>

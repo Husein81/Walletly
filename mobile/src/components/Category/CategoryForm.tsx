@@ -267,13 +267,8 @@ const CategoryForm = ({ category }: Props) => {
                     <ActivityIndicator color="white" />
                   ) : (
                     <>
-                      <Icon
-                        name={category ? "Save" : "Plus"}
-                        size={20}
-                        color="white"
-                      />
                       <Text className="text-white text-base font-semibold">
-                        {category ? "Update Category" : "Create Category"}
+                        {category ? "Update" : "Save"}
                       </Text>
                     </>
                   )}

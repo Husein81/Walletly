@@ -8,5 +8,7 @@ export { IconSelector } from "./IconSelector";
 export { TransactionsCard } from "./transactions-card";
 export { Selection } from "./Selection";
 export { default as UserDropdown } from "./user-dropdown";
+export { default as StatsCard } from "./stats-card";
 export { default as ToggleGroup } from "./toggle-group";
+export { default as AlertDialog } from "./alert-dialog";
 export * from "./forms";
