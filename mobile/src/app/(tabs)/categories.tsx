@@ -2,20 +2,16 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useMemo } from "react";
-import { View, Pressable, ScrollView } from "react-native";
+import { Pressable, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import CategoryForm from "@/components/Category/CategoryForm";
 import CategorySectionList from "@/components/Category/CategorySectionList";
-import { Button, Text } from "@/components/ui";
+import { Text } from "@/components/ui";
 import { ListSkeleton, StatsCard } from "@/components/ui-components";
 
 // Local imports
-import { Skeleton } from "@/components/ui/skeleton";
-import { formattedBalance } from "@/functions";
-import { useGetAccounts } from "@/hooks/accounts";
 import { useCategories } from "@/hooks/categories";
-import { useColorScheme } from "@/lib/useColorScheme";
 import { ExpenseType } from "@/types";
 
 // store imports
@@ -24,19 +20,13 @@ import { useAuthStore, useModalStore } from "@/store";
 const Categories = () => {
   const { user } = useAuthStore();
   const { onOpen } = useModalStore();
-  const { isDarkColorScheme } = useColorScheme();
 
   const { data: categories, refetch } = useCategories(user?.id || "");
-  const { data: accounts } = useGetAccounts(user?.id ?? "");
 
-  const totalBalance = useMemo(
-    () => accounts?.reduce((acc, account) => acc + Number(account.balance), 0),
-    [accounts]
-  );
   useFocusEffect(
     useCallback(() => {
       refetch();
-    }, [categories])
+    }, [refetch, categories])
   );
 
   const expenseCategories = useMemo(

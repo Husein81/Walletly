@@ -27,7 +27,6 @@ const Accounts = () => {
 
   useFocusEffect(
     useCallback(() => {
-      // Refetch accounts when the screen is focused
       refetch();
     }, [refetch, accounts])
   );
