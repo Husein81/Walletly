@@ -1,17 +1,15 @@
 // Local Imports
-import { ScrollView } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   Option,
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
   SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Props = {
   defaultValue?: Option;

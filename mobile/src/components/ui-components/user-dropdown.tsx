@@ -1,4 +1,4 @@
-import { View, Pressable, Alert } from "react-native";
+import { View, Pressable, Alert, TouchableOpacity } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button, Rn, Separator, Text } from "../ui";
 import { useAuthStore } from "@/store";
@@ -34,28 +34,16 @@ const UserDropdown = () => {
 
   return (
     <Rn.DropdownMenu>
-      <Rn.DropdownMenuTrigger asChild>
-        <Button variant={"ghost"} className="w-12 h-12 rounded-2xl">
-          <Rn.Avatar alt="User Avatar" className="w-9 h-9">
-            <Rn.AvatarImage
-              source={{
-                uri: `https://ui-avatars.com/api/?name=${
-                  user?.name || "User"
-                }&size=100&background=3b82f6&color=fff`,
-              }}
-            />
-            <Rn.AvatarFallback
-              style={{
-                backgroundColor: "rgba(59, 130, 246, 0.15)",
-              }}
-              className="w-9 h-9 rounded-full flex items-center justify-center border border-primary/30"
-            >
-              <Text style={{ color: "#3b82f6" }} className="font-bold text-sm">
+      <Rn.DropdownMenuTrigger>
+        <View>
+          <Rn.Avatar alt="User Avatar" className="size-12">
+            <Rn.AvatarFallback className="size-12 rounded-full bg-primary flex items-center justify-center border border-primary/30">
+              <Text className="font-bold text-white">
                 {getInitials(user?.name)}
               </Text>
             </Rn.AvatarFallback>
           </Rn.Avatar>
-        </Button>
+        </View>
       </Rn.DropdownMenuTrigger>
       <Rn.DropdownMenuContent
         insets={contentInsets}
@@ -75,7 +63,7 @@ const UserDropdown = () => {
         <Rn.DropdownMenuItem onPress={() => router.push("/user")}>
           <View className="flex-row items-center gap-3 py-1">
             <View className="bg-primary/10 p-2 rounded-lg">
-              <Icon name="User" size={16} color="#3b82f6" />
+              <Icon name="User" size={16} color="#14B8A6" />
             </View>
             <Text className="text-foreground font-medium">View Profile</Text>
           </View>
@@ -88,7 +76,7 @@ const UserDropdown = () => {
               <Icon
                 name={isDarkColorScheme ? "Moon" : "Sun"}
                 size={16}
-                color="#3b82f6"
+                color="#14B8A6"
               />
             </View>
             <Text className="text-foreground font-medium">

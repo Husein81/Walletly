@@ -1,97 +1,129 @@
 // Global Imports
-import { Modal } from "@/components/ui-components";
-import { router, Tabs } from "expo-router";
-import { Platform } from "react-native";
+import { Tabs } from "expo-router";
+import { Platform, TouchableOpacity, View } from "react-native";
 
 // Local Imports
+import { ExpenseForm } from "@/components/Expense";
+import { Modal } from "@/components/ui-components";
 import { Icon } from "@/lib/icons/Icon";
+import { useModalStore } from "@/store";
+import { useColorScheme } from "@/lib/useColorScheme";
+import { NAV_THEME } from "@/lib/theme";
 
 const TabsLayout = () => {
+  const { onOpen } = useModalStore();
+  const { isDarkColorScheme } = useColorScheme();
   return (
     <>
       <Tabs
         screenOptions={{
+          headerShown: false,
+          tabBarBackground: () => (
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: isDarkColorScheme
+                  ? NAV_THEME.dark.colors.card
+                  : NAV_THEME.light.colors.background,
+                borderTopLeftRadius: 16,
+                borderTopRightRadius: 16,
+              }}
+            />
+          ),
+          tabBarShowLabel: true,
+          tabBarActiveTintColor: "#14B8A6", // teal
+          tabBarInactiveTintColor: "#9CA3AF", // gray-400
           tabBarStyle: {
-            height: Platform.OS === "ios" ? 80 : 70,
-            elevation: 0,
-            borderTopWidth: 0,
-            opacity: 0.95,
             position: "absolute",
+            left: 16,
+            right: 16,
+            height: Platform.OS === "ios" ? 70 : 64,
+            borderTopWidth: 0,
+            elevation: 10,
+            shadowColor: "#000",
+            shadowOpacity: 0.08,
+            shadowRadius: 12,
+            shadowOffset: { width: 0, height: 4 },
+          },
+          tabBarLabelStyle: {
+            fontSize: 12,
+            marginBottom: 6,
+            fontWeight: "500",
           },
         }}
       >
+        {/* Home */}
         <Tabs.Screen
           name="index"
           options={{
             title: "Home",
-            headerShown: false,
             tabBarIcon: ({ color }) => (
-              <Icon
-                onPress={() => router.replace("/")}
-                name="House"
-                color={color}
-                size={28}
-              />
+              <Icon name="House" size={24} color={color} />
             ),
           }}
         />
+
+        {/* Stats */}
         <Tabs.Screen
           name="analysis"
           options={{
-            title: "Analysis",
-            headerShown: false,
+            title: "Stats",
             tabBarIcon: ({ color }) => (
-              <Icon
-                onPress={() => router.replace("/analysis")}
-                name="ChartNoAxesColumnIncreasing"
-                color={color}
-                size={28}
-              />
+              <Icon name="ChartPie" size={24} color={color} />
             ),
           }}
         />
+
+        {/* Center FAB */}
+        <Tabs.Screen
+          name="expense"
+          options={{
+            title: "",
+            tabBarLabel: () => null,
+            tabBarIcon: () => (
+              <TouchableOpacity
+                onPress={() => onOpen(<ExpenseForm />, "New Expense")}
+              >
+                <View
+                  className="items-center justify-center"
+                  style={{
+                    width: 56,
+                    height: 56,
+                    borderRadius: 28,
+                    backgroundColor: "#14B8A6",
+                    marginBottom: Platform.OS === "ios" ? 24 : 20,
+                    shadowColor: "#14B8A6",
+                    shadowOpacity: 0.35,
+                    shadowRadius: 10,
+                    shadowOffset: { width: 0, height: 6 },
+                    elevation: 8,
+                  }}
+                >
+                  <Icon name="Plus" size={28} color="#ffffff" />
+                </View>
+              </TouchableOpacity>
+            ),
+          }}
+        />
+
+        {/* Wallet */}
         <Tabs.Screen
           name="accounts"
           options={{
-            title: "Accounts",
-            headerShown: false,
+            title: "Wallet",
             tabBarIcon: ({ color }) => (
-              <Icon
-                onPress={() => router.replace("/accounts")}
-                name="Wallet"
-                color={color}
-                size={28}
-              />
+              <Icon name="Wallet" size={24} color={color} />
             ),
           }}
         />
-        <Tabs.Screen
-          name="categories"
-          options={{
-            title: "Categories",
-            headerShown: false,
-            tabBarIcon: ({ color }) => (
-              <Icon
-                onPress={() => router.replace("/categories")}
-                name="LayoutGrid"
-                color={color}
-                size={28}
-              />
-            ),
-          }}
-        />
+
+        {/* Profile */}
         <Tabs.Screen
           name="user"
           options={{
-            headerShown: false,
-            title: "User",
+            title: "Profile",
             tabBarIcon: ({ color }) => (
-              <Icon
-                onPress={() => router.replace("/user")}
-                name="User"
-                color={color}
-                size={28}
-              />
+              <Icon name="User" size={24} color={color} />
             ),
           }}
         />
@@ -100,4 +132,5 @@ const TabsLayout = () => {
     </>
   );
 };
+
 export default TabsLayout;

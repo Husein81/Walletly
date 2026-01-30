@@ -1,7 +1,7 @@
 // Global Imports
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useForm } from "@tanstack/react-form";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -13,7 +13,7 @@ import {
 import Toast from "react-native-toast-message";
 
 // Local Imports
-import { Label, Rn } from "@/components/ui";
+import { Button, Label } from "@/components/ui";
 import {
   AlertDialog,
   InputField,
@@ -22,7 +22,7 @@ import {
 import BottomSheet, {
   BottomSheetRef,
 } from "@/components/ui-components/BottomSheet";
-import { getColorByIndex } from "@/functions";
+import CategoryForm from "@/components/Category/CategoryForm";
 import { useGetAccounts } from "@/hooks/accounts";
 import { useCategories } from "@/hooks/categories";
 import {
@@ -30,7 +30,7 @@ import {
   useDeleteExpense,
   useUpdateExpense,
 } from "@/hooks/expense";
-import { iconsRecord, NAV_THEME } from "@/lib/config";
+import { iconsRecord } from "@/lib/config";
 import { Icon } from "@/lib/icons/Icon";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { cn } from "@/lib/utils";
@@ -38,6 +38,7 @@ import { Account, Category, Expense, ExpenseType } from "@/types";
 
 // store imports
 import { useAuthStore, useModalStore } from "@/store";
+import { NAV_THEME } from "@/lib/theme";
 
 type Props = {
   expense?: Expense;
@@ -50,7 +51,7 @@ enum BottomSheetType {
 
 export const ExpenseForm = ({ expense }: Props) => {
   const { user } = useAuthStore();
-  const { onClose } = useModalStore();
+  const { onClose, onOpen } = useModalStore();
   const { isDarkColorScheme } = useColorScheme();
 
   // Fetch accounts and categories
@@ -60,13 +61,13 @@ export const ExpenseForm = ({ expense }: Props) => {
   const bottomSheetRef = useRef<BottomSheetRef>(null);
 
   const [selectedExpenseType, setSelectedExpenseType] = useState<ExpenseType>(
-    expense?.type || ExpenseType.EXPENSE
+    expense?.type || ExpenseType.EXPENSE,
   );
   const [accountSelectionTarget, setAccountSelectionTarget] = useState<
     "from" | "to"
   >("from");
   const [selectedAccount, setSelectedAccount] = useState<Account | undefined>(
-    expense?.fromAccount || undefined
+    expense?.fromAccount || undefined,
   );
   const [selectedToAccount, setSelectedToAccount] = useState<
     Account | undefined
@@ -82,9 +83,13 @@ export const ExpenseForm = ({ expense }: Props) => {
 
   // expense types
   const expenseTypes = [
-    { label: "Income", value: ExpenseType.INCOME },
-    { label: "Expense", value: ExpenseType.EXPENSE },
-    { label: "Transfer", value: ExpenseType.TRANSFER },
+    { label: "Income", value: ExpenseType.INCOME, icon: "CircleArrowUp" },
+    { label: "Expense", value: ExpenseType.EXPENSE, icon: "CircleArrowDown" },
+    {
+      label: "Transfer",
+      value: ExpenseType.TRANSFER,
+      icon: "LayoutDashboard",
+    },
   ];
 
   const isSelected = (type: ExpenseType) => selectedExpenseType === type;
@@ -95,15 +100,12 @@ export const ExpenseForm = ({ expense }: Props) => {
     return categories.filter((cat) => cat.type === selectedExpenseType);
   }, [categories, selectedExpenseType]);
 
-  const handleExpenseTypePress = useCallback(
-    (type: ExpenseType) => {
-      if (type !== selectedExpenseType) {
-        setSelectedCategory(undefined);
-        setSelectedExpenseType(type);
-      }
-    },
-    [selectedExpenseType]
-  );
+  const handleExpenseTypePress = (type: ExpenseType) => {
+    if (type !== selectedExpenseType) {
+      setSelectedCategory(undefined);
+      setSelectedExpenseType(type);
+    }
+  };
 
   const openBottomSheet = (type: BottomSheetType, target?: "from" | "to") => {
     setBottomSheetType(type);
@@ -160,7 +162,7 @@ export const ExpenseForm = ({ expense }: Props) => {
         if (expense) {
           await updateExpense.mutateAsync({
             ...payload,
-            id: expense.id,
+            id: expense.id!,
           });
         } else {
           await createExpense.mutateAsync(payload);
@@ -210,49 +212,36 @@ export const ExpenseForm = ({ expense }: Props) => {
         {/* Expense Type Selection - Modern Toggle Pills */}
         <View className="mb-6">
           <Label className="mb-3 text-base font-semibold">
-            Transaction Type
+            {expense ? "Edit Expense" : "New Expense"}
           </Label>
-          <View className="flex-row gap-2">
+          <View className="flex-row gap-2 bg-primary/10 p-1 rounded-xl">
             {expenseTypes.map((expenseType) => {
               const isSelectedType = isSelected(expenseType.value);
-              const isExpenseType = expenseType.value === ExpenseType.EXPENSE;
-              const isIncomeType = expenseType.value === ExpenseType.INCOME;
-
               return (
-                <Pressable
+                <Button
                   key={expenseType.value}
                   onPress={() => handleExpenseTypePress(expenseType.value)}
-                  className="flex-1 active:scale-95"
+                  className={cn(
+                    "flex-row flex-1 rounded-xl gap-1 py-3 px-4  items-center",
+                    {
+                      "bg-primary text-white": isSelectedType,
+                    },
+                  )}
+                  variant={isSelectedType ? "default" : "ghost"}
                 >
-                  <View
-                    className={cn(
-                      "py-3 px-4 rounded-xl items-center border border-border bg-card/50",
-                      {
-                        "bg-red-600/30 border-red-600":
-                          isSelectedType && isExpenseType,
-                      },
-                      {
-                        "bg-green-600/30 border-green-600":
-                          isSelectedType && isIncomeType,
-                      },
-                      {
-                        "bg-blue-600/30 border-blue-600":
-                          isSelectedType && isTransfer,
-                      }
-                    )}
+                  <Icon
+                    name={expenseType.icon}
+                    size={14}
+                    color={isSelectedType ? "white" : "#6b7280"}
+                  />
+                  <Text
+                    className={cn("text-muted-foreground font-medium text-sm", {
+                      "text-white": isSelectedType,
+                    })}
                   >
-                    <Text
-                      className={cn(
-                        "text-muted-foreground font-medium text-sm",
-                        { "text-red-600": isSelectedType && isExpenseType },
-                        { "text-green-600": isSelectedType && isIncomeType },
-                        { "text-blue-600": isSelectedType && isTransfer }
-                      )}
-                    >
-                      {expenseType.label}
-                    </Text>
-                  </View>
-                </Pressable>
+                    {expenseType.label}
+                  </Text>
+                </Button>
               );
             })}
           </View>
@@ -267,20 +256,13 @@ export const ExpenseForm = ({ expense }: Props) => {
             </Label>
             <Pressable
               onPress={() => openBottomSheet(BottomSheetType.ACCOUNT, "from")}
-              className="bg-card border border-border rounded-xl p-4 flex-row items-center justify-between"
+              className="bg-primary/10 border border-border rounded-xl p-4 flex-row items-center justify-between"
             >
               <View className="flex-row items-center gap-3">
-                <View
-                  className="p-2 rounded-lg"
-                  style={{
-                    backgroundColor: getColorByIndex(
-                      selectedAccount?.name || "default"
-                    ),
-                  }}
-                >
+                <View className="p-2 rounded-xl bg-primary/10">
                   <Icon
                     name={iconsRecord[selectedAccount?.imageUrl || "wallet"]}
-                    color="#fff"
+                    color="#14B8A6"
                     size={20}
                   />
                 </View>
@@ -298,20 +280,13 @@ export const ExpenseForm = ({ expense }: Props) => {
               <Label className="mb-2 text-sm font-medium">Category</Label>
               <Pressable
                 onPress={() => openBottomSheet(BottomSheetType.CATEGORY, "to")}
-                className="bg-card border border-border rounded-xl p-4 flex-row items-center justify-between"
+                className="bg-primary/10 border border-border rounded-xl p-4 flex-row items-center justify-between"
               >
                 <View className="flex-row items-center gap-3">
-                  <View
-                    className="p-2 rounded-lg"
-                    style={{
-                      backgroundColor: getColorByIndex(
-                        selectedCategory?.name || "default"
-                      ),
-                    }}
-                  >
+                  <View className="p-2 rounded-xl bg-primary/10">
                     <Icon
                       name={iconsRecord[selectedCategory?.imageUrl || "tag"]}
-                      color="#fff"
+                      color="#14B8A6"
                       size={20}
                     />
                   </View>
@@ -327,22 +302,15 @@ export const ExpenseForm = ({ expense }: Props) => {
               <Label className="mb-2 text-sm font-medium">To Account</Label>
               <Pressable
                 onPress={() => openBottomSheet(BottomSheetType.ACCOUNT, "to")}
-                className="bg-card border border-border rounded-xl p-4 flex-row items-center justify-between"
+                className="bg-primary/10 border border-border rounded-xl p-4 flex-row items-center justify-between"
               >
                 <View className="flex-row items-center gap-3">
-                  <View
-                    className="p-2 rounded-lg"
-                    style={{
-                      backgroundColor: getColorByIndex(
-                        selectedToAccount?.name || "default"
-                      ),
-                    }}
-                  >
+                  <View className="p-2 rounded-xl bg-primary/10">
                     <Icon
                       name={
                         iconsRecord[selectedToAccount?.imageUrl || "wallet"]
                       }
-                      color="#fff"
+                      color="#14B8A6"
                       size={20}
                     />
                   </View>
@@ -405,7 +373,7 @@ export const ExpenseForm = ({ expense }: Props) => {
                               day: "2-digit",
                               month: "short",
                               year: "numeric",
-                            }
+                            },
                           )
                         : new Date().toLocaleDateString("en-GB", {
                             day: "2-digit",
@@ -433,7 +401,7 @@ export const ExpenseForm = ({ expense }: Props) => {
                               hour: "2-digit",
                               minute: "2-digit",
                               hour12: true,
-                            }
+                            },
                           )
                         : new Date().toLocaleTimeString("en-US", {
                             hour: "2-digit",
@@ -464,14 +432,14 @@ export const ExpenseForm = ({ expense }: Props) => {
                             selectedDate.getMonth(),
                             selectedDate.getDate(),
                             current.getHours(),
-                            current.getMinutes()
+                            current.getMinutes(),
                           )
                         : new Date(
                             current.getFullYear(),
                             current.getMonth(),
                             current.getDate(),
                             selectedDate.getHours(),
-                            selectedDate.getMinutes()
+                            selectedDate.getMinutes(),
                           );
 
                     field.handleChange(updatedDate);
@@ -493,13 +461,8 @@ export const ExpenseForm = ({ expense }: Props) => {
           >
             <View
               className={cn(
-                "py-4 rounded-xl items-center",
-                {
-                  "bg-green-500": selectedExpenseType === ExpenseType.INCOME,
-                },
-                { "bg-red-500": selectedExpenseType === ExpenseType.EXPENSE },
-                { "bg-blue-500": selectedExpenseType === ExpenseType.TRANSFER },
-                (!canSubmit || isSubmitting) && "opacity-50"
+                "py-4 rounded-xl items-center bg-primary",
+                (!canSubmit || isSubmitting) && "opacity-50",
               )}
             >
               <Text className="text-white font-bold text-base">
@@ -507,8 +470,8 @@ export const ExpenseForm = ({ expense }: Props) => {
                   <ActivityIndicator
                     color={
                       isDarkColorScheme
-                        ? NAV_THEME.dark.background
-                        : NAV_THEME.light.background
+                        ? NAV_THEME.dark.colors.background
+                        : NAV_THEME.light.colors.background
                     }
                   />
                 ) : expense ? (
@@ -538,8 +501,8 @@ export const ExpenseForm = ({ expense }: Props) => {
         ref={bottomSheetRef}
         data={
           bottomSheetType === BottomSheetType.ACCOUNT
-            ? accounts ?? []
-            : filteredCategories ?? []
+            ? (accounts ?? [])
+            : (filteredCategories ?? [])
         }
         title={
           bottomSheetType === BottomSheetType.ACCOUNT
@@ -547,7 +510,6 @@ export const ExpenseForm = ({ expense }: Props) => {
             : "Select Category"
         }
         renderItem={(item: Account | Category, index: number) => {
-          const color = getColorByIndex(item.name);
           const isAccountType = bottomSheetType === BottomSheetType.ACCOUNT;
           const isSelectedItem = isAccountType
             ? accountSelectionTarget === "from"
@@ -574,17 +536,14 @@ export const ExpenseForm = ({ expense }: Props) => {
                 "mx-4 mb-3 p-4 rounded-xl flex-row items-center justify-between bg-card border",
                 isSelectedItem
                   ? "border-primary bg-primary/10"
-                  : "border-border"
+                  : "border-border",
               )}
             >
               <View className="flex-row items-center gap-3">
-                <View
-                  className="p-3 rounded-xl"
-                  style={{ backgroundColor: color }}
-                >
+                <View className="p-3 rounded-xl bg-primary/10">
                   <Icon
                     name={iconsRecord[item.imageUrl || "Wallet"]}
-                    color="#fff"
+                    color="#14B8A6"
                     size={24}
                   />
                 </View>

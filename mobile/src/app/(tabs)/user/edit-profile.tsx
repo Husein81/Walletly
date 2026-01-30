@@ -13,7 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 
 // Local imports
-import { Button, Text } from "@/components/ui";
+import { Text } from "@/components/ui";
 import { Icon } from "@/lib/icons/Icon";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { useAuthStore } from "@/store";
@@ -65,7 +65,7 @@ const EditProfile = () => {
             style: "destructive",
             onPress: () => router.back(),
           },
-        ]
+        ],
       );
     } else {
       router.back();

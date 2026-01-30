@@ -7,8 +7,9 @@ import {
   XAxis,
   YAxis,
 } from "react-native-svg-charts";
-import { COLOR_PALETTE, NAV_THEME, SCREEN_WIDTH } from "@/lib/config";
+import { COLOR_PALETTE, SCREEN_WIDTH } from "@/lib/config";
 import { useColorScheme } from "@/lib/useColorScheme";
+import { NAV_THEME } from "@/lib/theme";
 
 type Props = {
   data: {
@@ -44,8 +45,8 @@ const LineChart = ({ data, color, yAxisLabel }: Props) => {
         stroke={color}
         fill={
           isDarkColorScheme
-            ? NAV_THEME.dark.background
-            : NAV_THEME.light.background
+            ? NAV_THEME.dark.colors.background
+            : NAV_THEME.light.colors.background
         }
         strokeWidth={2}
         onPress={() => setSelectedIndex(index)}
@@ -87,7 +88,7 @@ const LineChart = ({ data, color, yAxisLabel }: Props) => {
         x2="100%"
         y1={y(value)}
         y2={y(value)}
-        stroke={NAV_THEME.dark.shuttleGray + "50"}
+        stroke={NAV_THEME.dark.colors.border + "50"}
         strokeWidth={1}
       />
     ));
@@ -106,7 +107,7 @@ const LineChart = ({ data, color, yAxisLabel }: Props) => {
         <YAxis
           data={lineData}
           contentInset={{ top: 20, bottom: 30 }}
-          svg={{ fontSize: 12, fill: NAV_THEME.dark.iron }}
+          svg={{ fontSize: 12, fill: NAV_THEME.dark.colors.card }}
           numberOfTicks={5}
           formatLabel={(value) => `${yAxisLabel}${value}`}
         />
@@ -135,7 +136,7 @@ const LineChart = ({ data, color, yAxisLabel }: Props) => {
             data={lineData}
             formatLabel={(_, index) => data.labels[index] || ""}
             contentInset={{ left: 15, right: 10 }}
-            svg={{ fontSize: 12, fill: NAV_THEME.dark.iron }}
+            svg={{ fontSize: 12, fill: NAV_THEME.dark.colors.card }}
             scale={scale.scaleBand}
             xAccessor={({ index }) => index}
           />

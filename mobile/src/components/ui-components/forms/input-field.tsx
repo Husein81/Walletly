@@ -31,7 +31,7 @@ const InputField = ({
   return (
     <View className="gap-2">
       <Label>{label}</Label>
-      <View className="border border-input h-16 py-1 justify-center rounded-2xl overflow-hidden">
+      <View className="border border-input h-16 py-1 justify-center rounded-xl overflow-hidden">
         {icon && (
           <Icon
             color={isDarkColorScheme ? "#71717a" : "#a1a1aa"}
@@ -43,7 +43,7 @@ const InputField = ({
           className={cn(
             "text-foreground text-xl flex-1 border-0 h-full",
             { "pl-12": icon },
-            className
+            className,
           )}
           value={String(field.state.value)}
           secureTextEntry={isPassword && !show}

@@ -1,28 +1,5 @@
 import { Dimensions } from "react-native";
 
-export const NAV_THEME = {
-  light: {
-    background: "hsl(220 20% 98%)", // soft light gray background
-    border: "hsl(220 14% 89%)", // light border
-    card: "hsl(0 0% 100%)", // white card
-    notification: "hsl(0 84.2% 60.2%)", // destructive
-    primary: "#3b82f6", // primary
-    text: "hsl(240 10% 3.9%)", // foreground
-    iron: "#c0c4c9",
-    shuttleGray: "#6A6D70",
-  },
-  dark: {
-    background: "#000", // deep navy background
-    border: "hsl(220 12% 20%)", // dark border
-    card: "#18181b", // dark card background
-    notification: "hsl(0 72% 51%)", // destructive
-    primary: "hsl(220 10% 90%)", // slightly blueish off-white
-    text: "hsl(220 10% 90%)", // slightly blueish off-white
-    iron: "#c0c4c9",
-    shuttleGray: "#6A6D70",
-  },
-};
-
 export const COLOR_PALETTE = [
   "#FF6B6B", // red
   "#FFB347", // orange

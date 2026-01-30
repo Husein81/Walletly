@@ -1,11 +1,11 @@
 // Global imports
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
-import { jwtDecode } from "jwt-decode";
 import { create } from "zustand";
 
 // Local imports
 import { User } from "../types";
+import { authApi } from "@/api/auth";
 
 interface DecodedToken {
   exp: number; // UNIX timestamp
@@ -48,6 +48,10 @@ export const useAuthStore = create<AuthStore>((set) => ({
   },
 
   clearAuth: async () => {
+    const token = await AsyncStorage.getItem("authToken");
+    if (token) {
+      await authApi.logout(token);
+    }
     await AsyncStorage.removeItem("authToken");
     await AsyncStorage.removeItem("authUser");
     set({ user: null, token: null });
@@ -58,18 +62,8 @@ export const useAuthStore = create<AuthStore>((set) => ({
     const token = await AsyncStorage.getItem("authToken");
     try {
       if (token) {
-        const decoded = jwtDecode<DecodedToken>(token);
-        const now = Date.now() / 1000;
-
-        if (decoded.exp && decoded.exp < now) {
-          // Token expired
-          await AsyncStorage.removeItem("authToken");
-          await AsyncStorage.removeItem("authUser");
-          set({ user: null, token: null });
-          router.replace("/auth"); // redirect to login
-          return;
-        }
-
+        // For UUID-based tokens (local sessions), just check if they exist
+        // In a production app with JWT tokens, you'd decode and check expiry
         const userJson = await AsyncStorage.getItem("authUser");
         if (userJson) {
           set({ user: JSON.parse(userJson), token });
@@ -77,10 +71,10 @@ export const useAuthStore = create<AuthStore>((set) => ({
       }
       set({ isReady: true });
     } catch (err) {
-      // Malformed token
+      // Error loading auth data
       await AsyncStorage.removeItem("authToken");
       await AsyncStorage.removeItem("authUser");
-      set({ user: null, token: null });
+      set({ user: null, token: null, isReady: true });
       router.replace("/auth");
     }
   },

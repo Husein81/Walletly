@@ -5,8 +5,8 @@ import { Icon } from "@/lib/icons/Icon";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { cn } from "@/lib/utils";
 import { buttonVariants, Button as SButton } from "../ui/button";
-import { NAV_THEME } from "@/lib/config";
 import { VariantProps } from "class-variance-authority";
+import { NAV_THEME } from "@/lib/theme";
 
 type Props = {
   onPress?: (args?: any) => void;
@@ -61,8 +61,8 @@ export const Button = ({
         <ActivityIndicator
           color={
             isDarkColorScheme
-              ? NAV_THEME.dark.background
-              : NAV_THEME.light.background
+              ? NAV_THEME.dark.colors.background
+              : NAV_THEME.light.colors.background
           }
         />
       ) : (
@@ -72,7 +72,11 @@ export const Button = ({
               onPress={onPress}
               name={iconName ?? "default-icon"}
               size={iconSize}
-              color={isDarkColorScheme ? "white" : "black"}
+              color={
+                isDarkColorScheme
+                  ? NAV_THEME.dark.colors.text
+                  : NAV_THEME.light.colors.text
+              }
             />
           )}
           {children}
@@ -81,7 +85,11 @@ export const Button = ({
             <Icon
               onPress={onPress}
               name={rightIconName}
-              color={isDarkColorScheme ? "white" : "black"}
+              color={
+                isDarkColorScheme
+                  ? NAV_THEME.dark.colors.text
+                  : NAV_THEME.light.colors.text
+              }
             />
           )}
         </>

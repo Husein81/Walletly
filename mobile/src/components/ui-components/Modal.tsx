@@ -1,6 +1,12 @@
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { PortalHost } from "@rn-primitives/portal";
-import { Pressable, Modal as RModal, ScrollView, View } from "react-native";
+import {
+  Pressable,
+  Modal as RModal,
+  ScrollView,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 // local imports
@@ -39,7 +45,7 @@ export const Modal = () => {
               "flex-1 p-6",
               transparent
                 ? "bg-black/65 backdrop-blur justify-center items-center"
-                : "bg-background"
+                : "bg-background",
             )}
           >
             <SafeAreaView
@@ -47,23 +53,20 @@ export const Modal = () => {
                 transparent
                   ? "bg-card rounded-xl w-[90%] max-h-[80%] p-4"
                   : "flex-1",
-                "gap-4"
+                "gap-4",
               )}
             >
               {title && (
                 <View className="w-full flex-row items-center justify-center">
-                  <Pressable
+                  <TouchableOpacity
                     onPress={onClose}
-                    className="bg-card rounded-full p-2 border border-border absolute left-0"
+                    className="absolute left-0"
                   >
-                    <Icon
-                      name="ChevronLeft"
-                      color={isDarkColorScheme ? "#71717a" : "#a1a1aa"}
-                      size={24}
-                      onPress={onClose}
-                      className="text-foreground"
-                    />
-                  </Pressable>
+                    <Text className="text-muted-foreground text-sm">
+                      Cancel
+                    </Text>
+                  </TouchableOpacity>
+
                   <Text className="text-2xl font-semibold ">{title}</Text>
                 </View>
               )}

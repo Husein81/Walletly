@@ -37,12 +37,12 @@ const CategoryForm = ({ category }: Props) => {
 
   const [selectedIcon, setSelectedIcon] = useState(category?.imageUrl || "pc");
   const [selectedType, setSelectedType] = useState<ExpenseType>(
-    category?.type || ExpenseType.EXPENSE
+    category?.type || ExpenseType.EXPENSE,
   );
 
   const createCategory = useCreateCategory();
   const upgradeCategory = useUpdateCategory();
-  const deleteCategory = useDeleteCategory(category?.id ?? "");
+  const deleteCategory = useDeleteCategory();
 
   const handleDelete = () => {
     Alert.alert(
@@ -55,7 +55,7 @@ const CategoryForm = ({ category }: Props) => {
           style: "destructive",
           onPress: async () => {
             try {
-              await deleteCategory.mutateAsync();
+              await deleteCategory.mutateAsync(category?.id ?? "");
               onClose();
             } catch (error) {
               Toast.show({
@@ -66,7 +66,7 @@ const CategoryForm = ({ category }: Props) => {
             }
           },
         },
-      ]
+      ],
     );
   };
 
@@ -133,7 +133,7 @@ const CategoryForm = ({ category }: Props) => {
                     "p-4 rounded-2xl border-2 flex-row items-center justify-center gap-2",
                     selectedType === ExpenseType.EXPENSE
                       ? "bg-red-500/10 border-red-500"
-                      : "bg-card border-border"
+                      : "bg-card border-border",
                   )}
                 >
                   <Icon
@@ -150,7 +150,7 @@ const CategoryForm = ({ category }: Props) => {
                       "text-base font-semibold",
                       selectedType === ExpenseType.EXPENSE
                         ? "text-red-500"
-                        : "text-muted-foreground"
+                        : "text-muted-foreground",
                     )}
                   >
                     Expense
@@ -171,8 +171,8 @@ const CategoryForm = ({ category }: Props) => {
                   className={cn(
                     "p-4 rounded-2xl border-2 flex-row items-center justify-center gap-2",
                     selectedType === ExpenseType.INCOME
-                      ? "bg-green-500/10 border-green-500"
-                      : "bg-card border-border"
+                      ? "bg-primary/10 border-primary"
+                      : "bg-card border-border",
                   )}
                 >
                   <Icon
@@ -180,7 +180,7 @@ const CategoryForm = ({ category }: Props) => {
                     size={20}
                     color={
                       selectedType === ExpenseType.INCOME
-                        ? "#22c55e"
+                        ? "#14b8a6"
                         : "#a1a1aa"
                     }
                   />
@@ -188,14 +188,14 @@ const CategoryForm = ({ category }: Props) => {
                     className={cn(
                       "text-base font-semibold",
                       selectedType === ExpenseType.INCOME
-                        ? "text-green-500"
-                        : "text-muted-foreground"
+                        ? "text-primary"
+                        : "text-muted-foreground",
                     )}
                   >
                     Income
                   </Text>
                   {selectedType === ExpenseType.INCOME && (
-                    <View className="absolute -top-2 -right-2 bg-green-500 rounded-full p-1">
+                    <View className="absolute -top-2 -right-2 bg-primary rounded-full p-1">
                       <Icon name="Check" size={12} color="white" />
                     </View>
                   )}
@@ -252,7 +252,7 @@ const CategoryForm = ({ category }: Props) => {
                 colors={
                   selectedType === ExpenseType.EXPENSE
                     ? ["#ef4444", "#dc2626"]
-                    : ["#22c55e", "#16a34a"]
+                    : ["#14b8a6", "#0d9488"]
                 }
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}

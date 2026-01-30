@@ -14,7 +14,7 @@ const UserCard = ({ icon, title, subTitle, onPress }: Props) => {
       <View className="flex-row items-center p-4 border-b border-border/30">
         {icon && (
           <View className="bg-primary/10 p-2.5 rounded-xl mr-4">
-            <Icon name={icon} size={20} color="#3b82f6" />
+            <Icon name={icon} size={20} color="#14B8A6" />
           </View>
         )}
         <View className="flex-1">

@@ -1,205 +1,159 @@
 // Global imports
-import { LinearGradient } from "expo-linear-gradient";
-import { useFocusEffect } from "expo-router";
 import { useCallback, useMemo } from "react";
-import { Pressable, ScrollView, View } from "react-native";
+import { View, ScrollView, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useFocusEffect } from "expo-router";
 
 // Local imports
-import AccountForm from "@/components/Account/AccountForm";
-import AccountList from "@/components/Account/AccountList";
 import { Text } from "@/components/ui";
-import { ListSkeleton } from "@/components/ui-components";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Icon } from "@/lib/icons/Icon";
+import AccountForm from "@/components/Account/AccountForm";
 import { formattedBalance } from "@/functions";
 import { useGetAccounts } from "@/hooks/accounts";
 
-// store imports
+// Stores
 import { useAuthStore, useModalStore } from "@/store";
-import { useColorScheme } from "@/lib/useColorScheme";
+import AccountCard from "@/components/Account/AccountCard";
 
 const Accounts = () => {
   const { user } = useAuthStore();
   const { onOpen } = useModalStore();
-  const { isDarkColorScheme } = useColorScheme();
 
-  const { data: accounts, refetch } = useGetAccounts(user?.id ?? "");
+  const {
+    data: accounts = [],
+    refetch,
+    isLoading,
+  } = useGetAccounts(user?.id ?? "");
 
   useFocusEffect(
     useCallback(() => {
       refetch();
-    }, [refetch, accounts])
+    }, [refetch]),
   );
 
+  // Total balance
   const totalBalance = useMemo(
-    () => accounts?.reduce((acc, account) => acc + Number(account.balance), 0),
-    [accounts]
+    () => accounts.reduce((sum, a) => sum + Number(a.balance), 0),
+    [accounts],
   );
 
-  const sortedAccountsByDate = useMemo(() => {
-    if (!accounts) return [];
-
-    return [...accounts].sort((a, b) => {
-      const aDate = new Date(a.createdAt ?? 0).getTime();
-      const bDate = new Date(b.createdAt ?? 0).getTime();
-      return bDate - aDate; // descending order
-    });
+  // Group balances
+  const summary = useMemo(() => {
+    return accounts.reduce(
+      (acc, account) => {
+        const label = account.imageUrl?.toLowerCase() ?? "";
+        if (label.includes("card")) acc.credit += Number(account.balance);
+        else if (label.includes("piggy"))
+          acc.savings += Number(account.balance);
+        else acc.checking += Number(account.balance);
+        return acc;
+      },
+      { checking: 0, credit: 0, savings: 0 },
+    );
   }, [accounts]);
 
-  const handleOpenForm = () => onOpen(<AccountForm />, "Add new account");
+  const openAddAccount = () => onOpen(<AccountForm />, "Add account");
 
   return (
-    <SafeAreaView edges={["top"]} className="flex-1 bg-background">
+    <SafeAreaView className="flex-1 bg-background">
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 32 }}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 32 }}
       >
-        {/* Quick Add Account Card */}
-        <View className="px-5 pt-6 pb-2">
-          <Pressable onPress={handleOpenForm}>
-            <LinearGradient
-              colors={["#10b981", "#059669"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={{
-                borderRadius: 20,
-                padding: 24,
-                shadowColor: "#10b981",
-                shadowOffset: { width: 0, height: 8 },
-                shadowOpacity: 0.3,
-                shadowRadius: 16,
-                elevation: 8,
-              }}
-            >
-              <View className="flex-row items-center justify-between">
-                <View className="flex-1">
-                  <Text className="text-white text-xl font-bold mb-1">
-                    Create Wallet
-                  </Text>
-                  <Text className="text-white/80 text-sm">
-                    Track your balances and transactions
-                  </Text>
-                </View>
-                <View className="bg-white/20 p-4 rounded-2xl">
-                  <Text className="text-white text-2xl">💼</Text>
-                </View>
-              </View>
-            </LinearGradient>
-          </Pressable>
+        {/* HEADER */}
+        <View className="px-5 pt-4 pb-6 flex-row justify-between items-center">
+          <View>
+            <Text className="text-2xl font-bold text-foreground">Accounts</Text>
+            <Text className="text-sm text-muted-foreground mt-1">
+              Manage your cash, cards, and savings
+            </Text>
+          </View>
         </View>
 
-        {/* Total Balance Card */}
-        <View className="px-5 pt-4 pb-2">
-          <LinearGradient
-            colors={
-              isDarkColorScheme
-                ? ["#202020", "#28282b", "#37373a"]
-                : ["#fafafa", "#f4f4f5", "#e4e4e7"]
-            }
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={{
-              width: "100%",
-              maxWidth: 350,
-              borderRadius: 24,
-              padding: 28,
-              shadowColor: "#000000",
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.25,
-              shadowRadius: 12,
-              elevation: 4,
-              borderWidth: 1,
-              borderColor: isDarkColorScheme
-                ? "rgba(63, 63, 70, 0.3)"
-                : "rgba(228, 228, 231, 0.8)",
-            }}
-          >
-            <Text className="text-muted-foreground text-sm font-medium mb-2">
-              TOTAL BALANCE
+        {/* TOTAL BALANCE CARD */}
+        <View className="px-5 mb-6">
+          <View className="bg-card border border-border rounded-2xl p-5">
+            <Text className="text-muted-foreground text-sm mb-1">
+              Total balance
             </Text>
-            {totalBalance !== undefined ? (
-              <Text className="text-foreground text-4xl font-bold mb-3">
-                {formattedBalance(totalBalance)}
-              </Text>
-            ) : (
-              <Skeleton className="w-3/4 h-12 rounded-xl bg-muted/30 mb-3" />
-            )}
-            <View className="flex-row items-center gap-2">
-              <View className="bg-primary/10 px-3 py-1.5 rounded-full">
-                <Text className="text-primary text-xs font-semibold">
-                  {accounts?.length || 0} Account
-                  {accounts?.length !== 1 ? "s" : ""}
+
+            <Text className="text-foreground text-3xl font-bold mb-4">
+              {formattedBalance(totalBalance)}
+            </Text>
+
+            <View className="flex-row justify-between">
+              <View>
+                <Text className="text-muted-foreground/70 text-xs">
+                  Cash & Checking
+                </Text>
+                <Text className="text-muted-foreground font-semibold">
+                  {formattedBalance(summary.checking)}
+                </Text>
+              </View>
+
+              <View>
+                <Text className="text-muted-foreground/70 text-xs">
+                  Credit available
+                </Text>
+                <Text className="text-muted-foreground font-semibold">
+                  {formattedBalance(summary.credit)}
+                </Text>
+              </View>
+
+              <View>
+                <Text className="text-muted-foreground/70 text-xs">
+                  Savings
+                </Text>
+                <Text className="text-muted-foreground font-semibold">
+                  {formattedBalance(summary.savings)}
                 </Text>
               </View>
             </View>
-          </LinearGradient>
+          </View>
         </View>
 
-        {/* My Wallets Section */}
-        <View className="px-5 mt-6">
-          <View className="flex-row items-center justify-between mb-4">
-            <View>
-              <Text className="text-foreground text-2xl font-bold">
-                My Wallets
-              </Text>
-              <Text className="text-muted-foreground text-sm mt-1">
-                {accounts?.length || 0} active wallet
-                {accounts?.length !== 1 ? "s" : ""}
-              </Text>
-            </View>
-            <Pressable
-              onPress={handleOpenForm}
-              className="bg-green-500/80 px-4 py-2 rounded-full active:scale-95"
-            >
-              <Text className="text-primary text-sm font-semibold">+ Add</Text>
-            </Pressable>
-          </View>
+        {/* YOUR ACCOUNTS HEADER */}
+        <View className="px-5 mb-3 flex-row items-center justify-between">
+          <Text className="text-lg font-semibold text-foreground">
+            Your accounts
+          </Text>
 
-          {accounts && accounts.length > 0 ? (
-            <AccountList accounts={sortedAccountsByDate} />
-          ) : accounts && accounts.length === 0 ? (
-            <View className="items-center py-16">
-              <LinearGradient
-                colors={["#d1fae5", "#a7f3d0"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={{
-                  borderRadius: 100,
-                  padding: 32,
-                  marginBottom: 16,
-                }}
+          <Pressable
+            onPress={openAddAccount}
+            className="flex-row items-center bg-primary rounded-full px-3 py-1"
+          >
+            <Icon name="Plus" size={16} color="white" />
+            <Text className="text-white text-sm font-semibold ml-1">Add</Text>
+          </Pressable>
+        </View>
+
+        {/* ACCOUNTS LIST */}
+        <View className="px-5 gap-2">
+          {!isLoading && accounts.length === 0 && (
+            <View className="items-center mt-16">
+              <Text className="text-lg font-semibold text-foreground mb-2">
+                No accounts yet
+              </Text>
+              <Text className="text-sm text-muted-foreground text-center mb-6">
+                Create your first wallet to start tracking
+              </Text>
+
+              <Pressable
+                onPress={openAddAccount}
+                className="bg-primary px-6 py-3 rounded-xl"
               >
-                <Text className="text-7xl">💼</Text>
-              </LinearGradient>
-              <Text className="text-foreground text-xl font-bold mb-2">
-                No Accounts Yet
-              </Text>
-              <Text className="text-muted-foreground text-center px-8 mb-8">
-                Create your first wallet to start tracking your finances
-              </Text>
-              <Pressable onPress={handleOpenForm} className="active:scale-95">
-                <LinearGradient
-                  colors={["#10b981", "#059669"]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={{
-                    borderRadius: 16,
-                    paddingVertical: 14,
-                    paddingHorizontal: 32,
-                  }}
-                >
-                  <Text className="text-white text-base font-semibold">
-                    Create Your First Wallet
-                  </Text>
-                </LinearGradient>
+                <Text className="text-white font-semibold">Create account</Text>
               </Pressable>
             </View>
-          ) : (
-            <ListSkeleton />
           )}
+
+          {accounts.map((account) => (
+            <AccountCard key={account.id} account={account} />
+          ))}
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
+
 export default Accounts;

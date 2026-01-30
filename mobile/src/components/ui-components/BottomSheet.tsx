@@ -9,9 +9,9 @@ import { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
 import { Text, View, ViewStyle } from "react-native";
 
 // Local Imports
-import { NAV_THEME } from "@/lib/config";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { Account, Category } from "@/types";
+import { NAV_THEME } from "@/lib/theme";
 
 type T = Account | Category;
 
@@ -35,7 +35,7 @@ const BottomSheet = forwardRef(
       title = "Items",
       contentContainerStyle,
     }: BottomSheetProps,
-    ref: React.Ref<BottomSheetRef>
+    ref: React.Ref<BottomSheetRef>,
   ) => {
     const { isDarkColorScheme } = useColorScheme();
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
@@ -55,16 +55,16 @@ const BottomSheet = forwardRef(
         enableDynamicSizing
         handleStyle={{
           backgroundColor: isDarkColorScheme
-            ? NAV_THEME.dark.card
-            : NAV_THEME.light.card,
+            ? NAV_THEME.dark.colors.card
+            : NAV_THEME.light.colors.card,
           borderTopLeftRadius: 10,
           borderTopRightRadius: 10,
           backdropFilter: "blur(10px)",
         }}
         handleIndicatorStyle={{
           backgroundColor: isDarkColorScheme
-            ? NAV_THEME.dark.primary
-            : NAV_THEME.light.primary,
+            ? NAV_THEME.dark.colors.primary
+            : NAV_THEME.light.colors.primary,
         }}
         backdropComponent={(backdropProps) => (
           <BottomSheetBackdrop
@@ -84,8 +84,8 @@ const BottomSheet = forwardRef(
           contentContainerStyle={{
             flexGrow: 1,
             backgroundColor: isDarkColorScheme
-              ? NAV_THEME.dark.card
-              : NAV_THEME.light.card,
+              ? NAV_THEME.dark.colors.card
+              : NAV_THEME.light.colors.card,
             ...(contentContainerStyle || {}),
           }}
         >
@@ -98,7 +98,7 @@ const BottomSheet = forwardRef(
         </BottomSheetScrollView>
       </BottomSheetModal>
     );
-  }
+  },
 );
 
 export default BottomSheet;

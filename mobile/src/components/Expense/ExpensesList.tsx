@@ -7,25 +7,14 @@ import { ExpenseCard } from "./ExpenseCard";
 import { Separator } from "../ui";
 
 type Props = {
-  expensesSections: Array<{ title: string; data: Expense[] }>;
+  expenses: Array<Expense>;
 };
 
-export const ExpensesList = ({ expensesSections }: Props) => {
+export const ExpensesList = ({ expenses }: Props) => {
   return (
-    <View>
-      {expensesSections.map((section) => (
-        <View key={section.title} className="mb-6">
-          {/* Section Header */}
-          <View className="py-4 gap-2">
-            <Text className=" font-bold text-primary">{section.title}</Text>
-            <Separator />
-          </View>
-
-          {/* Expenses in Section */}
-          {section.data.map((expense) => (
-            <ExpenseCard key={expense.id} expense={expense} />
-          ))}
-        </View>
+    <View className="flex gap-4">
+      {expenses.map((expense) => (
+        <ExpenseCard key={expense.id} expense={expense} />
       ))}
     </View>
   );

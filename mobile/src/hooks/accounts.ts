@@ -2,27 +2,19 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/hooks";
 import { Account } from "@/types";
 import Toast from "react-native-toast-message";
+import { accountApi } from "@/api/account";
 
 const useGetAccounts = (userId: string) => {
   return useQuery({
     queryKey: ["accounts"],
-    queryFn: async (): Promise<Account[]> => {
-      const response = await api.get<Account[]>("/account", {
-        params: {
-          userId,
-        },
-      });
-      return response.data;
-    },
+    queryFn: accountApi.getAccounts.bind(null, userId),
   });
 };
 
 const useCreateAccount = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (account: Account): Promise<void> => {
-      await api.post<Account>("/account", account);
-    },
+    mutationFn: accountApi.createAccount,
     onSuccess: () => {
       // Invalidate and refetch
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
@@ -36,9 +28,7 @@ const useCreateAccount = () => {
 const useUpdateAccount = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (account: Account): Promise<void> => {
-      await api.put<Account>(`/account/${account.id}`, account);
-    },
+    mutationFn: accountApi.updateAccount,
     onSuccess: () => {
       // Invalidate and refetch
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
@@ -49,12 +39,10 @@ const useUpdateAccount = () => {
   });
 };
 
-const useDeleteAccount = (accountId: string) => {
+const useDeleteAccount = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (): Promise<void> => {
-      await api.delete(`/account/${accountId}`);
-    },
+    mutationFn: (accountId: string) => accountApi.deleteAccount(accountId),
     onSuccess: () => {
       // Invalidate and refetch
       queryClient.invalidateQueries({ queryKey: ["accounts"] });

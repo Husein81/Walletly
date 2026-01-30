@@ -1,7 +1,6 @@
 // Global imports
 import { format } from "date-fns";
-import { useFocusEffect } from "expo-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   Animated,
   NativeScrollEvent,
@@ -9,17 +8,13 @@ import {
   Platform,
   Pressable,
   ScrollView,
+  TouchableOpacity,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // Local imports
-import {
-  AddTransactionSection,
-  ExpenseForm,
-  ExpensesList,
-  QuickStats,
-} from "@/components/Expense";
+import { ExpenseForm, ExpensesList, Search } from "@/components/Expense";
 import { Text } from "@/components/ui";
 import { ListSkeleton, TransactionsCard } from "@/components/ui-components";
 import { Header } from "@/components/ui-components/Header";
@@ -52,38 +47,12 @@ const Home = () => {
     setPrevScrollPos(currentOffset);
   };
 
-  const { data: expenses, refetch } = useGetExpenses(user?.id ?? "", {
+  const { data: expenses, isLoading } = useGetExpenses(user?.id!, {
     year: selectedDate.getFullYear().toString(),
     month: (selectedDate.getMonth() + 1).toString(),
   });
 
-  useEffect(() => {
-    refetch();
-  }, [expenses, refetch, selectedDate]);
-
   const handleOpenForm = () => onOpen(<ExpenseForm />, "Add Expense");
-
-  const expensesSections = useMemo(() => {
-    if (!expenses) return [];
-
-    const groupedMap = new Map<string, { title: string; data: Expense[] }>();
-
-    for (const expense of expenses) {
-      const date = new Date(expense.updatedAt);
-      const dateKey = date.toDateString();
-      if (!groupedMap.has(dateKey)) {
-        groupedMap.set(dateKey, {
-          title: format(date, "EEE, dd MMM"),
-          data: [],
-        });
-      }
-      groupedMap.get(dateKey)!.data.push(expense);
-    }
-
-    return Array.from(groupedMap.entries())
-      .sort((a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime())
-      .map(([_, value]) => value);
-  }, [expenses]);
 
   const totalBalance = useMemo(() => {
     if (!expenses?.length) return 0;
@@ -105,6 +74,7 @@ const Home = () => {
       .filter((ex) => ex.type === "EXPENSE")
       .reduce((acc, expense) => acc + Number(expense.amount || 0), 0);
   }, [expenses]);
+  const handleOpenSearch = () => onOpen(<Search />, "Search");
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-background">
@@ -119,26 +89,20 @@ const Home = () => {
       >
         <Header />
 
-        {/* Modern Quick Add Section - Always Visible at Top */}
-        <AddTransactionSection onPress={handleOpenForm} />
-
         <TransactionsCard
           total={totalBalance ?? 0}
           income={totalIncome ?? 0}
           expense={totalExpense ?? 0}
         />
-        {expenses && expenses.length > 0 ? (
-          <View>
-            {/* Quick Stats Section */}
-            <QuickStats
-              numOfExpenses={expenses.length}
-              selectedDate={selectedDate}
-            />
 
+        {isLoading ? (
+          <ListSkeleton />
+        ) : expenses && expenses.length > 0 ? (
+          <View>
             {/* Recent Transactions Header */}
             <View className="flex-row items-center justify-between mb-4">
               <View>
-                <Text className="text-foreground text-2xl font-bold">
+                <Text className="text-foreground text-xl font-bold">
                   Recent Transactions
                 </Text>
                 <Text className="text-muted-foreground text-sm mt-1">
@@ -146,19 +110,18 @@ const Home = () => {
                   {expenses.length !== 1 ? "s" : ""} this month
                 </Text>
               </View>
-              <Pressable
-                onPress={handleOpenForm}
-                className="bg-blue-500/85 px-4 py-2 rounded-full active:scale-95"
-              >
-                <Text className="text-primary text-sm font-semibold">
-                  + Add
-                </Text>
-              </Pressable>
+              <TouchableOpacity onPress={handleOpenSearch}>
+                <View>
+                  <Text className="text-primary text-sm font-semibold">
+                    See all
+                  </Text>
+                </View>
+              </TouchableOpacity>
             </View>
 
-            <ExpensesList expensesSections={expensesSections ?? []} />
+            <ExpensesList expenses={expenses ?? []} />
           </View>
-        ) : expenses?.length === 0 ? (
+        ) : (
           <View className="flex-1 px-5">
             {/* Empty State with Better Design */}
             <View className="mt-8 items-center">
@@ -180,12 +143,12 @@ const Home = () => {
                   onPress={handleOpenForm}
                   className="shadow-lg opacity-100 pb-4"
                 >
-                  <View className="items-center flex-row px-2 gap-4 border border-blue-500/50 bg-primary/10 rounded-2xl">
+                  <View className="items-center flex-row px-2 gap-4 border border-teal-500/50 bg-primary/10 rounded-2xl">
                     <Icon
                       name="Plus"
                       size={24}
-                      color="#1fa3e3"
-                      className="rounded-full border-blue-500 border bg-blue-500/30 p-2"
+                      color="#14B8A6"
+                      className="rounded-full border-teal-500 border bg-teal-500/30 p-2"
                       strokeWidth={2.5}
                     />
 
@@ -203,8 +166,6 @@ const Home = () => {
               </View>
             </View>
           </View>
-        ) : (
-          <ListSkeleton />
         )}
       </ScrollView>
     </SafeAreaView>

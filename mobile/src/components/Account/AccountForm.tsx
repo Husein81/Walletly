@@ -29,7 +29,9 @@ type Props = {
 
 const accountSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  balance: z.number().or(z.string()),
+  balance: z
+    .union([z.number(), z.string()])
+    .pipe(z.coerce.number().positive("Balance must be positive")),
 });
 
 const AccountForm = ({ account }: Props) => {
@@ -40,11 +42,11 @@ const AccountForm = ({ account }: Props) => {
 
   const createAccount = useCreateAccount();
   const updateAccount = useUpdateAccount();
-  const deleteAccount = useDeleteAccount(account?.id ?? "");
+  const deleteAccount = useDeleteAccount();
 
   const handleDelete = async () => {
     try {
-      await deleteAccount.mutateAsync();
+      await deleteAccount.mutateAsync(account?.id!);
       onClose();
     } catch (error) {}
   };
@@ -82,7 +84,6 @@ const AccountForm = ({ account }: Props) => {
     <View className="gap-4 flex">
       <form.Field
         name="name"
-        validators={{ onChange: accountSchema.shape.name }}
         children={(field) => (
           <InputField
             label="Name"
@@ -95,9 +96,6 @@ const AccountForm = ({ account }: Props) => {
 
       <form.Field
         name="balance"
-        validators={{
-          onChange: (value) => accountSchema.shape.balance.parse(value),
-        }}
         children={(field) => (
           <InputField
             label="Balance"
@@ -125,7 +123,7 @@ const AccountForm = ({ account }: Props) => {
         {([canSubmit, isSubmitting]) => (
           <View className="gap-1 ">
             <Button
-              className="bg-green-500"
+              className="bg-primary"
               disabled={!canSubmit}
               onPress={(e) => {
                 e.preventDefault();

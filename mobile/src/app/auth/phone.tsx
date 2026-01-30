@@ -17,8 +17,9 @@ import { z } from "zod";
 import { Input, Label } from "@/components/ui";
 import { Button, FieldInfo } from "@/components/ui-components";
 import { useSendOtp } from "@/hooks/auth";
-import { countryCallingCodes, NAV_THEME } from "@/lib/config";
+import { countryCallingCodes } from "@/lib/config";
 import { useColorScheme } from "@/lib/useColorScheme";
+import { NAV_THEME } from "@/lib/theme";
 
 const Phone = () => {
   const { mutateAsync } = useSendOtp();
@@ -80,13 +81,15 @@ const Phone = () => {
                       theme={
                         isDarkColorScheme
                           ? {
-                              backgroundColor: NAV_THEME.dark.background,
-                              onBackgroundTextColor: NAV_THEME.dark.text,
+                              backgroundColor: NAV_THEME.dark.colors.background,
+                              onBackgroundTextColor: NAV_THEME.dark.colors.text,
                               fontSize: 16,
                             }
                           : {
-                              backgroundColor: NAV_THEME.light.background,
-                              onBackgroundTextColor: NAV_THEME.light.text,
+                              backgroundColor:
+                                NAV_THEME.light.colors.background,
+                              onBackgroundTextColor:
+                                NAV_THEME.light.colors.text,
                               fontSize: 16,
                             }
                       }

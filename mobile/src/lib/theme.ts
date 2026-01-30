@@ -1,90 +1,116 @@
-export const NAV_THEME = {
-  light: {
-    background: "hsl(0 0% 98%)", // zinc-50
-    border: "hsl(240 5.9% 90%)", // zinc-200
-    card: "hsl(0 0% 100%)", // white
-    notification: "hsl(0 84.2% 60.2%)", // red-500
-    primary: "hsl(221.2 83.2% 53.3%)", // blue-500
-    text: "hsl(240 5.3% 11.2%)", // zinc-900
-  },
-  dark: {
-    background: "hsl(0 0% 0%)", // pure black
-    border: "hsl(240 3.7% 15.9%)", // zinc-800
-    card: "hsl(240 5.9% 10%)", // zinc-900
-    notification: "hsl(0 84.2% 60.2%)", // red-500
-    primary: "hsl(0 0% 100%)", // white
-    text: "hsl(0 0% 100%)", // white
-  },
-} as const;
+import { DarkTheme, DefaultTheme, type Theme } from "@react-navigation/native";
 
-export const theme = {
-  background: "0 0% 98%",
-  foreground: "240 5.3% 11.2%",
-  card: "0 0% 100%",
-  "card-foreground": "240 5.3% 11.2%",
-  popover: "0 0% 100%",
-  "popover-foreground": "240 5.3% 11.2%",
-  primary: "221.2 83.2% 53.3%",
-  "primary-foreground": "0 0% 100%",
-  secondary: "240 4.8% 95.9%",
-  "secondary-foreground": "240 5.3% 11.2%",
-  muted: "240 4.8% 95.9%",
-  "muted-foreground": "240 3.8% 46.1%",
-  accent: "240 4.8% 95.9%",
-  "accent-foreground": "240 5.3% 11.2%",
-  destructive: "0 84.2% 60.2%",
-  "destructive-foreground": "0 0% 100%",
-  border: "240 5.9% 90%",
-  input: "240 5.9% 90%",
-  ring: "221.2 83.2% 53.3%",
-  success: "142.1 76.2% 36.3%",
-  "sidebar-background": "0 0% 98%",
-  "sidebar-foreground": "240 5.3% 26.1%",
-  "sidebar-primary": "221.2 83.2% 53.3%",
-  "sidebar-primary-foreground": "0 0% 100%",
-  "sidebar-accent": "240 4.8% 95.9%",
-  "sidebar-accent-foreground": "240 5.3% 11.2%",
-  "sidebar-border": "240 5.9% 90%",
-  "sidebar-ring": "221.2 83.2% 53.3%",
-  "chart-1": "12 76% 61%",
-  "chart-2": "173 58% 39%",
-  "chart-3": "197 37% 24%",
-  "chart-4": "43 74% 66%",
-  "chart-5": "27 87% 67%",
+/**
+ * FINANCE THEME (Teal-based)
+ * Matches dashboard, cards, and bottom tabs
+ */
+export const THEME = {
+  light: {
+    /* Core */
+    background: "hsl(210 40% 98%)", // slate-50
+    foreground: "hsl(222 47% 11%)", // slate-900
+
+    card: "hsl(0 0% 100%)",
+    cardForeground: "hsl(222 47% 11%)",
+
+    popover: "hsl(0 0% 100%)",
+    popoverForeground: "hsl(222 47% 11%)",
+
+    /* PRIMARY – Teal */
+    primary: "hsl(173 80% 40%)", // teal-500
+    primaryForeground: "hsl(0 0% 100%)",
+
+    /* Secondary / Muted */
+    secondary: "hsl(210 40% 96%)", // slate-100
+    secondaryForeground: "hsl(222 47% 11%)",
+
+    muted: "hsl(210 40% 96%)",
+    mutedForeground: "hsl(215 16% 47%)", // slate-500
+
+    accent: "hsl(173 80% 95%)",
+    accentForeground: "hsl(173 80% 25%)",
+
+    /* States */
+    destructive: "hsl(0 84% 60%)", // red-500
+    success: "hsl(142 71% 45%)", // green-500
+
+    /* Borders & Inputs */
+    border: "hsl(214 32% 91%)", // slate-200
+    input: "hsl(214 32% 91%)",
+    ring: "hsl(173 80% 40%)",
+
+    radius: "0.75rem",
+
+    /* Charts */
+    chart1: "hsl(173 80% 40%)",
+    chart2: "hsl(142 71% 45%)",
+    chart3: "hsl(0 84% 60%)",
+    chart4: "hsl(43 74% 66%)",
+    chart5: "hsl(220 70% 50%)",
+  },
+
+  dark: {
+    /* Core */
+    background: "hsl(222 47% 6%)", // very dark slate
+    foreground: "hsl(210 40% 98%)",
+
+    card: "hsl(222 47% 10%)",
+    cardForeground: "hsl(210 40% 98%)",
+
+    popover: "hsl(222 47% 10%)",
+    popoverForeground: "hsl(210 40% 98%)",
+
+    /* PRIMARY – Teal (muted for dark) */
+    primary: "hsl(173 80% 45%)",
+    primaryForeground: "hsl(222 47% 6%)",
+
+    secondary: "hsl(222 47% 14%)",
+    secondaryForeground: "hsl(210 40% 98%)",
+
+    muted: "hsl(222 47% 14%)",
+    mutedForeground: "hsl(215 20% 65%)",
+
+    accent: "hsl(222 47% 14%)",
+    accentForeground: "hsl(210 40% 98%)",
+
+    destructive: "hsl(0 72% 51%)",
+    success: "hsl(142 71% 45%)",
+
+    border: "hsl(222 47% 18%)",
+    input: "hsl(222 47% 18%)",
+    ring: "hsl(173 80% 45%)",
+
+    radius: "0.75rem",
+
+    chart1: "hsl(173 80% 45%)",
+    chart2: "hsl(142 71% 45%)",
+    chart3: "hsl(0 72% 51%)",
+    chart4: "hsl(43 74% 66%)",
+    chart5: "hsl(220 70% 60%)",
+  },
 };
 
-export const darkTheme = {
-  background: "0 0% 0%",
-  foreground: "0 0% 100%",
-  card: "240 5.9% 10%",
-  "card-foreground": "0 0% 100%",
-  popover: "240 5.9% 10%",
-  "popover-foreground": "0 0% 100%",
-  primary: "0 0% 100%",
-  "primary-foreground": "0 0% 100%",
-  secondary: "240 3.7% 15.9%",
-  "secondary-foreground": "0 0% 100%",
-  muted: "240 3.7% 15.9%",
-  "muted-foreground": "240 5% 64.9%",
-  accent: "240 3.7% 15.9%",
-  "accent-foreground": "0 0% 100%",
-  destructive: "0 84.2% 60.2%",
-  "destructive-foreground": "0 0% 100%",
-  border: "240 3.7% 15.9%",
-  input: "240 3.7% 15.9%",
-  ring: "0 0% 100%",
-  success: "142.1 76.2% 36.3%",
-  "sidebar-background": "0 0% 0%",
-  "sidebar-foreground": "240 4.8% 95.9%",
-  "sidebar-primary": "0 0% 100%",
-  "sidebar-primary-foreground": "0 0% 0%",
-  "sidebar-accent": "240 3.7% 15.9%",
-  "sidebar-accent-foreground": "0 0% 100%",
-  "sidebar-border": "240 3.7% 15.9%",
-  "sidebar-ring": "0 0% 100%",
-  "chart-1": "220 70% 50%",
-  "chart-2": "160 60% 45%",
-  "chart-3": "30 80% 55%",
-  "chart-4": "280 65% 60%",
-  "chart-5": "340 75% 55%",
+export const NAV_THEME: Record<"light" | "dark", Theme> = {
+  light: {
+    ...DefaultTheme,
+    colors: {
+      background: THEME.light.background,
+      border: THEME.light.border,
+      card: THEME.light.card,
+      notification: THEME.light.destructive,
+      primary: THEME.light.primary,
+      text: THEME.light.foreground,
+    },
+  },
+  dark: {
+    ...DarkTheme,
+    colors: {
+      background: THEME.dark.background,
+      border: THEME.dark.border,
+      card: THEME.dark.card,
+      notification: THEME.dark.destructive,
+      primary: THEME.dark.primary,
+      text: THEME.dark.foreground,
+    },
+  },
 };

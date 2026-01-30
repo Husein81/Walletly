@@ -3,36 +3,25 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 // Local imports
 import { Category } from "@/types";
 import { api } from ".";
+import { categoryApi } from "@/api/category";
 
 const useCategories = (userId: string) => {
   return useQuery({
     queryKey: ["categories"],
-    queryFn: async (): Promise<Category[]> => {
-      const response = await api.get<Category[]>("/category", {
-        params: {
-          userId,
-        },
-      });
-      return response.data;
-    },
+    queryFn: () => categoryApi.getCategories(userId),
   });
 };
 
 const useGetCategoryById = (categoryId: string) => {
   return useQuery({
     queryKey: ["category", categoryId],
-    queryFn: async (): Promise<Category> => {
-      const response = await api.get<Category>(`/category/${categoryId}`);
-      return response.data;
-    },
+    queryFn: () => categoryApi.getCategory(categoryId),
   });
 };
 const useCreateCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (category: Category): Promise<void> => {
-      await api.post<Category>(`/category`, category);
-    },
+    mutationFn: categoryApi.createCategory,
     onSuccess: () => {
       // Invalidate and refetch
       queryClient.invalidateQueries({ queryKey: ["categories"] });
@@ -46,9 +35,7 @@ const useCreateCategory = () => {
 const useUpdateCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (category: Category): Promise<void> => {
-      await api.put<Category>(`/category/${category.id}`, category);
-    },
+    mutationFn: categoryApi.updateCategory,
     onSuccess: () => {
       // Invalidate and refetch
       queryClient.invalidateQueries({ queryKey: ["categories"] });
@@ -59,12 +46,10 @@ const useUpdateCategory = () => {
   });
 };
 
-const useDeleteCategory = (categoryId: string) => {
+const useDeleteCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (): Promise<void> => {
-      await api.delete(`/category/${categoryId}`);
-    },
+    mutationFn: categoryApi.deleteCategory,
     onSuccess: () => {
       // Invalidate and refetch
       queryClient.invalidateQueries({ queryKey: ["categories"] });

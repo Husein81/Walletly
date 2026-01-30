@@ -1,32 +1,20 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from ".";
-import { Expense } from "@/types";
+import { expenseApi } from "@/api/expense";
 
 const useGetExpenses = (
   userId: string,
-  params: { year?: string; month?: string; searchTerm?: string }
+  params: { year?: string; month?: string; searchTerm?: string },
 ) => {
   return useQuery({
     queryKey: ["expenses", userId, params],
-    queryFn: async (): Promise<Expense[]> => {
-      const response = await api.get("/expense", {
-        params: {
-          userId,
-          ...params,
-        },
-      });
-      return response.data;
-    },
+    queryFn: () => expenseApi.getExpenses({ userId, ...params }),
   });
 };
 
 const useCreateExpense = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (data: Expense) => {
-      const response = await api.post("/expense", data);
-      return response.data;
-    },
+    mutationFn: expenseApi.createExpense,
     onSuccess: () => {
       // Invalidate the expenses query to refetch the data
       queryClient.invalidateQueries({ queryKey: ["expenses"] });
@@ -38,10 +26,7 @@ const useCreateExpense = () => {
 const useUpdateExpense = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (data: Expense) => {
-      const response = await api.put(`/expense/${data.id}`, data);
-      return response.data;
-    },
+    mutationFn: expenseApi.updateExpense,
     onSuccess: () => {
       // Invalidate the expenses query to refetch the data
       queryClient.invalidateQueries({ queryKey: ["expenses"] });
@@ -53,19 +38,14 @@ const useUpdateExpense = () => {
 const useGetExpenseById = (expenseId: string) => {
   return useQuery({
     queryKey: ["expense", expenseId],
-    queryFn: async (): Promise<Expense> => {
-      const response = await api.get<Expense>(`/expense/${expenseId}`);
-      return response.data;
-    },
+    queryFn: () => expenseApi.getExpenseById(expenseId),
   });
 };
 
 const useDeleteExpense = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (expenseId: string) => {
-      await api.delete(`/expense/${expenseId}`);
-    },
+    mutationFn: expenseApi.deleteExpense,
     onSuccess: () => {
       // Invalidate the expenses query to refetch the data
       queryClient.invalidateQueries({ queryKey: ["expenses"] });

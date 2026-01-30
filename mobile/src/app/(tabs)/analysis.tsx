@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { LineChart } from "@/components/Analysis";
 import { Overview } from "@/components/Analysis/";
 import { Text } from "@/components/ui";
-import { ToggleGroup } from "@/components/ui-components";
+import { Modal, ToggleGroup } from "@/components/ui-components";
 import { Header } from "@/components/ui-components/Header";
 import {
   formattedBalance,
@@ -67,7 +67,7 @@ const Analysis = () => {
   const { isDarkColorScheme } = useColorScheme();
 
   const [selectedOption, setSelectedOption] = useState<ToggleOption>(
-    options[0]
+    options[0],
   );
   const { selectedDate } = useDateStore();
 
@@ -80,7 +80,7 @@ const Analysis = () => {
   useFocusEffect(
     useCallback(() => {
       refetch();
-    }, [user?.id, refetch, selectedDate])
+    }, [user?.id, refetch, selectedDate]),
   );
 
   // Expense type data
@@ -193,49 +193,6 @@ const Analysis = () => {
           <Header />
         </View>
 
-        {/* Stats Overview Cards */}
-        <View className="px-5 pt-6 pb-2">
-          <View className="flex-row gap-3 mb-3">
-            <View className="flex-1 bg-card shadow-md rounded-2xl p-4 border border-border">
-              <Text className="text-muted-foreground text-xs font-medium mb-1">
-                INCOME
-              </Text>
-              <Text className="text-green-500 text-2xl font-bold">
-                {formattedBalance(totalIncome)}
-              </Text>
-              <Text className="text-muted-foreground text-xs mt-1">
-                {incomeData?.length || 0} transactions
-              </Text>
-            </View>
-            <View className="flex-1 bg-card shadow-md rounded-2xl p-4 border border-border">
-              <Text className="text-muted-foreground text-xs font-medium mb-1">
-                EXPENSE
-              </Text>
-              <Text className="text-red-500 text-2xl font-bold">
-                {formattedBalance(totalExpense)}
-              </Text>
-              <Text className="text-muted-foreground text-xs mt-1">
-                {expenseData?.length || 0} transactions
-              </Text>
-            </View>
-          </View>
-          <View className="bg-card shadow-md rounded-2xl p-4 border border-border">
-            <Text className="text-muted-foreground text-xs font-medium mb-1">
-              NET BALANCE
-            </Text>
-            <Text
-              className={`text-3xl font-bold ${
-                netBalance >= 0 ? "text-green-500" : "text-red-500"
-              }`}
-            >
-              {formattedBalance(Math.abs(netBalance))}
-            </Text>
-            <Text className="text-muted-foreground text-xs mt-1">
-              {netBalance >= 0 ? "Surplus" : "Deficit"} this month
-            </Text>
-          </View>
-        </View>
-
         {/* Analysis Type Selection */}
         <View className="px-5 pt-4 pb-2 mb-4">
           <Text className="text-foreground text-lg font-bold mb-3">
@@ -253,7 +210,7 @@ const Analysis = () => {
                 value={selectedOption?.value}
                 onChange={(value) =>
                   setSelectedOption(
-                    options.find((opt) => opt.value === value) || options[0]
+                    options.find((opt) => opt.value === value) || options[0],
                   )
                 }
               />
@@ -362,6 +319,7 @@ const Analysis = () => {
           )}
         </View>
       </ScrollView>
+      <Modal />
     </SafeAreaView>
   );
 };

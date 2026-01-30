@@ -1,9 +1,8 @@
-import { View, Text, SectionList, Platform } from "react-native";
+import { View, Text } from "react-native";
 
 // Local Imports
 import CategoryCard from "./CategoryCard";
 import { Category } from "@/types";
-import { Separator } from "../ui";
 
 type Props = {
   categorySections: Array<{ title: string; data: Category[] }>;
@@ -11,18 +10,21 @@ type Props = {
 
 const CategorySectionList = ({ categorySections }: Props) => {
   return (
-    <View className="pt-4 pb-16 gap-4">
+    <View className="pt-4 pb-16">
       {categorySections.map((section) => (
-        <View key={section.title}>
-          <View className="py-4 gap-2">
-            <Text className="text-2xl font-bold text-primary">
+        <View key={section.title} className="mb-8">
+          <View className="mb-4">
+            <Text className="text-lg font-bold text-foreground">
               {section.title}
             </Text>
-            <Separator />
           </View>
-          {section.data.map((category) => (
-            <CategoryCard key={category.id} category={category} />
-          ))}
+          <View className="flex-row flex-wrap justify-between">
+            {section.data.map((category) => (
+              <View key={category.id} className="w-[48%] mb-4">
+                <CategoryCard category={category} />
+              </View>
+            ))}
+          </View>
         </View>
       ))}
     </View>

@@ -1,4 +1,4 @@
-import { FlatList, View } from "react-native";
+import { View } from "react-native";
 import { Skeleton } from "../ui/skeleton";
 
 export const ListSkeleton = () => {

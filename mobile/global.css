@@ -4,76 +4,95 @@
 
 @layer base {
   :root {
-    /* Vercel Light Mode - Zinc palette */
-    --background: 0 0% 98%; /* zinc-50 #fafafa */
-    --foreground: 240 5.3% 11.2%; /* zinc-900 #18181b */
-    --card: 0 0% 100%; /* white */
-    --card-foreground: 240 5.3% 11.2%; /* zinc-900 */
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 5.3% 11.2%;
-    --primary: 221.2 83.2% 53.3%; /* blue-500 #3b82f6 - Vercel blue */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 240 4.8% 95.9%; /* zinc-100 #f4f4f5 */
-    --secondary-foreground: 240 5.3% 11.2%;
-    --muted: 240 4.8% 95.9%; /* zinc-100 */
-    --muted-foreground: 240 3.8% 46.1%; /* zinc-600 #52525b */
-    --accent: 240 4.8% 95.9%; /* zinc-100 */
-    --accent-foreground: 240 5.3% 11.2%;
-    --destructive: 0 78.2% 60.2%; /* red-500 #ef3444 */
-    --destructive-foreground: 0 0% 100%;
-    --border: 240 5.9% 90%; /* zinc-200 #e4e4e7 */
-    --input: 240 5.9% 90%;
-    --ring: 221.2 83.2% 53.3%; /* blue-500 */
-    --success: 142.1 76.2% 36.3%; /* green-600 #16a34a */
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 221.2 83.2% 53.3%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.3% 11.2%;
-    --sidebar-border: 240 5.9% 90%;
-    --sidebar-ring: 221.2 83.2% 53.3%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-  }
+    /* Backgrounds */
+    --background: 210 40% 98%; /* slate-50 */
+    --foreground: 222 47% 11%; /* slate-900 */
 
-  .dark:root {
-    /* Vercel Dark Mode - Pure black to zinc */
-    --background: 0 0% 0%; /* pure black #000000 */
-    --foreground: 0 0% 100%; /* white #ffffff */
-    --card: 240 5.9% 10%; /* zinc-900 #18181b */
-    --card-foreground: 0 0% 100%;
-    --popover: 240 5.9% 10%; /* zinc-900 */
-    --popover-foreground: 0 0% 100%;
-    --primary: 0 0% 100%; /* blue-500 #3b82f6 - Vercel blue */
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    /* PRIMARY – Teal (main card color) */
+    --primary: 173 80% 40%; /* teal-500 */
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 3.7% 15.9%; /* zinc-800 #27272a */
-    --secondary-foreground: 0 0% 100%;
-    --muted: 240 3.7% 15.9%; /* zinc-800 */
-    --muted-foreground: 240 5% 64.9%; /* zinc-400 #a1a1aa */
-    --accent: 240 3.7% 15.9%; /* zinc-800 */
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 84.2% 60.2%; /* red-500 #ef4444 */
+
+    /* Secondary / Muted */
+    --secondary: 210 40% 96%; /* slate-100 */
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%; /* slate-500 */
+
+    --accent: 173 80% 95%; /* very soft teal */
+    --accent-foreground: 173 80% 25%;
+
+    /* States */
+    --destructive: 0 84% 60%; /* red-500 */
     --destructive-foreground: 0 0% 100%;
-    --border: 240 3.7% 15.9%; /* zinc-800 #27272a */
-    --input: 240 3.7% 15.9%; /* zinc-800 */
-    --ring: 0 0% 100%; /* blue-500 */
-    --success: 142.1 76.2% 36.3%; /* green-600 #16a34a */
-    --sidebar-background: 0 0% 0%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 0 0% 100%;
+
+    --success: 142 71% 45%; /* green-500 */
+
+    /* Borders & inputs */
+    --border: 214 32% 91%; /* slate-200 */
+    --input: 214 32% 91%;
+    --ring: 173 80% 40%;
+
+    /* Sidebar (if used) */
+    --sidebar-background: 210 40% 98%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 173 80% 40%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 40% 96%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 173 80% 40%;
+  }
+  .dark:root {
+    /* Backgrounds */
+    --background: 222 47% 4%; /* near-black */
+    --foreground: 210 40% 98%; /* slate-50 */
+
+    --card: 222 47% 8%; /* dark card */
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 8%;
+    --popover-foreground: 210 40% 98%;
+
+    /* PRIMARY – Teal stays brand color */
+    --primary: 173 80% 45%; /* teal-400 */
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary / Muted */
+    --secondary: 217 33% 17%; /* zinc-800 */
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%; /* slate-400 */
+
+    --accent: 173 80% 20%; /* dark teal */
+    --accent-foreground: 173 80% 90%;
+
+    /* States */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 71% 45%;
+
+    /* Borders & inputs */
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 173 80% 45%;
+
+    /* Sidebar */
+    --sidebar-background: 222 47% 4%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 173 80% 45%;
     --sidebar-primary-foreground: 0 0% 0%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 0 0% 100%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --sidebar-accent: 217 33% 17%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 33% 17%;
+    --sidebar-ring: 173 80% 45%;
   }
 }

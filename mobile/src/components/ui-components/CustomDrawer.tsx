@@ -6,12 +6,12 @@ import {
 import { View } from "react-native";
 
 // Local Imports
-import { NAV_THEME } from "@/lib/config";
 import { Icon } from "@/lib/icons/Icon";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { useAuthStore } from "@/store/authStore";
 import { Switch } from "../ui/switch";
 import { useEffect, useRef } from "react";
+import { NAV_THEME } from "@/lib/theme";
 
 export const CustomDrawer = (props: any) => {
   const { clearAuth } = useAuthStore();
@@ -50,8 +50,8 @@ export const CustomDrawer = (props: any) => {
             name={isDarkColorScheme ? "Moon" : "Sun"}
             color={
               isDarkColorScheme
-                ? NAV_THEME.dark.primary
-                : NAV_THEME.light.primary
+                ? NAV_THEME.dark.colors.primary
+                : NAV_THEME.light.colors.primary
             }
           />
         </View>
@@ -63,8 +63,8 @@ export const CustomDrawer = (props: any) => {
             <Icon
               color={
                 isDarkColorScheme
-                  ? NAV_THEME.dark.primary
-                  : NAV_THEME.light.primary
+                  ? NAV_THEME.dark.colors.primary
+                  : NAV_THEME.light.colors.primary
               }
               name="LogOut"
             />

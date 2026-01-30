@@ -15,6 +15,7 @@ import { useCategories } from "@/hooks/categories";
 import { ExpenseType } from "@/types";
 
 // store imports
+import { Icon } from "@/lib/icons/Icon";
 import { useAuthStore, useModalStore } from "@/store";
 
 const Categories = () => {
@@ -26,19 +27,19 @@ const Categories = () => {
   useFocusEffect(
     useCallback(() => {
       refetch();
-    }, [refetch, categories])
+    }, [refetch, categories]),
   );
 
   const expenseCategories = useMemo(
     () =>
       categories?.filter((category) => category.type === ExpenseType.EXPENSE),
-    [categories]
+    [categories],
   );
 
   const incomeCategories = useMemo(
     () =>
       categories?.filter((category) => category.type === ExpenseType.INCOME),
-    [categories]
+    [categories],
   );
 
   const categorySections = [
@@ -57,60 +58,8 @@ const Categories = () => {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-background">
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        {/* Quick Add Category Card */}
-        <View className="px-5 pt-6 pb-2">
-          <Pressable onPress={handleOpenCategory}>
-            <LinearGradient
-              colors={["#8b5cf6", "#7c3aed"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={{
-                borderRadius: 20,
-                padding: 24,
-                shadowColor: "#8b5cf6",
-                shadowOffset: { width: 0, height: 8 },
-                shadowOpacity: 0.3,
-                shadowRadius: 16,
-                elevation: 8,
-              }}
-            >
-              <View className="flex-row items-center justify-between">
-                <View className="flex-1">
-                  <Text className="text-white text-xl font-bold mb-1">
-                    Create Category
-                  </Text>
-                  <Text className="text-white/80 text-sm">
-                    Organize your expenses and income
-                  </Text>
-                </View>
-                <View className="bg-white/20 p-4 rounded-2xl">
-                  <Text className="text-white text-2xl">📁</Text>
-                </View>
-              </View>
-            </LinearGradient>
-          </Pressable>
-        </View>
-
-        {/* Stats Cards */}
-        <View className="px-5 pt-4 pb-2">
-          <View className="flex-row gap-3">
-            <StatsCard
-              title="INCOME"
-              value={incomeCategories?.length ?? 0}
-              subTitle="Categories"
-              subTitleColor="text-green-500"
-            />
-            <StatsCard
-              title="EXPENSE"
-              value={expenseCategories?.length ?? 0}
-              subTitle="Categories"
-              subTitleColor="text-red-500"
-            />
-          </View>
-        </View>
-
         {/* Categories Section */}
-        <View className="px-5 mt-6">
+        <View className="px-5 mt-4">
           <View className="flex-row items-center justify-between mb-4">
             <View>
               <Text className="text-foreground text-2xl font-bold">
@@ -122,9 +71,9 @@ const Categories = () => {
             </View>
             <Pressable
               onPress={handleOpenCategory}
-              className="bg-purple-500/85 px-4 py-2 rounded-full active:scale-95"
+              className="bg-primary/85 px-4 py-2 rounded-full active:scale-95"
             >
-              <Text className="text-primary text-sm font-semibold">+ Add</Text>
+              <Text className="text-white text-sm font-semibold">+ Add</Text>
             </Pressable>
           </View>
 
@@ -142,7 +91,7 @@ const Categories = () => {
                   marginBottom: 16,
                 }}
               >
-                <Text className="text-7xl">📁</Text>
+                <Icon name="FolderOpen" size={48} color="#9ca3af" />
               </LinearGradient>
               <Text className="text-foreground text-xl font-bold mb-2">
                 No Categories Yet

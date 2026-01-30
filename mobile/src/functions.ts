@@ -1,5 +1,13 @@
 import { COLOR_PALETTE } from "@/lib/config";
-import { addDays, endOfMonth, format, isBefore, startOfMonth } from "date-fns";
+import {
+  addDays,
+  endOfMonth,
+  format,
+  isBefore,
+  isToday,
+  isYesterday,
+  startOfMonth,
+} from "date-fns";
 import { Expense } from "./types";
 import { SvgData } from "react-native-svg-charts";
 
@@ -19,7 +27,7 @@ const getColorByIndex = (str: string): string => {
 
 function transformExpensesToChartData(
   expenses: Expense[],
-  date = new Date()
+  date = new Date(),
 ): {
   labels: string[];
   datasets: { data: number[] }[];
@@ -29,7 +37,7 @@ function transformExpensesToChartData(
   for (const expense of expenses) {
     const dateKey = format(
       new Date(expense.updatedAt || new Date()),
-      "yyyy-MM-dd"
+      "yyyy-MM-dd",
     );
     if (!grouped[dateKey]) grouped[dateKey] = 0;
     grouped[dateKey] += Math.abs(expense.amount);
@@ -162,9 +170,21 @@ function getGroupedBarChartData(expenses: Expense[]): {
     labels,
   };
 }
+const formatSmartDateTime = (date: Date) => {
+  if (isToday(date)) {
+    return `Today, ${format(date, "hh:mm a")}`;
+  }
+
+  if (isYesterday(date)) {
+    return `Yesterday, ${format(date, "hh:mm a")}`;
+  }
+
+  return format(date, "dd MMM, hh:mm a");
+};
 
 export {
   formattedBalance,
+  formatSmartDateTime,
   getColorByIndex,
   transformExpensesToChartData,
   getCategoryChartData,

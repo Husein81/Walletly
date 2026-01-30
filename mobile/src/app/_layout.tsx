@@ -1,11 +1,13 @@
+import { drizzle } from "drizzle-orm/singlestore/driver";
 import { Stack } from "expo-router";
+import { openDatabaseSync } from "expo-sqlite";
 import React, { useEffect } from "react";
 
 // Local Imports
 import Providers from "@/components/providers";
 import { useAuthStore } from "@/store/authStore";
-import "../../global.css";
 import { PortalHost } from "@rn-primitives/portal";
+import "../../global.css";
 
 export {
   // Catch any errors thrown by the Layout component.

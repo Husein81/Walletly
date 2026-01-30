@@ -4,20 +4,15 @@ import Toast from "react-native-toast-message";
 // Local imports
 import { api } from "@/hooks";
 import { useAuthStore } from "@/store/authStore";
+import { authApi } from "@/api/auth";
+import { User } from "@/types";
 
 const useSendOtp = () => {
   const queryClient = useQueryClient();
-  const { setAuth } = useAuthStore();
 
   return useMutation({
-    mutationFn: async (phone: string) => {
-      const response = await api.post("/auth/send-otp", {
-        phone,
-      });
-      return response.data.code;
-    },
-    onSuccess: (data) => {
-      setAuth(data);
+    mutationFn: (phone: string) => authApi.sendOtp(phone),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user"] });
     },
     onError: (error: Error) => {
@@ -34,13 +29,8 @@ const useVerifyOtp = () => {
   const queryClient = useQueryClient();
   const { setAuth } = useAuthStore();
   return useMutation({
-    mutationFn: async ({ phone, code }: { phone: string; code: string }) => {
-      const response = await api.post("/auth/verify-otp", {
-        phone,
-        code,
-      });
-      return response.data;
-    },
+    mutationFn: ({ phone, code }: { phone: string; code: string }) =>
+      authApi.verifyOtp({ phone, code }),
     onSuccess: (data) => {
       setAuth(data);
       queryClient.invalidateQueries({ queryKey: ["user"] });
@@ -59,23 +49,8 @@ const useCompleteRegistration = () => {
   const queryClient = useQueryClient();
   const { setAuth } = useAuthStore();
   return useMutation({
-    mutationFn: async ({
-      userId,
-      name,
-      email,
-    }: {
-      userId: string;
-      name: string;
-      email: string;
-    }) => {
-      const response = await api.put(`/auth/complete-registration/${userId}`, {
-        name,
-        email,
-      });
-      return response.data;
-    },
+    mutationFn: authApi.completeRegistration,
     onSuccess: (data) => {
-      setAuth(data);
       queryClient.invalidateQueries({ queryKey: ["user"] });
     },
     onError: (error: Error) => {
@@ -89,23 +64,9 @@ const useUpdateProfile = () => {
   const queryClient = useQueryClient();
   const { setUser } = useAuthStore();
   return useMutation({
-    mutationFn: async ({
-      userId,
-      name,
-      email,
-    }: {
-      userId: string;
-      name?: string;
-      email?: string;
-    }) => {
-      const response = await api.put(`/auth/complete-registration/${userId}`, {
-        name,
-        email,
-      });
-      return response.data;
-    },
-    onSuccess: (data) => {
-      setUser(data.user);
+    mutationFn: authApi.updateProfile,
+    onSuccess: (data: User) => {
+      setUser(data);
       queryClient.invalidateQueries({ queryKey: ["user"] });
       Toast.show({
         type: "success",

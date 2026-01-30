@@ -34,15 +34,15 @@ export const Search = () => {
             .includes(searchTerm.toLowerCase()) ||
           expense.fromAccount.name
             .toLowerCase()
-            .includes(searchTerm.toLowerCase())
+            .includes(searchTerm.toLowerCase()),
       ),
-    [expenses, searchTerm]
+    [expenses, searchTerm],
   );
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      className="flex-1 w-full py-2 "
+      className="flex-1 w-full py-2 gap-2"
     >
       <Input
         placeholder="Search"
@@ -61,9 +61,7 @@ export const Search = () => {
           />
         </View>
       ) : (
-        <ExpensesList
-          expensesSections={[{ title: "", data: filteredExpenses ?? [] }]}
-        />
+        <ExpensesList expenses={filteredExpenses ?? []} />
       )}
     </KeyboardAvoidingView>
   );

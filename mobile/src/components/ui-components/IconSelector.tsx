@@ -3,11 +3,12 @@ import { Pressable, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 
 // Local imports
-import { iconsRecord, NAV_THEME } from "@/lib/config";
+import { iconsRecord } from "@/lib/config";
 import { getColorByIndex } from "@/functions";
 import { Icon } from "@/lib/icons/Icon";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { cn } from "@/lib/utils";
+import { NAV_THEME } from "@/lib/theme";
 
 type Props = {
   selectedIcon: string;
@@ -24,34 +25,27 @@ export const IconSelector = ({ selectedIcon, setSelectedIcon }: Props) => {
         keyExtractor={([key]) => key}
         renderItem={({ item: [key, value] }) => {
           const isSelected = selectedIcon === key;
-          const backgroundColor = getColorByIndex(key);
-
           return (
             <Pressable
               onPress={() => setSelectedIcon(key)}
               className={cn(
-                "p-2 rounded-xl mx-1 mt-0.5",
-                isSelected && "border-2 border-primary"
+                "bg-primary/10 p-2 rounded-xl mx-1 mt-0.5",
+                isSelected && "border-2 border-primary",
               )}
-              style={{ backgroundColor }}
             >
               <Icon
                 onPress={() => setSelectedIcon(key)}
                 name={value}
                 color={
                   isDarkColorScheme
-                    ? NAV_THEME.dark.primary
-                    : NAV_THEME.light.border
+                    ? NAV_THEME.dark.colors.primary
+                    : NAV_THEME.light.colors.primary
                 }
                 size={28}
               />
               {isSelected && (
                 <View className="absolute -top-1 -right-1 bg-primary rounded-full p-0.5">
-                  <Icon
-                    name="Check"
-                    size={10}
-                    color={isDarkColorScheme ? "#22c55e" : "#16a34a"}
-                  />
+                  <Icon name="Check" size={10} color={"#fff"} />
                 </View>
               )}
             </Pressable>
