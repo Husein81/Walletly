@@ -3,7 +3,13 @@ import { expenseApi } from "@/api/expense";
 
 const useGetExpenses = (
   userId: string,
-  params: { year?: string; month?: string; searchTerm?: string },
+  params: {
+    year?: string;
+    month?: string;
+    startDate?: Date;
+    endDate?: Date;
+    searchTerm?: string;
+  },
 ) => {
   return useQuery({
     queryKey: ["expenses", userId, params],

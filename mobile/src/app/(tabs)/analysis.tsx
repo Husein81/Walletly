@@ -5,7 +5,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { LineChart } from "@/components/Analysis";
 import { Overview } from "@/components/Analysis/";
 import { Text } from "@/components/ui";
-import { Modal, ToggleGroup } from "@/components/ui-components";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Modal, Selection, ToggleGroup } from "@/components/ui-components";
 import { Header } from "@/components/ui-components/Header";
 import {
   formattedBalance,
@@ -16,13 +23,23 @@ import {
 } from "@/functions";
 import { useGetExpenses } from "@/hooks/expense";
 import { useCallback, useMemo, useState } from "react";
+import {
+  startOfDay,
+  endOfDay,
+  startOfWeek,
+  endOfWeek,
+  startOfMonth,
+  endOfMonth,
+  startOfYear,
+  endOfYear,
+} from "date-fns";
 
 //store imports
 import AccountAnalysis from "@/components/Analysis/AccountAnalysis";
 import { ToggleOption } from "@/components/ui-components/toggle-group";
 import { useGetAccounts } from "@/hooks/accounts";
 import { useColorScheme } from "@/lib/useColorScheme";
-import { useDateStore } from "@/store";
+import { useDateStore, DateRangeType } from "@/store";
 import { useAuthStore } from "@/store/authStore";
 import { useFocusEffect } from "expo-router";
 
@@ -69,12 +86,44 @@ const Analysis = () => {
   const [selectedOption, setSelectedOption] = useState<ToggleOption>(
     options[0],
   );
+  const [dateRangeType, setDateRangeType] = useState<DateRangeType>("month");
   const { selectedDate } = useDateStore();
 
-  const { data: expenses, refetch } = useGetExpenses(user?.id || "", {
-    month: (selectedDate.getMonth() + 1).toString(),
-    year: selectedDate.getFullYear().toString(),
-  });
+  // Calculate date parameters based on selected range type
+  const dateParams = useMemo(() => {
+    switch (dateRangeType) {
+      case "today": {
+        const start = startOfDay(selectedDate);
+        const end = endOfDay(selectedDate);
+        return { startDate: start, endDate: end };
+      }
+      case "week": {
+        const start = startOfWeek(selectedDate, { weekStartsOn: 1 });
+        const end = endOfWeek(selectedDate, { weekStartsOn: 1 });
+        return { startDate: start, endDate: end };
+      }
+      case "month": {
+        const start = startOfMonth(selectedDate);
+        const end = endOfMonth(selectedDate);
+        return { startDate: start, endDate: end };
+      }
+      case "year": {
+        const start = startOfYear(selectedDate);
+        const end = endOfYear(selectedDate);
+        return { startDate: start, endDate: end };
+      }
+      default:
+        return {
+          month: (selectedDate.getMonth() + 1).toString(),
+          year: selectedDate.getFullYear().toString(),
+        };
+    }
+  }, [selectedDate, dateRangeType]);
+
+  const { data: expenses, refetch } = useGetExpenses(
+    user?.id || "",
+    dateParams,
+  );
   const { data: accounts } = useGetAccounts(user?.id || "");
 
   useFocusEffect(
@@ -190,7 +239,36 @@ const Analysis = () => {
         showsVerticalScrollIndicator={false}
       >
         <View className="px-5 pt-4">
-          <Header />
+          <Header title="Analysis" subtitle={formattedBalance(netBalance)} />
+        </View>
+
+        {/* Date Filter Selection */}
+        <View className="flex-row items-center justify-between px-5 py-4">
+          <Text className="text-foreground text-sm font-medium mb-2">
+            Filter by Date
+          </Text>
+          <View>
+            <Selection
+              value={{
+                label:
+                  dateRangeType.charAt(0).toUpperCase() +
+                  dateRangeType.slice(1),
+                value: dateRangeType,
+              }}
+              onValueChange={(option) => {
+                if (option) {
+                  setDateRangeType(option.value as DateRangeType);
+                }
+              }}
+              options={[
+                { label: "Today", value: "today" },
+                { label: "Week", value: "week" },
+                { label: "Month", value: "month" },
+                { label: "Year", value: "year" },
+              ]}
+              className="w-32"
+            />
+          </View>
         </View>
 
         {/* Analysis Type Selection */}

@@ -10,6 +10,7 @@ import UserSection from "@/components/User/user-section";
 import { Icon } from "@/lib/icons/Icon";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { useAuthStore } from "@/store";
+import Avatar from "@/components/ui-components/Avatar";
 
 const User = () => {
   const { user, clearAuth } = useAuthStore();
@@ -98,23 +99,10 @@ const User = () => {
           <Rn.Card className="p-4 rounded-2xl overflow-hidden">
             <View className="flex-row items-center gap-4">
               {/* Avatar */}
-              <Rn.Avatar
-                alt=""
-                className="w-20 h-20 border-4 border-primary/20"
-              >
-                {/* <Rn.AvatarImage
-                    source={{
-                      uri: `https://ui-avatars.com/api/?name=${
-                        user?.name || "User"
-                      }&size=200&background=3b82f6&color=fff`,
-                    }}
-                  /> */}
-                <Rn.AvatarFallback className="bg-primary/20">
-                  <Text className="text-primary text-2xl font-bold">
-                    {user?.name?.slice(0, 2).toUpperCase() || "U"}
-                  </Text>
-                </Rn.AvatarFallback>
-              </Rn.Avatar>
+              <Avatar
+                fallback={user?.name?.slice(0, 2).toUpperCase()}
+                size={64}
+              />
 
               {/* User Info */}
               <View>

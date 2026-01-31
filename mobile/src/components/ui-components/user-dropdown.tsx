@@ -5,6 +5,7 @@ import { useAuthStore } from "@/store";
 import { Icon } from "@/lib/icons/Icon";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { router } from "expo-router";
+import Avatar from "./Avatar";
 
 const UserDropdown = () => {
   const { isDarkColorScheme, toggleColorScheme } = useColorScheme();
@@ -20,12 +21,7 @@ const UserDropdown = () => {
 
   const getInitials = (name?: string) => {
     if (!name) return "U";
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
+    return name?.slice(0, 2).toUpperCase();
   };
 
   const handleLogout = () => {
@@ -36,13 +32,7 @@ const UserDropdown = () => {
     <Rn.DropdownMenu>
       <Rn.DropdownMenuTrigger>
         <View>
-          <Rn.Avatar alt="User Avatar" className="size-12">
-            <Rn.AvatarFallback className="size-12 rounded-full bg-primary flex items-center justify-center border border-primary/30">
-              <Text className="font-bold text-white">
-                {getInitials(user?.name)}
-              </Text>
-            </Rn.AvatarFallback>
-          </Rn.Avatar>
+          <Avatar fallback={getInitials(user?.name)} />
         </View>
       </Rn.DropdownMenuTrigger>
       <Rn.DropdownMenuContent

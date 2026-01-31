@@ -22,11 +22,13 @@ const TabsLayout = () => {
             <View
               style={{
                 flex: 1,
-                backgroundColor: isDarkColorScheme
+                borderTopWidth: 1,
+                borderTopColor: isDarkColorScheme
                   ? NAV_THEME.dark.colors.card
+                  : NAV_THEME.light.colors.border,
+                backgroundColor: isDarkColorScheme
+                  ? NAV_THEME.dark.colors.background
                   : NAV_THEME.light.colors.background,
-                borderTopLeftRadius: 16,
-                borderTopRightRadius: 16,
               }}
             />
           ),
@@ -67,7 +69,7 @@ const TabsLayout = () => {
         <Tabs.Screen
           name="analysis"
           options={{
-            title: "Stats",
+            title: "Analysis",
             tabBarIcon: ({ color }) => (
               <Icon name="ChartPie" size={24} color={color} />
             ),
@@ -110,7 +112,7 @@ const TabsLayout = () => {
         <Tabs.Screen
           name="accounts"
           options={{
-            title: "Wallet",
+            title: "Accounts",
             tabBarIcon: ({ color }) => (
               <Icon name="Wallet" size={24} color={color} />
             ),

@@ -2,7 +2,7 @@ import { db } from "@/components/providers";
 import { accounts, categories, expenses } from "@/db/schema";
 import { generateUUID } from "@/db/uuid";
 import { Expense } from "@/types";
-import { and, desc, eq, gte, like, lt, or } from "drizzle-orm";
+import { and, desc, eq, gte, like, lt, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
 
 type ExpenseType = "INCOME" | "EXPENSE" | "TRANSFER";
@@ -26,19 +26,38 @@ export const expenseApi = {
     userId,
     month,
     year,
+    startDate,
+    endDate,
     searchTerm,
   }: {
     userId: string;
     month?: string;
     year?: string;
+    startDate?: Date;
+    endDate?: Date;
     searchTerm?: string;
   }): Promise<Expense[]> => {
-    const now = new Date();
-    const y = year ? Number(year) : now.getFullYear();
-    const m = month ? Number(month) - 1 : now.getMonth();
+    let start: Date, end: Date;
 
-    const start = new Date(y, m, 1);
-    const end = new Date(y, m + 1, 1);
+    // Priority: Use startDate/endDate if provided, otherwise fall back to month/year
+    if (startDate && endDate) {
+      start = startDate;
+      end = endDate;
+    } else {
+      const now = new Date();
+      const y = year ? Number(year) : now.getFullYear();
+
+      // If month is provided, use month range; otherwise use year range
+      if (month) {
+        const m = Number(month) - 1;
+        start = new Date(y, m, 1);
+        end = new Date(y, m + 1, 1);
+      } else {
+        // Year range: from Jan 1 to Dec 31
+        start = new Date(y, 0, 1);
+        end = new Date(y + 1, 0, 1);
+      }
+    }
 
     const results = await db
       .select({
@@ -172,50 +191,130 @@ export const expenseApi = {
     });
   },
   updateExpense: async (expense: CreateExpenseDto & { id: string }) => {
-    const { id, amount, type, fromAccountId, toAccountId } = expense;
+    const {
+      id,
+      amount,
+      type,
+      fromAccountId,
+      toAccountId,
+      updatedAt,
+      description,
+      categoryId,
+    } = expense;
 
     return db.transaction(async (tx) => {
       const old = await tx.query.expenses.findFirst({
         where: eq(expenses.id, id),
       });
+
       if (!old) throw new Error("Expense not found");
 
+      /* -----------------------------
+       TRANSFER
+    ----------------------------- */
       if (type === "TRANSFER") {
-        if (!fromAccountId || !toAccountId) throw new Error("Invalid transfer");
+        if (!fromAccountId || !toAccountId) {
+          throw new Error("Invalid transfer");
+        }
 
         const delta = amount - old.amount;
 
+        // Update expense
         await tx
           .update(expenses)
-          .set({ ...expense })
+          .set({
+            amount,
+            type,
+            fromAccountId,
+            toAccountId,
+            updatedAt,
+            description,
+          })
           .where(eq(expenses.id, id));
 
+        // If FROM account changed → restore old account
+        if (old.fromAccountId && old.fromAccountId !== fromAccountId) {
+          await tx
+            .update(accounts)
+            .set({
+              balance: sql`${accounts.balance} + ${old.amount}`,
+              updatedAt,
+            })
+            .where(eq(accounts.id, old.fromAccountId));
+        }
+
+        // If TO account changed → restore old target
+        if (old.toAccountId && old.toAccountId !== toAccountId) {
+          await tx
+            .update(accounts)
+            .set({
+              balance: sql`${accounts.balance} - ${old.amount}`,
+              updatedAt,
+            })
+            .where(eq(accounts.id, old.toAccountId));
+        }
+
+        // Apply delta to new accounts
         await tx
           .update(accounts)
-          .set({ balance: Number(accounts.balance) - delta })
+          .set({
+            balance: sql`${accounts.balance} - ${delta}`,
+            updatedAt,
+          })
           .where(eq(accounts.id, fromAccountId));
 
         await tx
           .update(accounts)
-          .set({ balance: Number(accounts.balance) + delta })
+          .set({
+            balance: sql`${accounts.balance} + ${delta}`,
+            updatedAt,
+          })
           .where(eq(accounts.id, toAccountId));
 
         return;
       }
 
+      /* -----------------------------
+       INCOME / EXPENSE
+    ----------------------------- */
       if (!fromAccountId) throw new Error("Missing account");
+
+      // Restore old balance if account changed
+      if (old.fromAccountId && old.fromAccountId !== fromAccountId) {
+        const restore = old.type === "INCOME" ? -old.amount : old.amount;
+
+        await tx
+          .update(accounts)
+          .set({
+            balance: sql`${accounts.balance} + ${restore}`,
+            updatedAt,
+          })
+          .where(eq(accounts.id, old.fromAccountId));
+      }
 
       const diff =
         type === "INCOME" ? amount - old.amount : old.amount - amount;
 
+      // Update expense
       await tx
         .update(expenses)
-        .set({ ...expense })
+        .set({
+          amount,
+          type,
+          fromAccountId,
+          categoryId,
+          description,
+          updatedAt,
+        })
         .where(eq(expenses.id, id));
 
+      // Apply diff to new account
       await tx
         .update(accounts)
-        .set({ balance: Number(accounts.balance) + diff })
+        .set({
+          balance: sql`${accounts.balance} + ${diff}`,
+          updatedAt,
+        })
         .where(eq(accounts.id, fromAccountId));
     });
   },

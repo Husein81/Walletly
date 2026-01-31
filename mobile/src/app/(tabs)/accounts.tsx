@@ -14,6 +14,7 @@ import { useGetAccounts } from "@/hooks/accounts";
 // Stores
 import { useAuthStore, useModalStore } from "@/store";
 import AccountCard from "@/components/Account/AccountCard";
+import { Header } from "@/components/ui-components/Header";
 
 const Accounts = () => {
   const { user } = useAuthStore();
@@ -57,21 +58,18 @@ const Accounts = () => {
   return (
     <SafeAreaView className="flex-1 bg-background">
       <ScrollView
+        className="flex-1 px-5"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 32 }}
       >
         {/* HEADER */}
-        <View className="px-5 pt-4 pb-6 flex-row justify-between items-center">
-          <View>
-            <Text className="text-2xl font-bold text-foreground">Accounts</Text>
-            <Text className="text-sm text-muted-foreground mt-1">
-              Manage your cash, cards, and savings
-            </Text>
-          </View>
-        </View>
+        <Header
+          title="Accounts"
+          subtitle="Manage your cash, cards, and savings"
+        />
 
         {/* TOTAL BALANCE CARD */}
-        <View className="px-5 mb-6">
+        <View className="mb-6">
           <View className="bg-card border border-border rounded-2xl p-5">
             <Text className="text-muted-foreground text-sm mb-1">
               Total balance
@@ -113,7 +111,7 @@ const Accounts = () => {
         </View>
 
         {/* YOUR ACCOUNTS HEADER */}
-        <View className="px-5 mb-3 flex-row items-center justify-between">
+        <View className="mb-3 flex-row items-center justify-between">
           <Text className="text-lg font-semibold text-foreground">
             Your accounts
           </Text>
@@ -128,7 +126,7 @@ const Accounts = () => {
         </View>
 
         {/* ACCOUNTS LIST */}
-        <View className="px-5 gap-2">
+        <View className="gap-2">
           {!isLoading && accounts.length === 0 && (
             <View className="items-center mt-16">
               <Text className="text-lg font-semibold text-foreground mb-2">

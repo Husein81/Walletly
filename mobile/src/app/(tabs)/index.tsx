@@ -1,5 +1,4 @@
 // Global imports
-import { format } from "date-fns";
 import { useMemo, useRef, useState } from "react";
 import {
   Animated,
@@ -16,19 +15,33 @@ import { SafeAreaView } from "react-native-safe-area-context";
 // Local imports
 import { ExpenseForm, ExpensesList, Search } from "@/components/Expense";
 import { Text } from "@/components/ui";
-import { ListSkeleton, TransactionsCard } from "@/components/ui-components";
+import {
+  ListSkeleton,
+  TransactionsCard,
+  UserDropdown,
+} from "@/components/ui-components";
 import { Header } from "@/components/ui-components/Header";
 import { useGetExpenses } from "@/hooks/expense";
 import { Icon } from "@/lib/icons/Icon";
-import { Expense } from "@/types";
 
 //store imports
+import DateFilter from "@/components/ui-components/DateFilter";
 import { useAuthStore, useDateStore, useModalStore } from "@/store";
+import {
+  endOfDay,
+  endOfMonth,
+  endOfWeek,
+  endOfYear,
+  startOfDay,
+  startOfMonth,
+  startOfWeek,
+  startOfYear,
+} from "date-fns";
 
 const Home = () => {
   const { user } = useAuthStore();
   const { onOpen } = useModalStore();
-  const { selectedDate } = useDateStore();
+  const { selectedDate, setSelectedDate, dateRangeType } = useDateStore();
 
   const [prevScrollPos, setPrevScrollPos] = useState(0);
 
@@ -47,10 +60,50 @@ const Home = () => {
     setPrevScrollPos(currentOffset);
   };
 
-  const { data: expenses, isLoading } = useGetExpenses(user?.id!, {
-    year: selectedDate.getFullYear().toString(),
-    month: (selectedDate.getMonth() + 1).toString(),
-  });
+  // Calculate date parameters based on selected range type
+  const dateParams = useMemo(() => {
+    switch (dateRangeType) {
+      case "today": {
+        const start = startOfDay(selectedDate);
+        const end = endOfDay(selectedDate);
+        return {
+          startDate: start,
+          endDate: end,
+        };
+      }
+      case "week": {
+        const start = startOfWeek(selectedDate, { weekStartsOn: 1 });
+        const end = endOfWeek(selectedDate, { weekStartsOn: 1 });
+        return {
+          startDate: start,
+          endDate: end,
+        };
+      }
+      case "month": {
+        const start = startOfMonth(selectedDate);
+        const end = endOfMonth(selectedDate);
+        return {
+          startDate: start,
+          endDate: end,
+        };
+      }
+      case "year": {
+        const start = startOfYear(selectedDate);
+        const end = endOfYear(selectedDate);
+        return {
+          startDate: start,
+          endDate: end,
+        };
+      }
+      default:
+        return {
+          year: selectedDate.getFullYear().toString(),
+          month: (selectedDate.getMonth() + 1).toString(),
+        };
+    }
+  }, [selectedDate, dateRangeType]);
+
+  const { data: expenses, isLoading } = useGetExpenses(user?.id!, dateParams);
 
   const handleOpenForm = () => onOpen(<ExpenseForm />, "Add Expense");
 
@@ -74,6 +127,7 @@ const Home = () => {
       .filter((ex) => ex.type === "EXPENSE")
       .reduce((acc, expense) => acc + Number(expense.amount || 0), 0);
   }, [expenses]);
+
   const handleOpenSearch = () => onOpen(<Search />, "Search");
 
   return (
@@ -87,7 +141,14 @@ const Home = () => {
         onScroll={handleScroll}
         scrollEventThrottle={16}
       >
-        <Header />
+        <Header
+          title={user?.name}
+          subtitle={user?.phone}
+          action={<UserDropdown />}
+          hasGreeting
+        />
+
+        <DateFilter date={selectedDate} onChange={setSelectedDate} />
 
         <TransactionsCard
           total={totalBalance ?? 0}
@@ -107,7 +168,14 @@ const Home = () => {
                 </Text>
                 <Text className="text-muted-foreground text-sm mt-1">
                   {expenses.length} transaction
-                  {expenses.length !== 1 ? "s" : ""} this month
+                  {expenses.length !== 1 ? "s" : ""}{" "}
+                  {dateRangeType === "today"
+                    ? "today"
+                    : dateRangeType === "week"
+                      ? "this week"
+                      : dateRangeType === "year"
+                        ? "this year"
+                        : "this month"}
                 </Text>
               </View>
               <TouchableOpacity onPress={handleOpenSearch}>
