@@ -2,7 +2,7 @@
 import { Pressable, Text, View } from "react-native";
 
 // local imports
-import { formatSmartDateTime, formattedBalance } from "@/functions";
+import { formatSmartDateTime, formattedBalance } from "@/utils";
 import { iconsRecord } from "@/lib/config";
 import { Icon } from "@/lib/icons/Icon";
 import { cn } from "@/lib/utils";

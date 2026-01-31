@@ -2,7 +2,7 @@
 import { Pressable, Text, View } from "react-native";
 
 // Local imports
-import { formattedBalance, getColorByIndex } from "@/functions";
+import { formattedBalance, getColorByIndex } from "@/utils";
 import { iconsRecord } from "@/lib/config";
 import { Icon } from "@/lib/icons/Icon";
 import { cn } from "@/lib/utils";

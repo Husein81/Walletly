@@ -5,89 +5,44 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { LineChart } from "@/components/Analysis";
 import { Overview } from "@/components/Analysis/";
 import { Text } from "@/components/ui";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Modal, Selection, ToggleGroup } from "@/components/ui-components";
+import { Modal, ToggleGroup } from "@/components/ui-components";
+import DateFilter from "@/components/ui-components/DateFilter";
 import { Header } from "@/components/ui-components/Header";
+import { useGetExpenses } from "@/hooks/expense";
 import {
   formattedBalance,
   getCategoryChartData,
   getColorByIndex,
   groupExpensesByCategory,
   transformExpensesToChartData,
-} from "@/functions";
-import { useGetExpenses } from "@/hooks/expense";
-import { useCallback, useMemo, useState } from "react";
+} from "@/utils";
 import {
-  startOfDay,
   endOfDay,
-  startOfWeek,
-  endOfWeek,
-  startOfMonth,
   endOfMonth,
-  startOfYear,
-  endOfYear,
+  endOfWeek,
+  startOfDay,
+  startOfMonth,
+  startOfWeek,
 } from "date-fns";
+import { useMemo, useState } from "react";
 
 //store imports
 import AccountAnalysis from "@/components/Analysis/AccountAnalysis";
-import { ToggleOption } from "@/components/ui-components/toggle-group";
 import { useGetAccounts } from "@/hooks/accounts";
 import { useColorScheme } from "@/lib/useColorScheme";
-import { useDateStore, DateRangeType } from "@/store";
-import { useAuthStore } from "@/store/authStore";
-import { useFocusEffect } from "expo-router";
-
-enum ExpenseState {
-  ExpenseOverview = "EXPENSE_OVERVIEW",
-  IncomeOverview = "INCOME_OVERVIEW",
-  ExpenseFlow = "EXPENSE_FLOW",
-  IncomeFlow = "INCOME_FLOW",
-  AccountAnalysis = "ACCOUNT_ANALYSIS",
-}
-
-const options: ToggleOption[] = [
-  {
-    label: "Expense Overview",
-    value: ExpenseState.ExpenseOverview,
-    className: "rounded-xl px-2",
-  },
-  {
-    label: "Income Overview",
-    value: ExpenseState.IncomeOverview,
-    className: "rounded-xl",
-  },
-  {
-    label: "Expense Flow",
-    value: ExpenseState.ExpenseFlow,
-    className: "rounded-xl px-2",
-  },
-  {
-    label: "Income Flow",
-    value: ExpenseState.IncomeFlow,
-    className: "rounded-xl px-2",
-  },
-  {
-    label: "Account Analysis",
-    value: ExpenseState.AccountAnalysis,
-    className: "rounded-xl px-2",
-  },
-];
+import { useAuthStore, useDateStore } from "@/store";
+import { EXPENSE_STATES, ExpenseState } from "@/components/Analysis/config";
+import { ToggleOption } from "@/components/ui-components/toggle-group";
 
 const Analysis = () => {
   const { user } = useAuthStore();
   const { isDarkColorScheme } = useColorScheme();
 
   const [selectedOption, setSelectedOption] = useState<ToggleOption>(
-    options[0],
+    EXPENSE_STATES[0],
   );
-  const [dateRangeType, setDateRangeType] = useState<DateRangeType>("month");
-  const { selectedDate } = useDateStore();
+  const { selectedDate, customStartDate, customEndDate, dateRangeType } =
+    useDateStore();
 
   // Calculate date parameters based on selected range type
   const dateParams = useMemo(() => {
@@ -107,30 +62,28 @@ const Analysis = () => {
         const end = endOfMonth(selectedDate);
         return { startDate: start, endDate: end };
       }
-      case "year": {
-        const start = startOfYear(selectedDate);
-        const end = endOfYear(selectedDate);
+      case "custom": {
+        if (customStartDate && customEndDate) {
+          return { startDate: customStartDate, endDate: customEndDate };
+        }
+        // Fallback to month if custom dates are not set
+        const start = startOfMonth(selectedDate);
+        const end = endOfMonth(selectedDate);
         return { startDate: start, endDate: end };
       }
       default:
         return {
-          month: (selectedDate.getMonth() + 1).toString(),
           year: selectedDate.getFullYear().toString(),
+          month: (selectedDate.getMonth() + 1).toString(),
         };
     }
-  }, [selectedDate, dateRangeType]);
+  }, [selectedDate, dateRangeType, customStartDate, customEndDate]);
 
   const { data: expenses, refetch } = useGetExpenses(
     user?.id || "",
     dateParams,
   );
   const { data: accounts } = useGetAccounts(user?.id || "");
-
-  useFocusEffect(
-    useCallback(() => {
-      refetch();
-    }, [user?.id, refetch, selectedDate]),
-  );
 
   // Expense type data
   const expenseData = useMemo(() => {
@@ -243,32 +196,8 @@ const Analysis = () => {
         </View>
 
         {/* Date Filter Selection */}
-        <View className="flex-row items-center justify-between px-5 py-4">
-          <Text className="text-foreground text-sm font-medium mb-2">
-            Filter by Date
-          </Text>
-          <View>
-            <Selection
-              value={{
-                label:
-                  dateRangeType.charAt(0).toUpperCase() +
-                  dateRangeType.slice(1),
-                value: dateRangeType,
-              }}
-              onValueChange={(option) => {
-                if (option) {
-                  setDateRangeType(option.value as DateRangeType);
-                }
-              }}
-              options={[
-                { label: "Today", value: "today" },
-                { label: "Week", value: "week" },
-                { label: "Month", value: "month" },
-                { label: "Year", value: "year" },
-              ]}
-              className="w-32"
-            />
-          </View>
+        <View className="px-5 pt-4 pb-2">
+          <DateFilter />
         </View>
 
         {/* Analysis Type Selection */}
@@ -284,11 +213,12 @@ const Analysis = () => {
             <View className=" ">
               <ToggleGroup
                 type="single"
-                options={options}
+                options={EXPENSE_STATES}
                 value={selectedOption?.value}
                 onChange={(value) =>
                   setSelectedOption(
-                    options.find((opt) => opt.value === value) || options[0],
+                    EXPENSE_STATES.find((opt) => opt.value === value) ||
+                      EXPENSE_STATES[0],
                   )
                 }
               />
@@ -305,11 +235,6 @@ const Analysis = () => {
                 <Text className="text-foreground text-xl font-bold">
                   Expense Overview
                 </Text>
-                <View className="bg-red-500/10 px-3 py-1.5 rounded-full">
-                  <Text className="text-red-500 text-xs font-semibold">
-                    {expenseData?.length || 0} items
-                  </Text>
-                </View>
               </View>
               <Overview
                 progressData={progressData}
@@ -325,11 +250,6 @@ const Analysis = () => {
                 <Text className="text-foreground text-xl font-bold">
                   Income Overview
                 </Text>
-                <View className="bg-green-500/10 px-3 py-1.5 rounded-full">
-                  <Text className="text-green-500 text-xs font-semibold">
-                    {incomeData?.length || 0} items
-                  </Text>
-                </View>
               </View>
               <Overview
                 progressData={progressData}

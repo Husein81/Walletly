@@ -1,4 +1,6 @@
 import { COLOR_PALETTE } from "@/lib/config";
+import { DateRangeType } from "@/store";
+import { Expense } from "@/types";
 import {
   addDays,
   endOfMonth,
@@ -7,8 +9,9 @@ import {
   isToday,
   isYesterday,
   startOfMonth,
+  subDays,
+  subMonths,
 } from "date-fns";
-import { Expense } from "./types";
 import { SvgData } from "react-native-svg-charts";
 
 const formattedBalance = (balance: number, currency = "$") =>
@@ -180,6 +183,41 @@ const formatSmartDateTime = (date: Date) => {
   }
 
   return format(date, "dd MMM, hh:mm a");
+};
+
+export const getGreeting = (): { greeting: string; icon: string } => {
+  const hour = new Date().getHours();
+  if (hour < 12) return { greeting: "Good Morning", icon: "Sun" };
+  if (hour < 18) return { greeting: "Good Afternoon", icon: "Sun" };
+  return { greeting: "Good Evening", icon: "Moon" };
+};
+
+export const getDateRangeLabel = (
+  range: DateRangeType,
+  startDate?: Date,
+  endDate?: Date,
+) => {
+  const today = new Date();
+
+  if (range === "today") {
+    return "Today";
+  }
+
+  if (range === "week") {
+    const start = subDays(today, 7);
+    return `${format(start, "dd MMM")} – ${format(today, "dd MMM")}`;
+  }
+
+  if (range === "month") {
+    const start = subMonths(today, 1);
+    return `${format(start, "dd MMM")} – ${format(today, "dd MMM")}`;
+  }
+
+  if (range === "custom") {
+    return `${format(String(startDate), "dd MMM")} – ${format(String(endDate), "dd MMM")}`;
+  }
+
+  return "";
 };
 
 export {

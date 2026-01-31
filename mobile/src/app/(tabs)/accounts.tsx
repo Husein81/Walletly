@@ -8,7 +8,7 @@ import { useFocusEffect } from "expo-router";
 import { Text } from "@/components/ui";
 import { Icon } from "@/lib/icons/Icon";
 import AccountForm from "@/components/Account/AccountForm";
-import { formattedBalance } from "@/functions";
+import { formattedBalance } from "@/utils";
 import { useGetAccounts } from "@/hooks/accounts";
 
 // Stores

@@ -17,6 +17,7 @@ import { ExpenseType } from "@/types";
 // store imports
 import { Icon } from "@/lib/icons/Icon";
 import { useAuthStore, useModalStore } from "@/store";
+import { Header } from "@/components/ui-components/Header";
 
 const Categories = () => {
   const { user } = useAuthStore();
@@ -60,22 +61,18 @@ const Categories = () => {
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         {/* Categories Section */}
         <View className="px-5 mt-4">
-          <View className="flex-row items-center justify-between mb-4">
-            <View>
-              <Text className="text-foreground text-2xl font-bold">
-                All Categories
-              </Text>
-              <Text className="text-muted-foreground text-sm mt-1">
-                {categories?.length || 0} total categories
-              </Text>
-            </View>
-            <Pressable
-              onPress={handleOpenCategory}
-              className="bg-primary/85 px-4 py-2 rounded-full active:scale-95"
-            >
-              <Text className="text-white text-sm font-semibold">+ Add</Text>
-            </Pressable>
-          </View>
+          <Header
+            title="Categories"
+            subtitle={`${categories?.length || 0} total categories`}
+            action={
+              <Pressable
+                onPress={handleOpenCategory}
+                className="bg-primary/85 px-4 py-2 rounded-full active:scale-95"
+              >
+                <Text className="text-white text-sm font-semibold">+ Add</Text>
+              </Pressable>
+            }
+          />
 
           {categories && categories.length > 0 ? (
             <CategorySectionList categorySections={categorySections} />

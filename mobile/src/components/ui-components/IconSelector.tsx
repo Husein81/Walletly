@@ -4,7 +4,7 @@ import { FlatList } from "react-native-gesture-handler";
 
 // Local imports
 import { iconsRecord } from "@/lib/config";
-import { getColorByIndex } from "@/functions";
+import { getColorByIndex } from "@/utils";
 import { Icon } from "@/lib/icons/Icon";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { cn } from "@/lib/utils";

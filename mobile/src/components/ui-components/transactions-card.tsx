@@ -1,4 +1,4 @@
-import { formattedBalance } from "@/functions";
+import { formattedBalance } from "@/utils";
 import { Icon } from "@/lib/icons/Icon";
 import React from "react";
 import { Text, View } from "react-native";

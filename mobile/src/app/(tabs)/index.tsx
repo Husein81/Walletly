@@ -41,7 +41,8 @@ import {
 const Home = () => {
   const { user } = useAuthStore();
   const { onOpen } = useModalStore();
-  const { selectedDate, setSelectedDate, dateRangeType } = useDateStore();
+  const { selectedDate, dateRangeType, customStartDate, customEndDate } =
+    useDateStore();
 
   const [prevScrollPos, setPrevScrollPos] = useState(0);
 
@@ -95,13 +96,28 @@ const Home = () => {
           endDate: end,
         };
       }
+      case "custom": {
+        if (customStartDate && customEndDate) {
+          return {
+            startDate: customStartDate,
+            endDate: customEndDate,
+          };
+        }
+        // Fallback to month if custom dates are not set
+        const start = startOfMonth(selectedDate);
+        const end = endOfMonth(selectedDate);
+        return {
+          startDate: start,
+          endDate: end,
+        };
+      }
       default:
         return {
           year: selectedDate.getFullYear().toString(),
           month: (selectedDate.getMonth() + 1).toString(),
         };
     }
-  }, [selectedDate, dateRangeType]);
+  }, [selectedDate, dateRangeType, customStartDate, customEndDate]);
 
   const { data: expenses, isLoading } = useGetExpenses(user?.id!, dateParams);
 
@@ -148,7 +164,7 @@ const Home = () => {
           hasGreeting
         />
 
-        <DateFilter date={selectedDate} onChange={setSelectedDate} />
+        <DateFilter />
 
         <TransactionsCard
           total={totalBalance ?? 0}

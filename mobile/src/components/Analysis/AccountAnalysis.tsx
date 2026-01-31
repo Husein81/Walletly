@@ -1,17 +1,17 @@
-import { View } from "react-native";
-import BarChart from "./BarChart";
+import { iconsRecord } from "@/lib/config";
+import { Icon } from "@/lib/icons/Icon";
+import { useColorScheme } from "@/lib/useColorScheme";
+import { Account, Expense } from "@/types";
 import {
   formattedBalance,
   getColorByIndex,
   getGroupedBarChartData,
-} from "@/functions";
-import { Account, Expense } from "@/types";
+} from "@/utils";
+import { useCallback } from "react";
+import { View } from "react-native";
 import { Separator, Text } from "../ui";
-import { Icon } from "@/lib/icons/Icon";
-import { iconsRecord } from "@/lib/config";
-import { useColorScheme } from "@/lib/useColorScheme";
 import { Empty } from "../ui-components";
-import { useCallback, useMemo } from "react";
+import BarChart from "./BarChart";
 
 type Props = {
   expenses?: Expense[];
@@ -40,7 +40,7 @@ const AccountAnalysis = ({ expenses, accounts }: Props) => {
     (i: number) =>
       accounts?.find((acc) => acc.name === barChartData.labels[i])?.imageUrl ??
       "other",
-    [accounts, barChartData.labels]
+    [accounts, barChartData.labels],
   );
 
   return (

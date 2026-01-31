@@ -3,6 +3,7 @@ import React from "react";
 
 // local imports
 import { Rn, Text } from "../ui";
+import { cn } from "@/lib/utils";
 
 export type ToggleOption = {
   value: string;
@@ -30,7 +31,7 @@ function ToggleGroup(props: SingleProps): React.ReactElement;
 function ToggleGroup(props: MultipleProps): React.ReactElement;
 
 function ToggleGroup(props: SingleProps | MultipleProps) {
-  const { options, className = "" } = props;
+  const { options, className = "gap-2" } = props;
   const type = props.type ?? "single";
 
   if (type === "multiple") {
@@ -47,9 +48,19 @@ function ToggleGroup(props: SingleProps | MultipleProps) {
           <Rn.ToggleGroupItem
             key={opt.value}
             value={opt.value}
-            className={opt.className}
+            className={cn(
+              opt.className,
+              opt.value === props.value && "bg-primary/10",
+            )}
           >
-            <Text className="px-2">{opt.label}</Text>
+            <Text
+              className={cn(
+                "px-2",
+                opt.value === props.value && "text-primary",
+              )}
+            >
+              {opt.label}
+            </Text>
           </Rn.ToggleGroupItem>
         ))}
       </Rn.ToggleGroup>
@@ -69,9 +80,16 @@ function ToggleGroup(props: SingleProps | MultipleProps) {
         <Rn.ToggleGroupItem
           key={opt.value}
           value={opt.value}
-          className={opt.className}
+          className={cn(
+            opt.className,
+            opt.value === props.value && "bg-primary",
+          )}
         >
-          <Text className="px-2">{opt.label}</Text>
+          <Text
+            className={cn("px-2", opt.value === props.value && "text-white")}
+          >
+            {opt.label}
+          </Text>
         </Rn.ToggleGroupItem>
       ))}
     </Rn.ToggleGroup>

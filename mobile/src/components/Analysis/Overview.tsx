@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { View } from "react-native";
 import { PieChart, SvgData } from "react-native-svg-charts";
-import { getColorByIndex } from "@/functions";
+import { getColorByIndex } from "@/utils";
 import { iconsRecord, SCREEN_WIDTH } from "@/lib/config";
 import { Icon } from "@/lib/icons/Icon";
 import { useColorScheme } from "@/lib/useColorScheme";
@@ -25,7 +25,7 @@ const Overview = ({ pieChartData, progressData }: Props) => {
 
   const totalExpense = useMemo(
     () => (progressData ?? []).reduce((sum, item) => sum + item.amount, 0),
-    [progressData]
+    [progressData],
   );
   // Donut center text
   const Labels = ({
