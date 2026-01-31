@@ -147,7 +147,7 @@ const Home = () => {
   const handleOpenSearch = () => onOpen(<Search />, "Search");
 
   return (
-    <SafeAreaView edges={["top"]} className="flex-1 bg-background">
+    <SafeAreaView edges={["top", "bottom"]} className="flex-1 bg-background">
       <ScrollView
         className="flex-1 px-5"
         contentContainerStyle={{

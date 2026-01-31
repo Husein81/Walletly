@@ -1,13 +1,12 @@
-import { drizzle } from "drizzle-orm/singlestore/driver";
 import { Stack } from "expo-router";
-import { openDatabaseSync } from "expo-sqlite";
 import React, { useEffect } from "react";
-
+import { StatusBar, StatusBarStyle } from "expo-status-bar";
 // Local Imports
 import Providers from "@/components/providers";
 import { useAuthStore } from "@/store/authStore";
 import { PortalHost } from "@rn-primitives/portal";
 import "../../global.css";
+import { useColorScheme } from "@/lib/useColorScheme";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -16,8 +15,8 @@ export {
 
 const MainLayout = () => {
   const { user, token } = useAuthStore();
-
   const isAuthenticated = Boolean(user && token);
+
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Protected guard={isAuthenticated}>

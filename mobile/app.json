@@ -15,7 +15,7 @@
     },
     "notification": {
       "icon": "./assets/images/wallet.png",
-      "color": "#2563EB"
+      "color": "#14B8A6"
     },
     "ios": {
       "supportsTablet": true,

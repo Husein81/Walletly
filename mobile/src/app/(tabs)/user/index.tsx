@@ -79,11 +79,13 @@ const User = () => {
       title: "Help & Support",
       subTitle: "Get help with the app",
       icon: "Info",
+      onPress: () => router.push("/user/help-support"),
     },
     {
       title: "Privacy Policy",
       subTitle: "Read our privacy policy",
       icon: "FileText",
+      onPress: () => router.push("/user/privacy-policy"),
     },
     {
       title: "About",
