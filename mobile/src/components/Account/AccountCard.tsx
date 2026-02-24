@@ -2,15 +2,14 @@
 import { Pressable, Text, View } from "react-native";
 
 // Local imports
-import { formattedBalance, getColorByIndex } from "@/utils";
+import { Icon } from "@/components/ui";
 import { iconsRecord } from "@/lib/config";
-import { Icon } from "@/lib/icons/Icon";
 import { cn } from "@/lib/utils";
 import { Account } from "@/types";
+import { formattedBalance } from "@/utils";
 import AccountForm from "./AccountForm";
 
 // Store imports
-import { useColorScheme } from "@/lib/useColorScheme";
 import { useModalStore } from "@/store";
 
 type Props = {
@@ -19,12 +18,9 @@ type Props = {
 
 const AccountCard = ({ account }: Props) => {
   const { onOpen } = useModalStore();
-  const { isDarkColorScheme } = useColorScheme();
 
   const handleEdit = () =>
     onOpen(<AccountForm account={account} />, "Edit account");
-
-  const color = getColorByIndex(account.name);
 
   return (
     <Pressable

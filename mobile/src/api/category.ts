@@ -1,49 +1,57 @@
-import { db } from "@/components/providers";
-import { categories } from "@/db/schema";
+import { db } from "@/db/client";
+import { generateUUID } from "@/db/uuid";
 import { Category } from "@/types";
-import { desc, eq } from "drizzle-orm";
 
 export const categoryApi = {
   getCategories: async (userId: string): Promise<Category[]> => {
-    return (await db
-      .select()
-      .from(categories)
-      .where(eq(categories.userId, userId))
-      .orderBy(desc(categories.createdAt))) as Category[];
+    return await db.getAllAsync<Category>(
+      "SELECT * FROM categories WHERE userId = ? ORDER BY createdAt DESC",
+      [userId],
+    );
   },
   getCategory: async (categoryId: string): Promise<Category> => {
-    const category = (await db.query.categories.findFirst({
-      where: eq(categories.id, categoryId),
-    })) as Category;
+    const category = await db.getFirstAsync<Category>(
+      "SELECT * FROM categories WHERE id = ?",
+      [categoryId],
+    );
     if (!category) throw new Error("Category not found");
     return category;
   },
   createCategory: async (category: Omit<Category, "id">) => {
-    const [created] = await db
-      .insert(categories)
-      .values({
-        ...category,
-        imageUrl: category.imageUrl || "",
-      })
-      .returning();
+    const id = generateUUID();
+    const imageUrl = category.imageUrl || "";
+
+    await db.runAsync(
+      `INSERT INTO categories (id, name, imageUrl, type, userId, createdAt, updatedAt) 
+       VALUES (?, ?, ?, ?, ?, unixepoch(), unixepoch())`,
+      [id, category.name, imageUrl, category.type, category.userId!],
+    );
+
+    const created = await db.getFirstAsync<Category>(
+      "SELECT * FROM categories WHERE id = ?",
+      [id],
+    );
+    if (!created) throw new Error("Failed to create category");
     return created;
   },
   updateCategory: async (category: Category) => {
-    await categoryApi.getCategory(category.id!);
-    const [updated] = await db
-      .update(categories)
-      .set({
-        name: category.name,
-        imageUrl: category.imageUrl || "",
-        type: category.type,
-        updatedAt: new Date(),
-      })
-      .where(eq(categories.id, category.id!))
-      .returning();
+    if (!category.id) throw new Error("Category ID required");
+
+    await db.runAsync(
+      `UPDATE categories 
+       SET name = ?, imageUrl = ?, type = ?, updatedAt = unixepoch() 
+       WHERE id = ?`,
+      [category.name, category.imageUrl || "", category.type, category.id],
+    );
+
+    const updated = await db.getFirstAsync<Category>(
+      "SELECT * FROM categories WHERE id = ?",
+      [category.id],
+    );
+    if (!updated) throw new Error("Category not found after update");
     return updated;
   },
   deleteCategory: async (categoryId: string) => {
-    await categoryApi.getCategory(categoryId); // Ensure category exists
-    await db.delete(categories).where(eq(categories.id, categoryId));
+    await db.runAsync("DELETE FROM categories WHERE id = ?", [categoryId]);
   },
 };

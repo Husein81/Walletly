@@ -1,4 +1,4 @@
-import { Icon } from "@/lib/icons/Icon";
+import { Icon } from "@/components/ui";
 import { AnyFieldApi } from "@tanstack/react-form";
 import { useState } from "react";
 import { View } from "react-native";

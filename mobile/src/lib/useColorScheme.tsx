@@ -15,7 +15,7 @@ export function useColorScheme() {
   }, [colorScheme, systemColorScheme, setColorScheme]);
 
   return {
-    colorScheme: colorScheme ?? systemColorScheme ?? "dark",
+    colorScheme: colorScheme ?? systemColorScheme ?? "light",
     isDarkColorScheme: (colorScheme ?? systemColorScheme) === "dark",
     setColorScheme,
     toggleColorScheme,

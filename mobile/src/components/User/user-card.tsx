@@ -1,4 +1,4 @@
-import { Icon } from "@/lib/icons/Icon";
+import { Icon } from "@/components/ui";
 import { View, Text, Pressable } from "react-native";
 
 type Props = {

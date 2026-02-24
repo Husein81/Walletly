@@ -1,7 +1,7 @@
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
 // local imports
-import { Icon } from "@/lib/icons/Icon";
+import { Icon } from "@/components/ui";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { cn } from "@/lib/utils";
 import { buttonVariants, Button as SButton } from "../ui/button";

@@ -6,7 +6,7 @@ import {
 import { View } from "react-native";
 
 // Local Imports
-import { Icon } from "@/lib/icons/Icon";
+import { Icon } from "@/components/ui";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { useAuthStore } from "@/store/authStore";
 import { Switch } from "../ui/switch";

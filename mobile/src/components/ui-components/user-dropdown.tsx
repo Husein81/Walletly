@@ -2,7 +2,7 @@ import { View, Pressable, Alert, TouchableOpacity } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button, Rn, Separator, Text } from "../ui";
 import { useAuthStore } from "@/store";
-import { Icon } from "@/lib/icons/Icon";
+import { Icon } from "@/components/ui";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { router } from "expo-router";
 import Avatar from "./Avatar";

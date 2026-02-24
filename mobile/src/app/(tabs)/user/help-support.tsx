@@ -12,9 +12,9 @@ import { router } from "expo-router";
 
 // Local imports
 import { Text } from "@/components/ui";
-import { Icon } from "@/lib/icons/Icon";
+import { Icon } from "@/components/ui";
 import { useColorScheme } from "@/lib/useColorScheme";
-import { FAQ_ITEMS } from "./config";
+import { FAQ_ITEMS } from "@/utils/config";
 import { Header } from "@/components/ui-components/Header";
 
 const HelpSupport = () => {

@@ -7,7 +7,7 @@ export const ListSkeleton = () => {
       {[1, 2, 3, 4].map((item) => (
         <View
           key={item}
-          className="flex-row items-center gap-4 border-2 border-border rounded-lg p-2"
+          className="flex-row items-center gap-4 border-2 border-border rounded-xl p-2"
         >
           <Skeleton className="size-14" />
           <View className="flex-1 gap-2">

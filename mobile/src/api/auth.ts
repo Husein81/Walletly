@@ -1,9 +1,13 @@
-import { db } from "@/components/providers";
-import { otps, users } from "@/db/schema";
-import { sessions } from "@/db/schema";
-import { generateUUID } from "@/db/uuid";
+import { db } from "@/db/client";
 import { User } from "@/types";
-import { and, eq } from "drizzle-orm";
+
+function generateUUID() {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
 
 const generateOtp = () =>
   Math.floor(100000 + Math.random() * 900000).toString();
@@ -13,20 +17,22 @@ const generateToken = () => generateUUID();
 export const authApi = {
   sendOtp: async (phone: string): Promise<string> => {
     const code = generateOtp();
-    const expiresAt = new Date(Date.now() + 300 * 1000); // 5 min
+    // 5 minutes from now in unixepoch (matching other times)
+    const expiresAt = Math.floor((Date.now() + 300 * 1000) / 1000);
 
-    // invalidate old OTPs
-    await db.delete(otps).where(eq(otps.phone, phone));
+    // Invalidate old OTPs for this phone
+    await db.runAsync("DELETE FROM otps WHERE phone = ?", [phone]);
 
-    await db.insert(otps).values({
-      phone,
-      code,
-      expiresAt,
-      verified: false,
-    });
+    // Insert new OTP
+    await db.runAsync(
+      `INSERT INTO otps (id, phone, code, verified, expiresAt, createdAt) 
+       VALUES (?, ?, ?, 0, ?, unixepoch())`,
+      [generateUUID(), phone, code, expiresAt],
+    );
 
     return code;
   },
+
   verifyOtp: async ({
     phone,
     code,
@@ -34,38 +40,58 @@ export const authApi = {
     phone: string;
     code: string;
   }): Promise<{ user: User; token: string }> => {
-    const otp = await db.query.otps.findFirst({
-      where: and(eq(otps.phone, phone), eq(otps.code, code)),
-    });
+    // Find the OTP
+    const result = await db.getAllAsync<{ id: string; expiresAt: number }>(
+      "SELECT * FROM otps WHERE phone = ? AND code = ? LIMIT 1",
+      [phone, code],
+    );
+    const otp = result[0];
 
     if (!otp) throw new Error("Invalid OTP");
-    if (otp.expiresAt.getTime() < Date.now()) throw new Error("OTP expired");
 
-    let user = await db.query.users.findFirst({
-      where: eq(users.phone, phone),
-    });
-
-    if (!user) {
-      const [created] = await db
-        .insert(users)
-        .values({ phone, phoneVerified: true })
-        .returning();
-      user = created;
+    // Check expiration (compare with current unix timestamp)
+    if (otp.expiresAt < Math.floor(Date.now() / 1000)) {
+      throw new Error("OTP expired");
     }
 
-    // mark OTP as used
-    await db.update(otps).set({ verified: true }).where(eq(otps.id, otp.id));
+    // Find the user
+    let userResult = await db.getAllAsync<User>(
+      "SELECT * FROM users WHERE phone = ? LIMIT 1",
+      [phone],
+    );
+    let user = userResult[0];
 
-    // 🔐 generate local session token
+    if (!user) {
+      // Create new user
+      const newUserId = generateUUID();
+      await db.runAsync(
+        `INSERT INTO users (id, phone, phoneVerified, role, createdAt, updatedAt) 
+         VALUES (?, ?, 1, 'USER', unixepoch(), unixepoch())`,
+        [newUserId, phone],
+      );
+
+      const newUserResult = await db.getAllAsync<User>(
+        "SELECT * FROM users WHERE id = ?",
+        [newUserId],
+      );
+      user = newUserResult[0];
+
+      if (!user) throw new Error("Failed to create user");
+    }
+
+    // Mark OTP as verified
+    await db.runAsync("UPDATE otps SET verified = 1 WHERE id = ?", [otp.id]);
+
+    // Create session
     const token = generateToken();
+    await db.runAsync(
+      "INSERT INTO sessions (id, userId, createdAt) VALUES (?, ?, unixepoch())",
+      [token, user.id],
+    );
 
-    await db.insert(sessions).values({
-      id: token,
-      userId: user.id,
-    });
-
-    return { user: user as User, token };
+    return { user, token };
   },
+
   completeRegistration: async ({
     userId,
     name,
@@ -75,14 +101,23 @@ export const authApi = {
     name: string;
     email: string;
   }) => {
-    const [updated] = await db
-      .update(users)
-      .set({ name, email })
-      .where(eq(users.id, userId))
-      .returning();
+    await db.runAsync(
+      `UPDATE users 
+       SET name = ?, email = ?, updatedAt = unixepoch() 
+       WHERE id = ?`,
+      [name, email, userId],
+    );
 
+    const updatedRes = await db.getAllAsync<User>(
+      "SELECT * FROM users WHERE id = ?",
+      [userId],
+    );
+    const updated = updatedRes[0];
+
+    if (!updated) throw new Error("User not found after update");
     return updated;
   },
+
   updateProfile: async ({
     userId,
     name,
@@ -92,20 +127,42 @@ export const authApi = {
     name?: string;
     email?: string;
   }) => {
-    const [updated] = await db
-      .update(users)
-      .set({ name, email })
-      .where(eq(users.id, userId))
-      .returning();
+    const updates: string[] = [];
+    const params: any[] = [];
 
+    if (name !== undefined) {
+      updates.push("name = ?");
+      params.push(name);
+    }
+    if (email !== undefined) {
+      updates.push("email = ?");
+      params.push(email);
+    }
+
+    if (updates.length > 0) {
+      updates.push("updatedAt = unixepoch()");
+      params.push(userId); // for WHERE clause
+
+      await db.runAsync(
+        `UPDATE users SET ${updates.join(", ")} WHERE id = ?`,
+        params,
+      );
+    }
+
+    const updatedRes = await db.getAllAsync<User>(
+      "SELECT * FROM users WHERE id = ?",
+      [userId],
+    );
+    const updated = updatedRes[0];
+
+    if (!updated) throw new Error("User not found after update");
     return updated as User;
   },
+
   logout: async (token: string) => {
     try {
-      // Delete session from database
-      await db.delete(sessions).where(eq(sessions.id, token));
+      await db.runAsync("DELETE FROM sessions WHERE id = ?", [token]);
     } catch (error) {
-      // Session might not exist, but logout should still succeed
       console.warn("Error clearing session:", error);
     }
   },

@@ -3,7 +3,7 @@ import { startOfMonth, startOfWeek } from "date-fns";
 import { Pressable, ScrollView, View } from "react-native";
 
 // Local imports
-import { Icon } from "@/lib/icons/Icon";
+import { Icon } from "@/components/ui";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { cn } from "@/lib/utils";
 import { useModalStore } from "@/store";
@@ -100,7 +100,7 @@ const DateFilter = () => {
             >
               <View className="flex-row items-center gap-2">
                 <Icon
-                  name={filter.icon as any}
+                  name={filter.icon}
                   size={16}
                   color={
                     selectedRange === filter.value

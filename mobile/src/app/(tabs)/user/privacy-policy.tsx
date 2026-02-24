@@ -1,14 +1,13 @@
 // Global imports
-import { ScrollView, View, Pressable } from "react-native";
+import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
 
 // Local imports
 import { Text } from "@/components/ui";
-import { Icon } from "@/lib/icons/Icon";
-import { useColorScheme } from "@/lib/useColorScheme";
-import { PRIVACY_POLICY_SECTIONS } from "./config";
 import { Header } from "@/components/ui-components/Header";
+import { Icon } from "@/components/ui";
+import { useColorScheme } from "@/lib/useColorScheme";
+import { PRIVACY_POLICY_SECTIONS } from "@/utils/config";
 
 const PrivacyPolicy = () => {
   const { isDarkColorScheme } = useColorScheme();

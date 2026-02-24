@@ -10,7 +10,6 @@ import {
   isYesterday,
   startOfMonth,
   subDays,
-  subMonths,
 } from "date-fns";
 import { SvgData } from "react-native-svg-charts";
 
@@ -209,8 +208,7 @@ export const getDateRangeLabel = (
   }
 
   if (range === "month") {
-    const start = subMonths(today, 1);
-    return `${format(start, "dd MMM")} – ${format(today, "dd MMM")}`;
+    return `${format(today, "MMMM")}`;
   }
 
   if (range === "custom") {
@@ -221,11 +219,11 @@ export const getDateRangeLabel = (
 };
 
 export {
-  formattedBalance,
   formatSmartDateTime,
-  getColorByIndex,
-  transformExpensesToChartData,
+  formattedBalance,
   getCategoryChartData,
-  groupExpensesByCategory,
+  getColorByIndex,
   getGroupedBarChartData,
+  groupExpensesByCategory,
+  transformExpensesToChartData,
 };

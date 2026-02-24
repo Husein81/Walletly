@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import { create } from "zustand";
 
 interface ModalStore {
@@ -9,7 +10,7 @@ interface ModalStore {
   onOpen: (
     body: React.ReactNode,
     title?: string,
-    transparent?: boolean
+    transparent?: boolean,
   ) => void;
 }
 
@@ -18,7 +19,16 @@ export const useModalStore = create<ModalStore>((set) => ({
   body: null,
   title: undefined,
   transparent: false,
-  onClose: () => set({ open: false, body: null, title: undefined }),
-  onOpen: (body, title, transparent = false) =>
-    set({ open: true, body, title, transparent }),
+  onClose: () => {
+    set({ open: false, body: null, title: undefined });
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.push("/");
+    }
+  },
+  onOpen: (body, title, transparent = false) => {
+    set({ open: true, body, title, transparent });
+    router.push("/modal");
+  },
 }));

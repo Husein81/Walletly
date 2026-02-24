@@ -1,7 +1,7 @@
 import { View, Text } from "react-native";
 import { Rn } from "../ui";
 import { Button } from "./Button";
-import { Icon } from "@/lib/icons/Icon";
+import { Icon } from "@/components/ui";
 
 type Props = {
   title: string;

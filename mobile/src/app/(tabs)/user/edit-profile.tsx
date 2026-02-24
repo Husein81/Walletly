@@ -14,7 +14,7 @@ import { router } from "expo-router";
 
 // Local imports
 import { Text } from "@/components/ui";
-import { Icon } from "@/lib/icons/Icon";
+import { Icon } from "@/components/ui";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { useAuthStore } from "@/store";
 import { useUpdateProfile } from "@/hooks/auth";

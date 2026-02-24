@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { PieChart, SvgData } from "react-native-svg-charts";
 import { getColorByIndex } from "@/utils";
 import { iconsRecord, SCREEN_WIDTH } from "@/lib/config";
-import { Icon } from "@/lib/icons/Icon";
+import { Icon } from "@/components/ui";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { Progress, Separator, Text } from "../ui";
 import { Text as TextSVG } from "react-native-svg";

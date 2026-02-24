@@ -1,4 +1,4 @@
-import { Icon } from "@/lib/icons/Icon";
+import { Icon } from "@/components/ui";
 import { View, Text } from "react-native";
 import { format } from "date-fns";
 import { StatsCard } from "../ui-components";

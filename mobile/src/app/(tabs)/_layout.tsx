@@ -4,8 +4,7 @@ import { Platform, TouchableOpacity, View } from "react-native";
 
 // Local Imports
 import { ExpenseForm } from "@/components/Expense";
-import { Modal } from "@/components/ui-components";
-import { Icon } from "@/lib/icons/Icon";
+import { Icon } from "@/components/ui";
 import { useModalStore } from "@/store";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { NAV_THEME } from "@/lib/theme";
@@ -13,6 +12,14 @@ import { NAV_THEME } from "@/lib/theme";
 const TabsLayout = () => {
   const { onOpen } = useModalStore();
   const { isDarkColorScheme } = useColorScheme();
+
+  const activeColor = isDarkColorScheme
+    ? NAV_THEME.dark.colors.primary
+    : NAV_THEME.light.colors.primary;
+  const inactiveColor = isDarkColorScheme
+    ? NAV_THEME.dark.colors.mutedForeground
+    : NAV_THEME.light.colors.mutedForeground;
+
   return (
     <>
       <Tabs
@@ -23,9 +30,7 @@ const TabsLayout = () => {
               style={{
                 flex: 1,
                 borderTopWidth: 1,
-                borderTopColor: isDarkColorScheme
-                  ? NAV_THEME.dark.colors.card
-                  : NAV_THEME.light.colors.border,
+                borderTopColor: isDarkColorScheme ? "#333333" : "#e1e1e1",
                 backgroundColor: isDarkColorScheme
                   ? NAV_THEME.dark.colors.background
                   : NAV_THEME.light.colors.background,
@@ -33,13 +38,14 @@ const TabsLayout = () => {
             />
           ),
           tabBarShowLabel: true,
-          tabBarActiveTintColor: "#14B8A6", // teal
-          tabBarInactiveTintColor: "#9CA3AF", // gray-400
+          tabBarActiveTintColor: activeColor,
+          tabBarInactiveTintColor: inactiveColor,
           tabBarStyle: {
             position: "absolute",
             left: 16,
             right: 16,
-            height: Platform.OS === "ios" ? 70 : 64,
+            paddingVertical: 8,
+            height: Platform.OS === "ios" ? 70 : 65,
             borderTopWidth: 0,
             elevation: 10,
             shadowColor: "#000",
@@ -69,7 +75,7 @@ const TabsLayout = () => {
         <Tabs.Screen
           name="analysis"
           options={{
-            title: "Analysis",
+            title: "Stats",
             tabBarIcon: ({ color }) => (
               <Icon name="ChartPie" size={24} color={color} />
             ),
@@ -92,16 +98,21 @@ const TabsLayout = () => {
                     width: 56,
                     height: 56,
                     borderRadius: 28,
-                    backgroundColor: "#14B8A6",
+                    backgroundColor: activeColor,
                     marginBottom: Platform.OS === "ios" ? 24 : 20,
-                    shadowColor: "#14B8A6",
-                    shadowOpacity: 0.35,
+                    shadowColor: activeColor,
+                    shadowOpacity: isDarkColorScheme ? 0.4 : 0.35,
                     shadowRadius: 10,
                     shadowOffset: { width: 0, height: 6 },
                     elevation: 8,
                   }}
                 >
-                  <Icon name="Plus" size={28} color="#ffffff" />
+                  <Icon
+                    name="Plus"
+                    size={28}
+                    color={NAV_THEME.light.colors.background}
+                    onPress={() => onOpen(<ExpenseForm />, "New Expense")}
+                  />
                 </View>
               </TouchableOpacity>
             ),
@@ -112,7 +123,7 @@ const TabsLayout = () => {
         <Tabs.Screen
           name="accounts"
           options={{
-            title: "Accounts",
+            title: "Wallet",
             tabBarIcon: ({ color }) => (
               <Icon name="Wallet" size={24} color={color} />
             ),
@@ -130,7 +141,6 @@ const TabsLayout = () => {
           }}
         />
       </Tabs>
-      <Modal />
     </>
   );
 };

@@ -54,6 +54,7 @@ import { ToggleGroup, ToggleGroupIcon, ToggleGroupItem } from "./toggle-group";
 import { Toggle, ToggleIcon, toggleVariants } from "./toggle";
 export { Button } from "./button";
 export { Label } from "./label";
+export { Icon } from "./icon";
 export { Input } from "./input";
 export { Text } from "./text";
 export { Card } from "./card";

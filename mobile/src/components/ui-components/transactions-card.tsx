@@ -1,5 +1,5 @@
 import { formattedBalance } from "@/utils";
-import { Icon } from "@/lib/icons/Icon";
+import { Icon } from "@/components/ui";
 import React from "react";
 import { Text, View } from "react-native";
 import { Rn } from "../ui";

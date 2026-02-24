@@ -1,56 +1,52 @@
 import { Dimensions } from "react-native";
 
 export const COLOR_PALETTE = [
-  "#FF6B6B", // red
-  "#FFB347", // orange
-  "#FFD93D", // yellow
-  "#6BCB77", // green
-  "#4D96FF", // blue
-  "#9D4ECC", // purple (fixed lowercase issue)
-  "#FF85A1", // pink
-  "#00C2A8", // teal
-  "#FFC75F", // gold
-  "#C34A36", // brown
-  "#6C5DD3", // indigo
-  "#3D405B", // dark blue
-
-  "#F67280", // coral
-  "#2A9D8F", // jade green
-  "#8D99AE", // dusty blue
-  "#E76F51", // burnt orange
-  "#A8DADC", // pale cyan
-  "#F4A261", // sandy orange
-  "#B5838D", // mauve
-  "#3A0CA3", // royal blue
+  "#22D3EE", // cyan-400 (bright teal)
+  "#06B6D4", // cyan-500 (teal accent)
+  "#0D9488", // teal-700 (dark teal)
+  "#10B981", // emerald-500 (green)
+  "#34D399", // emerald-400 (bright green)
+  "#6366F1", // indigo-500 (blue)
+  "#818CF8", // indigo-400 (light blue)
+  "#EF4444", // red-500 (destructive)
+  "#F87171", // red-400 (bright red)
+  "#F59E0B", // amber-500 (warning)
+  "#FBBF24", // amber-400 (bright warning)
+  "#06B6D4", // cyan-500 (secondary teal)
+  "#14B8A6", // teal-500 (primary accent)
+  "#2DD4BF", // teal-400 (bright accent)
+  "#3B82F6", // blue-500 (accent blue)
 ];
 
 export const iconsRecord: Record<string, string> = {
-  pc: "Laptop",
+  bank: "Landmark",
   car: "Car",
   card: "CreditCard",
+  cigarette: "Cigarette",
   clothes: "Shirt",
   dollar: "DollarSign",
+  food: "Utensils",
+  grant: "Gift",
   handCoins: "HandCoins",
   health: "Activity",
   house: "House",
-  food: "Utensils",
   education: "Book",
-  phone: "Smartphone",
   entertainment: "Gamepad2",
-  piggy: "PiggyBank",
+  metro: "TramFront",
   money: "Banknote",
-  transportation: "BusFront",
+  other: "CircleHelp",
+  pc: "Laptop",
+  piggy: "PiggyBank",
+  phone: "Smartphone",
   rental: "Building2",
-  bank: "Landmark",
-  grant: "Gift",
   sale: "Receipt",
-  cigarette: "Cigarette",
   shopping: "ShoppingCart",
   sport: "Dumbbell",
   tag: "Tag",
+  transportation: "BusFront",
   travel: "Plane",
   wallet: "Wallet",
-  other: "CircleHelp",
+  wifi: "Wifi",
 };
 
 export const currencies: Record<string, string> = {

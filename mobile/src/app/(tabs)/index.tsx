@@ -6,10 +6,10 @@ import {
   NativeSyntheticEvent,
   Platform,
   Pressable,
-  ScrollView,
   TouchableOpacity,
   View,
 } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // Local imports
@@ -22,7 +22,7 @@ import {
 } from "@/components/ui-components";
 import { Header } from "@/components/ui-components/Header";
 import { useGetExpenses } from "@/hooks/expense";
-import { Icon } from "@/lib/icons/Icon";
+import { Icon } from "@/components/ui";
 
 //store imports
 import DateFilter from "@/components/ui-components/DateFilter";
@@ -61,8 +61,7 @@ const Home = () => {
     setPrevScrollPos(currentOffset);
   };
 
-  // Calculate date parameters based on selected range type
-  const dateParams = useMemo(() => {
+  const getDateParams = () => {
     switch (dateRangeType) {
       case "today": {
         const start = startOfDay(selectedDate);
@@ -117,7 +116,10 @@ const Home = () => {
           month: (selectedDate.getMonth() + 1).toString(),
         };
     }
-  }, [selectedDate, dateRangeType, customStartDate, customEndDate]);
+  };
+
+  // Calculate date parameters based on selected range type
+  const dateParams = getDateParams();
 
   const { data: expenses, isLoading } = useGetExpenses(user?.id!, dateParams);
 
@@ -166,11 +168,30 @@ const Home = () => {
 
         <DateFilter />
 
-        <TransactionsCard
+        {/* <TransactionsCard
           total={totalBalance ?? 0}
           income={totalIncome ?? 0}
           expense={totalExpense ?? 0}
-        />
+        /> */}
+
+        <View className="flex-row gap-4 mb-4">
+          <View className="bg-card rounded-xl p-4 mb-6 flex-1">
+            <Text className="text-foreground text-sm font-bold mb-2">
+              Balance
+            </Text>
+            <Text className="text-2xl font-extrabold text-muted-foreground">
+              ${totalIncome.toFixed(2)}
+            </Text>
+          </View>
+          <View className="bg-card rounded-xl p-4 mb-6 flex-1">
+            <Text className="text-foreground text-sm font-bold mb-2">
+              Expenses
+            </Text>
+            <Text className="text-2xl font-extrabold text-red-500">
+              ${totalExpense.toFixed(2)}
+            </Text>
+          </View>
+        </View>
 
         {isLoading ? (
           <ListSkeleton />
@@ -219,35 +240,6 @@ const Home = () => {
                 Start tracking your expenses by adding your first transaction
                 below
               </Text>
-
-              {/* Quick Action Cards */}
-              <View className="w-full gap-3 ">
-                {/* Primary Add Button */}
-                <Pressable
-                  onPress={handleOpenForm}
-                  className="shadow-lg opacity-100 pb-4"
-                >
-                  <View className="items-center flex-row px-2 gap-4 border border-teal-500/50 bg-primary/10 rounded-2xl">
-                    <Icon
-                      name="Plus"
-                      size={24}
-                      color="#14B8A6"
-                      className="rounded-full border-teal-500 border bg-teal-500/30 p-2"
-                      strokeWidth={2.5}
-                    />
-
-                    <View className="flex-1 py-4 text-center">
-                      <Text className="text-white text-sm font-bold">
-                        Add Your First Transaction
-                      </Text>
-                      <Text className="text-white/80 text-xs">
-                        Start tracking by adding an expense, income, or transfer
-                      </Text>
-                    </View>
-                    <Icon name="ChevronRight" size={20} color="white" />
-                  </View>
-                </Pressable>
-              </View>
             </View>
           </View>
         )}

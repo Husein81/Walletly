@@ -4,7 +4,7 @@ import { Pressable, Text, View } from "react-native";
 // local imports
 import { formatSmartDateTime, formattedBalance } from "@/utils";
 import { iconsRecord } from "@/lib/config";
-import { Icon } from "@/lib/icons/Icon";
+import { Icon } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { Expense } from "@/types";
 import { ExpenseForm } from "./ExpenseForm";
@@ -26,8 +26,8 @@ export const ExpenseCard = ({ expense }: Props) => {
     onOpen(<ExpenseForm expense={expense} />, "Edit Expense");
 
   return (
-    <Pressable onPress={() => handleOpen(expense)}>
-      <View className="flex-row py-2">
+    <Pressable onPress={() => handleOpen(expense)} style={{ elevation: 1 }}>
+      <View className="flex-row py-2 border-b border-border items-center">
         <View className="flex-row gap-4 items-center">
           <View className="p-2 rounded-xl bg-primary/10">
             <Icon

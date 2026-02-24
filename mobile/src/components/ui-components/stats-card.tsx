@@ -1,4 +1,4 @@
-import { Icon } from "@/lib/icons/Icon";
+import { Icon } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { View, Text } from "react-native";
 

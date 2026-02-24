@@ -15,7 +15,7 @@ import { useCategories } from "@/hooks/categories";
 import { ExpenseType } from "@/types";
 
 // store imports
-import { Icon } from "@/lib/icons/Icon";
+import { Icon } from "@/components/ui";
 import { useAuthStore, useModalStore } from "@/store";
 import { Header } from "@/components/ui-components/Header";
 

@@ -1,5 +1,4 @@
 export { Dropdown } from "./Dropdown";
-export { Modal } from "./Modal";
 export { CustomDrawer } from "./CustomDrawer";
 export { Button } from "./Button";
 export { Empty } from "./Empty";

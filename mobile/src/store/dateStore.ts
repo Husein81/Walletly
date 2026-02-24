@@ -13,7 +13,7 @@ interface DateStore {
 }
 export const useDateStore = create<DateStore>((set) => ({
   selectedDate: new Date(),
-  dateRangeType: "month",
+  dateRangeType: "today",
   customStartDate: undefined,
   customEndDate: undefined,
   setSelectedDate: (date) => set({ selectedDate: date }),

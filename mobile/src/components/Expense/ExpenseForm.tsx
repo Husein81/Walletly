@@ -1,7 +1,7 @@
 // Global Imports
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useForm } from "@tanstack/react-form";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -19,10 +19,6 @@ import {
   InputField,
   TextareaField,
 } from "@/components/ui-components";
-import BottomSheet, {
-  BottomSheetRef,
-} from "@/components/ui-components/BottomSheet";
-import CategoryForm from "@/components/Category/CategoryForm";
 import { useGetAccounts } from "@/hooks/accounts";
 import { useCategories } from "@/hooks/categories";
 import {
@@ -31,41 +27,39 @@ import {
   useUpdateExpense,
 } from "@/hooks/expense";
 import { iconsRecord } from "@/lib/config";
-import { Icon } from "@/lib/icons/Icon";
+import { Icon } from "@/components/ui";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { cn } from "@/lib/utils";
-import { Account, Category, Expense, ExpenseType } from "@/types";
+import {
+  Account,
+  BottomSheetType,
+  Category,
+  Expense,
+  ExpenseType,
+} from "@/types";
 
 // store imports
-import { useAuthStore, useModalStore } from "@/store";
 import { NAV_THEME } from "@/lib/theme";
+import { useAuthStore, useBottomSheetStore, useModalStore } from "@/store";
+import CategorySelection from "./CategorySelection";
 
 type Props = {
   expense?: Expense;
 };
 
-enum BottomSheetType {
-  ACCOUNT = "ACCOUNT",
-  CATEGORY = "CATEGORY",
-}
-
 export const ExpenseForm = ({ expense }: Props) => {
   const { user } = useAuthStore();
-  const { onClose, onOpen } = useModalStore();
+  const { onClose } = useModalStore();
+  const { onOpen: onOpenBS } = useBottomSheetStore();
   const { isDarkColorScheme } = useColorScheme();
 
   // Fetch accounts and categories
   const { data: accounts } = useGetAccounts(user?.id || "");
   const { data: categories } = useCategories(user?.id || "");
 
-  const bottomSheetRef = useRef<BottomSheetRef>(null);
-
   const [selectedExpenseType, setSelectedExpenseType] = useState<ExpenseType>(
     expense?.type || ExpenseType.EXPENSE,
   );
-  const [accountSelectionTarget, setAccountSelectionTarget] = useState<
-    "from" | "to"
-  >("from");
   const [selectedAccount, setSelectedAccount] = useState<Account | undefined>(
     expense?.fromAccount || undefined,
   );
@@ -75,8 +69,6 @@ export const ExpenseForm = ({ expense }: Props) => {
   const [selectedCategory, setSelectedCategory] = useState<
     Category | undefined
   >(expense?.category || undefined);
-  const [bottomSheetType, setBottomSheetType] =
-    useState<BottomSheetType | null>(null);
 
   const [mode, setMode] = useState<"date" | "time">("date");
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -108,11 +100,32 @@ export const ExpenseForm = ({ expense }: Props) => {
   };
 
   const openBottomSheet = (type: BottomSheetType, target?: "from" | "to") => {
-    setBottomSheetType(type);
-    if (target) {
-      setAccountSelectionTarget(target);
-    }
-    bottomSheetRef.current?.present();
+    const isAccountType = type === BottomSheetType.ACCOUNT;
+    const data = isAccountType ? (accounts ?? []) : (filteredCategories ?? []);
+    const title = isAccountType ? "Select Account" : "Select Category";
+
+    onOpenBS(
+      <CategorySelection
+        title={title}
+        data={data}
+        isAccountType={isAccountType}
+        selectedAccount={selectedAccount}
+        selectedToAccount={selectedToAccount}
+        selectedCategory={selectedCategory}
+        target={target}
+        onSelect={(item) => {
+          if (isAccountType) {
+            if (target === "from") {
+              setSelectedAccount(item as Account);
+            } else {
+              setSelectedToAccount(item as Account);
+            }
+          } else {
+            setSelectedCategory(item as Category);
+          }
+        }}
+      />,
+    );
   };
 
   // Create and Update Expense
@@ -495,78 +508,6 @@ export const ExpenseForm = ({ expense }: Props) => {
           onPress={() => handleDeleteExpense(expense?.id ?? "")}
         />
       )}
-
-      {/* Bottom Sheet */}
-      <BottomSheet
-        ref={bottomSheetRef}
-        data={
-          bottomSheetType === BottomSheetType.ACCOUNT
-            ? (accounts ?? [])
-            : (filteredCategories ?? [])
-        }
-        title={
-          bottomSheetType === BottomSheetType.ACCOUNT
-            ? "Select Account"
-            : "Select Category"
-        }
-        renderItem={(item: Account | Category, index: number) => {
-          const isAccountType = bottomSheetType === BottomSheetType.ACCOUNT;
-          const isSelectedItem = isAccountType
-            ? accountSelectionTarget === "from"
-              ? selectedAccount?.id === item.id
-              : selectedToAccount?.id === item.id
-            : selectedCategory?.id === item.id;
-
-          return (
-            <Pressable
-              key={item.id ?? index}
-              onPress={() => {
-                if (bottomSheetType === BottomSheetType.ACCOUNT) {
-                  if (accountSelectionTarget === "from") {
-                    setSelectedAccount(item as Account);
-                  } else {
-                    setSelectedToAccount(item as Account);
-                  }
-                } else {
-                  setSelectedCategory(item as Category);
-                }
-                bottomSheetRef.current?.dismiss();
-              }}
-              className={cn(
-                "mx-4 mb-3 p-4 rounded-xl flex-row items-center justify-between bg-card border",
-                isSelectedItem
-                  ? "border-primary bg-primary/10"
-                  : "border-border",
-              )}
-            >
-              <View className="flex-row items-center gap-3">
-                <View className="p-3 rounded-xl bg-primary/10">
-                  <Icon
-                    name={iconsRecord[item.imageUrl || "Wallet"]}
-                    color="#14B8A6"
-                    size={24}
-                  />
-                </View>
-                <View>
-                  <Text className="text-base font-semibold text-foreground capitalize">
-                    {item.name}
-                  </Text>
-                  {isAccountType && (item as Account).balance !== undefined && (
-                    <Text className="text-sm text-muted-foreground">
-                      Balance: ${Number((item as Account).balance).toFixed(2)}
-                    </Text>
-                  )}
-                </View>
-              </View>
-              {isSelectedItem && (
-                <View className="bg-primary rounded-full p-1">
-                  <Icon name="Check" size={16} color="white" />
-                </View>
-              )}
-            </Pressable>
-          );
-        }}
-      />
     </View>
   );
 };

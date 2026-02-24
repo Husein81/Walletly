@@ -6,7 +6,7 @@ import { useFocusEffect } from "expo-router";
 
 // Local imports
 import { Text } from "@/components/ui";
-import { Icon } from "@/lib/icons/Icon";
+import { Icon } from "@/components/ui";
 import AccountForm from "@/components/Account/AccountForm";
 import { formattedBalance } from "@/utils";
 import { useGetAccounts } from "@/hooks/accounts";
@@ -25,12 +25,6 @@ const Accounts = () => {
     refetch,
     isLoading,
   } = useGetAccounts(user?.id ?? "");
-
-  useFocusEffect(
-    useCallback(() => {
-      refetch();
-    }, [refetch]),
-  );
 
   // Total balance
   const totalBalance = useMemo(

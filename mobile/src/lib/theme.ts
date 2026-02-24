@@ -51,46 +51,51 @@ export const THEME = {
 
   dark: {
     /* Core */
-    background: "hsl(222 47% 6%)", // very dark slate
+    background: "hsl(222 47% 5%)", // darker slate for better OLED
     foreground: "hsl(210 40% 98%)",
 
-    card: "hsl(222 47% 10%)",
+    card: "hsl(222 40% 12%)", // improved visibility
     cardForeground: "hsl(210 40% 98%)",
 
-    popover: "hsl(222 47% 10%)",
+    popover: "hsl(222 47% 13%)",
     popoverForeground: "hsl(210 40% 98%)",
 
-    /* PRIMARY – Teal (muted for dark) */
-    primary: "hsl(173 80% 45%)",
-    primaryForeground: "hsl(222 47% 6%)",
+    /* PRIMARY – Teal (brighter for dark) */
+    primary: "hsl(173 85% 50%)", // brighter teal
+    primaryForeground: "hsl(222 47% 5%)",
 
-    secondary: "hsl(222 47% 14%)",
+    secondary: "hsl(222 47% 18%)", // better contrast
     secondaryForeground: "hsl(210 40% 98%)",
 
-    muted: "hsl(222 47% 14%)",
-    mutedForeground: "hsl(215 20% 65%)",
+    muted: "hsl(222 47% 18%)",
+    mutedForeground: "hsl(215 20% 55%)", // improved gray for dark mode
 
-    accent: "hsl(222 47% 14%)",
-    accentForeground: "hsl(210 40% 98%)",
+    accent: "hsl(222 47% 18%)",
+    accentForeground: "hsl(173 85% 50%)",
 
-    destructive: "hsl(0 72% 51%)",
-    success: "hsl(142 71% 45%)",
+    destructive: "hsl(0 84% 60%)",
+    success: "hsl(142 76% 55%)", // brighter green
 
-    border: "hsl(222 47% 18%)",
-    input: "hsl(222 47% 18%)",
-    ring: "hsl(173 80% 45%)",
+    border: "hsl(222 47% 22%)", // more visible borders
+    input: "hsl(222 47% 22%)",
+    ring: "hsl(173 85% 50%)",
 
     radius: "0.75rem",
 
-    chart1: "hsl(173 80% 45%)",
-    chart2: "hsl(142 71% 45%)",
-    chart3: "hsl(0 72% 51%)",
+    chart1: "hsl(173 85% 50%)",
+    chart2: "hsl(142 76% 55%)",
+    chart3: "hsl(0 84% 60%)",
     chart4: "hsl(43 74% 66%)",
-    chart5: "hsl(220 70% 60%)",
+    chart5: "hsl(220 75% 60%)",
   },
 };
+type NavTheme = Theme & {
+  colors: Theme["colors"] & {
+    mutedForeground: string;
+  };
+};
 
-export const NAV_THEME: Record<"light" | "dark", Theme> = {
+export const NAV_THEME: Record<"light" | "dark", NavTheme> = {
   light: {
     ...DefaultTheme,
     colors: {
@@ -100,6 +105,7 @@ export const NAV_THEME: Record<"light" | "dark", Theme> = {
       notification: THEME.light.destructive,
       primary: THEME.light.primary,
       text: THEME.light.foreground,
+      mutedForeground: THEME.light.mutedForeground,
     },
   },
   dark: {
@@ -111,6 +117,7 @@ export const NAV_THEME: Record<"light" | "dark", Theme> = {
       notification: THEME.dark.destructive,
       primary: THEME.dark.primary,
       text: THEME.dark.foreground,
+      mutedForeground: THEME.dark.mutedForeground,
     },
   },
 };

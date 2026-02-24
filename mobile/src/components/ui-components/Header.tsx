@@ -2,7 +2,7 @@ import { Pressable, View } from "react-native";
 
 // Local imports
 import { Text } from "../ui/text";
-import { Icon } from "@/lib/icons/Icon";
+import { Icon } from "@/components/ui";
 import { getGreeting } from "@/utils";
 import { router } from "expo-router";
 

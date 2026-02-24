@@ -20,7 +20,7 @@ import {
 } from "../ui-components";
 
 // Store Imports
-import { Icon } from "@/lib/icons/Icon";
+import { Icon } from "@/components/ui";
 import { useAuthStore, useModalStore } from "@/store";
 
 type Props = {

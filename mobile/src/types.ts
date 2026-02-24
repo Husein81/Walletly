@@ -11,6 +11,11 @@ export enum ExpenseType {
   TRANSFER = "TRANSFER",
 }
 
+export enum BottomSheetType {
+  ACCOUNT = "ACCOUNT",
+  CATEGORY = "CATEGORY",
+}
+
 // Schemas
 export const userSchema = z.object({
   id: z.string().optional(),

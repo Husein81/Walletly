@@ -9,7 +9,7 @@ import {
   View,
   type ViewStyle,
 } from "react-native";
-import { Icon } from "@/lib/icons/Icon";
+import { Icon } from "./icon";
 import { TextClassContext } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 
@@ -36,7 +36,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
     <TextClassContext.Provider
       value={cn(
         "select-none text-sm native:text-lg text-primary",
-        open && "native:text-accent-foreground"
+        open && "native:text-accent-foreground",
       )}
     >
       <DropdownMenuPrimitive.SubTrigger
@@ -45,7 +45,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
           "flex flex-row web:cursor-default web:select-none gap-2 items-center web:focus:bg-accent web:hover:bg-accent active:bg-accent rounded-sm px-2 py-1.5 native:py-2 web:outline-none",
           open && "bg-accent",
           inset && "pl-8",
-          className
+          className,
         )}
         {...props}
       >
@@ -55,8 +55,8 @@ const DropdownMenuSubTrigger = React.forwardRef<
             Platform.OS === "web"
               ? "ChevronRight"
               : open
-              ? "ChevronUp"
-              : "ChevronDown"
+                ? "ChevronUp"
+                : "ChevronDown"
           }
           size={18}
           className="ml-auto text-foreground"
@@ -81,7 +81,7 @@ const DropdownMenuSubContent = React.forwardRef<
         open
           ? "web:animate-in web:fade-in-0 web:zoom-in-95"
           : "web:animate-out web:fade-out-0 web:zoom-out",
-        className
+        className,
       )}
       {...props}
     />
@@ -100,7 +100,7 @@ const DropdownMenuContent = React.forwardRef<
 >(
   (
     { className, overlayClassName, overlayStyle, portalHost, ...props },
-    ref
+    ref,
   ) => {
     const { open } = DropdownMenuPrimitive.useRootContext();
     return (
@@ -113,8 +113,8 @@ const DropdownMenuContent = React.forwardRef<
                   overlayStyle,
                 ])
               : Platform.OS !== "web"
-              ? StyleSheet.absoluteFill
-              : undefined
+                ? StyleSheet.absoluteFill
+                : undefined
           }
           className={overlayClassName}
         >
@@ -125,14 +125,14 @@ const DropdownMenuContent = React.forwardRef<
               open
                 ? "web:animate-in web:fade-in-0 web:zoom-in-95"
                 : "web:animate-out web:fade-out-0 web:zoom-out-95",
-              className
+              className,
             )}
             {...props}
           />
         </DropdownMenuPrimitive.Overlay>
       </DropdownMenuPrimitive.Portal>
     );
-  }
+  },
 );
 DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName;
 
@@ -149,7 +149,7 @@ const DropdownMenuItem = React.forwardRef<
         "relative flex flex-row web:cursor-default gap-2 items-center rounded-sm px-2 py-1.5 native:py-2 web:outline-none web:focus:bg-accent active:bg-accent web:hover:bg-accent group",
         inset && "pl-8",
         props.disabled && "opacity-50 web:pointer-events-none",
-        className
+        className,
       )}
       {...props}
     />
@@ -166,7 +166,7 @@ const DropdownMenuCheckboxItem = React.forwardRef<
     className={cn(
       "relative flex flex-row web:cursor-default items-center web:group rounded-sm py-1.5 native:py-2 pl-8 pr-2 web:outline-none web:focus:bg-accent active:bg-accent",
       props.disabled && "web:pointer-events-none opacity-50",
-      className
+      className,
     )}
     checked={checked}
     {...props}
@@ -196,7 +196,7 @@ const DropdownMenuRadioItem = React.forwardRef<
     className={cn(
       "relative flex flex-row web:cursor-default web:group items-center rounded-sm py-1.5 native:py-2 pl-8 pr-2 web:outline-none web:focus:bg-accent active:bg-accent",
       props.disabled && "web:pointer-events-none opacity-50",
-      className
+      className,
     )}
     {...props}
   >
@@ -221,7 +221,7 @@ const DropdownMenuLabel = React.forwardRef<
     className={cn(
       "px-2 py-1.5 text-sm native:text-base font-semibold text-foreground web:cursor-default",
       inset && "pl-8",
-      className
+      className,
     )}
     {...props}
   />
@@ -245,7 +245,7 @@ const DropdownMenuShortcut = ({ className, ...props }: TextProps) => {
     <Text
       className={cn(
         "ml-auto text-xs native:text-sm tracking-widest text-muted-foreground",
-        className
+        className,
       )}
       {...props}
     />

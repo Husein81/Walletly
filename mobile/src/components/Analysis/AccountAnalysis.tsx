@@ -1,12 +1,7 @@
+import { Icon } from "@/components/ui";
 import { iconsRecord } from "@/lib/config";
-import { Icon } from "@/lib/icons/Icon";
-import { useColorScheme } from "@/lib/useColorScheme";
 import { Account, Expense } from "@/types";
-import {
-  formattedBalance,
-  getColorByIndex,
-  getGroupedBarChartData,
-} from "@/utils";
+import { formattedBalance, getGroupedBarChartData } from "@/utils";
 import { useCallback } from "react";
 import { View } from "react-native";
 import { Separator, Text } from "../ui";
@@ -19,7 +14,6 @@ type Props = {
 };
 
 const AccountAnalysis = ({ expenses, accounts }: Props) => {
-  const { isDarkColorScheme } = useColorScheme();
   const barChartData = getGroupedBarChartData(expenses || []);
 
   const flatData = barChartData.data.flat();
@@ -56,16 +50,8 @@ const AccountAnalysis = ({ expenses, accounts }: Props) => {
       {Array.from({ length: flatData.length / 2 }, (_, i) => (
         <View key={i} className="flex-row gap-4 px-4 py-2">
           <View className="flex-row  flex-1 items-center gap-2">
-            <View
-              className="p-2 rounded-xl"
-              style={{
-                backgroundColor: getColorByIndex(icon(i)),
-              }}
-            >
-              <Icon
-                color={isDarkColorScheme ? "#fff" : "#000"}
-                name={iconsRecord[icon(i)]}
-              />
+            <View className="p-2 rounded-xl bg-primary/10">
+              <Icon color={"#14B8A6"} name={iconsRecord[icon(i)]} />
             </View>
             <Text className="text-lg">{barChartData.labels[i]}:</Text>
           </View>

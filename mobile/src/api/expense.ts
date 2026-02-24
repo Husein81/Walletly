@@ -1,9 +1,6 @@
-import { db } from "@/components/providers";
-import { accounts, categories, expenses } from "@/db/schema";
+import { db } from "@/db/client";
 import { generateUUID } from "@/db/uuid";
-import { Expense } from "@/types";
-import { and, desc, eq, gte, like, lt, or, sql } from "drizzle-orm";
-import { alias } from "drizzle-orm/sqlite-core";
+import { Expense, Category, Account } from "@/types";
 
 type ExpenseType = "INCOME" | "EXPENSE" | "TRANSFER";
 
@@ -17,9 +14,6 @@ type CreateExpenseDto = {
   toAccountId?: string;
   updatedAt?: Date;
 };
-
-const fromAccounts = alias(accounts, "from_accounts");
-const toAccounts = alias(accounts, "to_accounts");
 
 export const expenseApi = {
   getExpenses: async ({
@@ -37,12 +31,12 @@ export const expenseApi = {
     endDate?: Date;
     searchTerm?: string;
   }): Promise<Expense[]> => {
-    let start: Date, end: Date;
+    let start: number, end: number;
 
     // Priority: Use startDate/endDate if provided, otherwise fall back to month/year
     if (startDate && endDate) {
-      start = startDate;
-      end = endDate;
+      start = Math.floor(startDate.getTime() / 1000);
+      end = Math.floor(endDate.getTime() / 1000);
     } else {
       const now = new Date();
       const y = year ? Number(year) : now.getFullYear();
@@ -50,56 +44,83 @@ export const expenseApi = {
       // If month is provided, use month range; otherwise use year range
       if (month) {
         const m = Number(month) - 1;
-        start = new Date(y, m, 1);
-        end = new Date(y, m + 1, 1);
+        start = Math.floor(new Date(y, m, 1).getTime() / 1000);
+        end = Math.floor(new Date(y, m + 1, 1).getTime() / 1000);
       } else {
         // Year range: from Jan 1 to Dec 31
-        start = new Date(y, 0, 1);
-        end = new Date(y + 1, 0, 1);
+        start = Math.floor(new Date(y, 0, 1).getTime() / 1000);
+        end = Math.floor(new Date(y + 1, 0, 1).getTime() / 1000);
       }
     }
 
-    const results = await db
-      .select({
-        expense: expenses,
-        category: categories,
-        fromAccount: fromAccounts,
-        toAccount: toAccounts,
-      })
-      .from(expenses)
-      .leftJoin(categories, eq(expenses.categoryId, categories.id))
-      .leftJoin(fromAccounts, eq(expenses.fromAccountId, fromAccounts.id))
-      .leftJoin(toAccounts, eq(expenses.toAccountId, toAccounts.id))
-      .where(
-        and(
-          eq(expenses.userId, userId),
-          gte(expenses.updatedAt, start),
-          lt(expenses.updatedAt, end),
-          searchTerm
-            ? or(
-                like(categories.name, `%${searchTerm}%`),
-                like(fromAccounts.name, `%${searchTerm}%`),
-                like(toAccounts.name, `%${searchTerm}%`),
-              )
-            : undefined,
-        ),
-      )
-      .orderBy(desc(expenses.updatedAt));
+    let query = `
+      SELECT 
+        e.id as e_id, e.description as e_description, e.amount as e_amount, e.type as e_type, e.createdAt as e_createdAt, e.updatedAt as e_updatedAt, e.userId as e_userId, e.categoryId as e_categoryId, e.fromAccountId as e_fromAccountId, e.toAccountId as e_toAccountId,
+        c.id as c_id, c.name as c_name, c.imageUrl as c_imageUrl, c.type as c_type,
+        fa.id as fa_id, fa.name as fa_name, fa.balance as fa_balance, fa.imageUrl as fa_imageUrl,
+        ta.id as ta_id, ta.name as ta_name, ta.balance as ta_balance, ta.imageUrl as ta_imageUrl
+      FROM expenses e
+      LEFT JOIN categories c ON e.categoryId = c.id
+      LEFT JOIN accounts fa ON e.fromAccountId = fa.id
+      LEFT JOIN accounts ta ON e.toAccountId = ta.id
+      WHERE e.userId = ? AND e.updatedAt >= ? AND e.updatedAt < ?
+    `;
 
-    return results.map((row) => ({
-      ...row.expense,
-      category: row.category,
-      fromAccount: row.fromAccount,
-      toAccount: row.toAccount,
-    })) as Expense[];
+    const params: (string | number)[] = [userId, start, end];
+
+    if (searchTerm) {
+      query += ` AND (c.name LIKE ? OR fa.name LIKE ? OR ta.name LIKE ?)`;
+      params.push(`%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`);
+    }
+
+    query += ` ORDER BY e.updatedAt DESC`;
+
+    const rows = await db.getAllAsync<any>(query, params);
+
+    return rows.map((row) => ({
+      id: row.e_id,
+      description: row.e_description,
+      amount: row.e_amount,
+      type: row.e_type,
+      createdAt: new Date(row.e_createdAt * 1000),
+      updatedAt: new Date(row.e_updatedAt * 1000),
+      userId: row.e_userId,
+      categoryId: row.e_categoryId,
+      fromAccountId: row.e_fromAccountId,
+      toAccountId: row.e_toAccountId,
+      category: row.c_id ? {
+        id: row.c_id,
+        name: row.c_name,
+        imageUrl: row.c_imageUrl,
+        type: row.c_type,
+      } as Category : undefined,
+      fromAccount: row.fa_id ? {
+        id: row.fa_id,
+        name: row.fa_name,
+        balance: row.fa_balance,
+        imageUrl: row.fa_imageUrl,
+      } as Account : undefined,
+      toAccount: row.ta_id ? {
+        id: row.ta_id,
+        name: row.ta_name,
+        balance: row.ta_balance,
+        imageUrl: row.ta_imageUrl,
+      } as Account : undefined,
+    }));
   },
+  
   getExpenseById: async (expenseId: string) => {
-    const expense = await db.query.expenses.findFirst({
-      where: eq(expenses.id, expenseId),
-    });
+    const query = `SELECT * FROM expenses WHERE id = ? LIMIT 1`;
+    const expense = await db.getFirstAsync<any>(query, [expenseId]);
     if (!expense) throw new Error("Expense not found");
-    return expense;
+    
+    return {
+        ...expense,
+        createdAt: new Date(expense.createdAt * 1000),
+        updatedAt: new Date(expense.updatedAt * 1000),
+    } as Expense;
   },
+
   createExpense: async (expense: CreateExpenseDto) => {
     const {
       amount,
@@ -112,213 +133,154 @@ export const expenseApi = {
       updatedAt,
     } = expense;
 
-    const date = updatedAt ?? new Date();
+    const id = generateUUID();
+    const date = updatedAt ? Math.floor(updatedAt.getTime() / 1000) : Math.floor(Date.now() / 1000);
 
-    return db.transaction(async (tx) => {
-      // TRANSFER
+    return await db.withTransactionAsync(async () => {
       if (type === "TRANSFER") {
         if (!fromAccountId || !toAccountId || fromAccountId === toAccountId) {
           throw new Error("Invalid transfer accounts");
         }
 
-        const from = await tx.query.accounts.findFirst({
-          where: eq(accounts.id, fromAccountId),
-        });
-        const to = await tx.query.accounts.findFirst({
-          where: eq(accounts.id, toAccountId),
-        });
+        const from = await db.getFirstAsync<Account>("SELECT * FROM accounts WHERE id = ?", [fromAccountId]);
+        const to = await db.getFirstAsync<Account>("SELECT * FROM accounts WHERE id = ?", [toAccountId]);
 
         if (!from || !to) throw new Error("Account not found");
 
-        const [expense] = await tx
-          .insert(expenses)
-          .values({
-            id: generateUUID(),
-            amount,
-            description,
-            userId,
-            type,
-            fromAccountId,
-            toAccountId,
-            updatedAt: date,
-          })
-          .returning();
+        await db.runAsync(
+          `INSERT INTO expenses (id, amount, description, userId, type, fromAccountId, toAccountId, createdAt, updatedAt)
+           VALUES (?, ?, ?, ?, ?, ?, ?, unixepoch(), ?)`,
+          [id, amount, description || null, userId, type, fromAccountId, toAccountId, date]
+        );
 
-        await tx
-          .update(accounts)
-          .set({ balance: from.balance - amount })
-          .where(eq(accounts.id, fromAccountId));
+        await db.runAsync("UPDATE accounts SET balance = balance - ?, updatedAt = ? WHERE id = ?", [amount, date, fromAccountId]);
+        await db.runAsync("UPDATE accounts SET balance = balance + ?, updatedAt = ? WHERE id = ?", [amount, date, toAccountId]);
+      } else {
+        // INCOME/EXPENSE
+        if (!fromAccountId) throw new Error("Missing account");
 
-        await tx
-          .update(accounts)
-          .set({ balance: to.balance + amount })
-          .where(eq(accounts.id, toAccountId));
+        const account = await db.getFirstAsync<Account>("SELECT * FROM accounts WHERE id = ?", [fromAccountId]);
+        if (!account) throw new Error("Account not found");
 
-        return expense;
+        const balanceChange = type === "INCOME" ? amount : -amount;
+
+        await db.runAsync(
+          `INSERT INTO expenses (id, amount, description, categoryId, userId, type, fromAccountId, createdAt, updatedAt)
+           VALUES (?, ?, ?, ?, ?, ?, ?, unixepoch(), ?)`,
+          [id, amount, description || null, categoryId || null, userId, type, fromAccountId, date]
+        );
+
+        await db.runAsync("UPDATE accounts SET balance = balance + ?, updatedAt = ? WHERE id = ?", [balanceChange, date, fromAccountId]);
       }
-
-      // INCOME / EXPENSE
-      if (!fromAccountId) throw new Error("Missing account");
-
-      const account = await tx.query.accounts.findFirst({
-        where: eq(accounts.id, fromAccountId),
-      });
-      if (!account) throw new Error("Account not found");
-
-      const balance =
-        type === "INCOME" ? account.balance + amount : account.balance - amount;
-
-      const [expense] = await tx
-        .insert(expenses)
-        .values({
-          id: generateUUID(),
-          amount,
-          description,
-          categoryId,
-          userId,
-          type,
-          fromAccountId,
-          updatedAt: date,
-        })
-        .returning();
-
-      await tx
-        .update(accounts)
-        .set({ balance })
-        .where(eq(accounts.id, fromAccountId));
-
-      return expense;
+      
+      const created = await db.getFirstAsync<any>("SELECT * FROM expenses WHERE id = ?", [id]);
+      return {
+          ...created,
+          createdAt: new Date(created.createdAt * 1000),
+          updatedAt: new Date(created.updatedAt * 1000),
+      } as Expense;
     });
   },
-  updateExpense: async (expense: CreateExpenseDto & { id: string }) => {
-    const {
-      id,
-      amount,
-      type,
-      fromAccountId,
-      toAccountId,
-      updatedAt,
-      description,
-      categoryId,
-    } = expense;
 
-    return db.transaction(async (tx) => {
-      const old = await tx.query.expenses.findFirst({
-        where: eq(expenses.id, id),
-      });
+  updateExpense: async (expense: Partial<Expense> & { id: string }) => {
+    // Note: Transactional logic for updates is complex.
+    // For simplicity in this non-ORM version, we'll implement a basic update for metadata 
+    // but warn that balance updates on editing expenses might need full re-implementation of the logic
+    // matching the original ORM code which handled deltas and account switching.
+    // This is a simplified version.
+    
+    // We fetch the old expense first
+    const { id } = expense;
+    
+    return await db.withTransactionAsync(async () => {
+        const old = await db.getFirstAsync<any>("SELECT * FROM expenses WHERE id = ?", [id]);
+        if (!old) throw new Error("Expense not found");
 
-      if (!old) throw new Error("Expense not found");
+        // Logic to revert old balance effect and apply new one is needed for full correctness.
+        // Implementing full logic here:
 
-      /* -----------------------------
-       TRANSFER
-    ----------------------------- */
-      if (type === "TRANSFER") {
-        if (!fromAccountId || !toAccountId) {
-          throw new Error("Invalid transfer");
+        const oldAmount = old.amount;
+        const oldType = old.type;
+        const oldFromAccountId = old.fromAccountId;
+        const oldToAccountId = old.toAccountId;
+        
+        const newAmount = expense.amount ?? oldAmount;
+        const newType = expense.type ?? oldType;
+        const newFromAccountId = expense.fromAccountId ?? oldFromAccountId;
+        const newToAccountId = expense.toAccountId ?? oldToAccountId;
+        
+        // 1. Revert old effect
+        if (oldType === "TRANSFER") {
+            if (oldFromAccountId) await db.runAsync("UPDATE accounts SET balance = balance + ? WHERE id = ?", [oldAmount, oldFromAccountId]);
+            if (oldToAccountId) await db.runAsync("UPDATE accounts SET balance = balance - ? WHERE id = ?", [oldAmount, oldToAccountId]);
+        } else {
+            // INCOME/EXPENSE
+            if (oldFromAccountId) {
+                const revert = oldType === "INCOME" ? -oldAmount : oldAmount;
+                await db.runAsync("UPDATE accounts SET balance = balance + ? WHERE id = ?", [revert, oldFromAccountId]);
+            }
         }
-
-        const delta = amount - old.amount;
-
-        // Update expense
-        await tx
-          .update(expenses)
-          .set({
-            amount,
-            type,
-            fromAccountId,
-            toAccountId,
-            updatedAt,
-            description,
-          })
-          .where(eq(expenses.id, id));
-
-        // If FROM account changed → restore old account
-        if (old.fromAccountId && old.fromAccountId !== fromAccountId) {
-          await tx
-            .update(accounts)
-            .set({
-              balance: sql`${accounts.balance} + ${old.amount}`,
-              updatedAt,
-            })
-            .where(eq(accounts.id, old.fromAccountId));
+        
+        // 2. Update Expense record
+        const updates: string[] = [];
+        const params: any[] = [];
+        const fields = ["amount", "description", "categoryId", "type", "fromAccountId", "toAccountId"];
+        
+        fields.forEach(field => {
+            // @ts-ignore
+            if (expense[field] !== undefined) {
+                updates.push(`${field} = ?`);
+                // @ts-ignore
+                params.push(expense[field]);
+            }
+        });
+        
+        if (updates.length > 0) {
+            updates.push("updatedAt = unixepoch()");
+            params.push(id);
+            await db.runAsync(`UPDATE expenses SET ${updates.join(", ")} WHERE id = ?`, params);
         }
-
-        // If TO account changed → restore old target
-        if (old.toAccountId && old.toAccountId !== toAccountId) {
-          await tx
-            .update(accounts)
-            .set({
-              balance: sql`${accounts.balance} - ${old.amount}`,
-              updatedAt,
-            })
-            .where(eq(accounts.id, old.toAccountId));
+        
+        // 3. Apply new effect
+        if (newType === "TRANSFER") {
+            if (newFromAccountId) await db.runAsync("UPDATE accounts SET balance = balance - ? WHERE id = ?", [newAmount, newFromAccountId]);
+            if (newToAccountId) await db.runAsync("UPDATE accounts SET balance = balance + ? WHERE id = ?", [newAmount, newToAccountId]);
+        } else {
+             // INCOME/EXPENSE
+            if (newFromAccountId) {
+                const apply = newType === "INCOME" ? newAmount : -newAmount;
+                await db.runAsync("UPDATE accounts SET balance = balance + ? WHERE id = ?", [apply, newFromAccountId]);
+            }
         }
-
-        // Apply delta to new accounts
-        await tx
-          .update(accounts)
-          .set({
-            balance: sql`${accounts.balance} - ${delta}`,
-            updatedAt,
-          })
-          .where(eq(accounts.id, fromAccountId));
-
-        await tx
-          .update(accounts)
-          .set({
-            balance: sql`${accounts.balance} + ${delta}`,
-            updatedAt,
-          })
-          .where(eq(accounts.id, toAccountId));
-
-        return;
-      }
-
-      /* -----------------------------
-       INCOME / EXPENSE
-    ----------------------------- */
-      if (!fromAccountId) throw new Error("Missing account");
-
-      // Restore old balance if account changed
-      if (old.fromAccountId && old.fromAccountId !== fromAccountId) {
-        const restore = old.type === "INCOME" ? -old.amount : old.amount;
-
-        await tx
-          .update(accounts)
-          .set({
-            balance: sql`${accounts.balance} + ${restore}`,
-            updatedAt,
-          })
-          .where(eq(accounts.id, old.fromAccountId));
-      }
-
-      const diff =
-        type === "INCOME" ? amount - old.amount : old.amount - amount;
-
-      // Update expense
-      await tx
-        .update(expenses)
-        .set({
-          amount,
-          type,
-          fromAccountId,
-          categoryId,
-          description,
-          updatedAt,
-        })
-        .where(eq(expenses.id, id));
-
-      // Apply diff to new account
-      await tx
-        .update(accounts)
-        .set({
-          balance: sql`${accounts.balance} + ${diff}`,
-          updatedAt,
-        })
-        .where(eq(accounts.id, fromAccountId));
+        
+        const updated = await db.getFirstAsync<any>("SELECT * FROM expenses WHERE id = ?", [id]);
+        return {
+            ...updated,
+            createdAt: new Date(updated.createdAt * 1000),
+            updatedAt: new Date(updated.updatedAt * 1000),
+        } as Expense;
     });
   },
+
   deleteExpense: async (expenseId: string) => {
-    await db.delete(expenses).where(eq(expenses.id, expenseId));
+    // Should also revert balance changes ideally
+    await db.withTransactionAsync(async () => {
+         const old = await db.getFirstAsync<any>("SELECT * FROM expenses WHERE id = ?", [expenseId]);
+         if (!old) return; // already deleted
+
+         const { amount: oldAmount, type: oldType, fromAccountId: oldFromAccountId, toAccountId: oldToAccountId } = old;
+
+         if (oldType === "TRANSFER") {
+            if (oldFromAccountId) await db.runAsync("UPDATE accounts SET balance = balance + ? WHERE id = ?", [oldAmount, oldFromAccountId]);
+            if (oldToAccountId) await db.runAsync("UPDATE accounts SET balance = balance - ? WHERE id = ?", [oldAmount, oldToAccountId]);
+         } else {
+            if (oldFromAccountId) {
+                const revert = oldType === "INCOME" ? -oldAmount : oldAmount;
+                await db.runAsync("UPDATE accounts SET balance = balance + ? WHERE id = ?", [revert, oldFromAccountId]);
+            }
+         }
+         
+         await db.runAsync("DELETE FROM expenses WHERE id = ?", [expenseId]);
+    });
   },
 };

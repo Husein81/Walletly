@@ -12,7 +12,7 @@ import {
   useDeleteCategory,
   useUpdateCategory,
 } from "@/hooks/categories";
-import { Icon } from "@/lib/icons/Icon";
+import { Icon } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { Category, ExpenseType } from "@/types";
 import { Button, Label } from "../ui";

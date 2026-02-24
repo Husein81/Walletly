@@ -7,7 +7,7 @@ import { router } from "expo-router";
 // Local imports
 import { Rn, Text } from "@/components/ui";
 import UserSection from "@/components/User/user-section";
-import { Icon } from "@/lib/icons/Icon";
+import { Icon } from "@/components/ui";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { useAuthStore } from "@/store";
 import Avatar from "@/components/ui-components/Avatar";

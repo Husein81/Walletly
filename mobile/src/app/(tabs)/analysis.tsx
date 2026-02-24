@@ -1,11 +1,12 @@
-import { Platform, ScrollView, View } from "react-native";
+import { Platform, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // local imports
 import { LineChart } from "@/components/Analysis";
 import { Overview } from "@/components/Analysis/";
 import { Text } from "@/components/ui";
-import { Modal, ToggleGroup } from "@/components/ui-components";
+import { ToggleGroup } from "@/components/ui-components";
 import DateFilter from "@/components/ui-components/DateFilter";
 import { Header } from "@/components/ui-components/Header";
 import { useGetExpenses } from "@/hooks/expense";
@@ -20,9 +21,11 @@ import {
   endOfDay,
   endOfMonth,
   endOfWeek,
+  endOfYear,
   startOfDay,
   startOfMonth,
   startOfWeek,
+  startOfYear,
 } from "date-fns";
 import { useMemo, useState } from "react";
 
@@ -45,31 +48,54 @@ const Analysis = () => {
     useDateStore();
 
   // Calculate date parameters based on selected range type
-  const dateParams = useMemo(() => {
+  const getDateParams = () => {
     switch (dateRangeType) {
       case "today": {
         const start = startOfDay(selectedDate);
         const end = endOfDay(selectedDate);
-        return { startDate: start, endDate: end };
+        return {
+          startDate: start,
+          endDate: end,
+        };
       }
       case "week": {
         const start = startOfWeek(selectedDate, { weekStartsOn: 1 });
         const end = endOfWeek(selectedDate, { weekStartsOn: 1 });
-        return { startDate: start, endDate: end };
+        return {
+          startDate: start,
+          endDate: end,
+        };
       }
       case "month": {
         const start = startOfMonth(selectedDate);
         const end = endOfMonth(selectedDate);
-        return { startDate: start, endDate: end };
+        return {
+          startDate: start,
+          endDate: end,
+        };
+      }
+      case "year": {
+        const start = startOfYear(selectedDate);
+        const end = endOfYear(selectedDate);
+        return {
+          startDate: start,
+          endDate: end,
+        };
       }
       case "custom": {
         if (customStartDate && customEndDate) {
-          return { startDate: customStartDate, endDate: customEndDate };
+          return {
+            startDate: customStartDate,
+            endDate: customEndDate,
+          };
         }
         // Fallback to month if custom dates are not set
         const start = startOfMonth(selectedDate);
         const end = endOfMonth(selectedDate);
-        return { startDate: start, endDate: end };
+        return {
+          startDate: start,
+          endDate: end,
+        };
       }
       default:
         return {
@@ -77,12 +103,12 @@ const Analysis = () => {
           month: (selectedDate.getMonth() + 1).toString(),
         };
     }
-  }, [selectedDate, dateRangeType, customStartDate, customEndDate]);
+  };
 
-  const { data: expenses, refetch } = useGetExpenses(
-    user?.id || "",
-    dateParams,
-  );
+  // Calculate date parameters based on selected range type
+  const dateParams = getDateParams();
+
+  const { data: expenses } = useGetExpenses(user?.id || "", dateParams);
   const { data: accounts } = useGetAccounts(user?.id || "");
 
   // Expense type data
@@ -192,7 +218,7 @@ const Analysis = () => {
         showsVerticalScrollIndicator={false}
       >
         <View className="px-5 pt-4">
-          <Header title="Analysis" subtitle={formattedBalance(netBalance)} />
+          <Header title="Stats" subtitle={formattedBalance(netBalance)} />
         </View>
 
         {/* Date Filter Selection */}
@@ -306,18 +332,12 @@ const Analysis = () => {
                 <Text className="text-foreground text-xl font-bold">
                   Account Analysis
                 </Text>
-                <View className="bg-primary/10 px-3 py-1.5 rounded-full">
-                  <Text className="text-primary text-xs font-semibold">
-                    {accounts?.length || 0} accounts
-                  </Text>
-                </View>
               </View>
               <AccountAnalysis expenses={expenses} accounts={accounts} />
             </View>
           )}
         </View>
       </ScrollView>
-      <Modal />
     </SafeAreaView>
   );
 };
