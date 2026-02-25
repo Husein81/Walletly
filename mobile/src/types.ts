@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { symbol, z } from "zod";
 
 export enum UserRole {
   USER = "USER",
@@ -11,19 +11,23 @@ export enum ExpenseType {
   TRANSFER = "TRANSFER",
 }
 
-export enum BottomSheetType {
-  ACCOUNT = "ACCOUNT",
-  CATEGORY = "CATEGORY",
-}
-
 // Schemas
 export const userSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1).max(50).optional(),
-  phone: z.string().min(6),
+  phone: z.string().min(6).optional(),
   phoneVerified: z.boolean().default(false),
   email: z.string().email().optional(),
+  username: z.string().min(3).max(20),
+  password: z.string().min(6),
   role: z.nativeEnum(UserRole).optional().default(UserRole.USER),
+  currency: z
+    .object({
+      code: z.string(),
+      symbol: z.string(),
+      label: z.string(),
+    })
+    .default({ code: "USD", symbol: "$", label: "US Dollar" }),
   createdAt: z.date().default(() => new Date()),
   updatedAt: z.date().default(() => new Date()),
 });

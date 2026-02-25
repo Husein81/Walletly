@@ -1,11 +1,10 @@
-import { Icon } from "@/components/ui";
 import { AnyFieldApi } from "@tanstack/react-form";
 import { useState } from "react";
 import { View } from "react-native";
 import { TextInputProps } from "react-native/Libraries/Components/TextInput/TextInput";
-import { Input, Label } from "../../ui";
-import { FieldInfo } from "./FieldInfo";
 import { cn } from "@/lib/utils";
+import { Icon, Input, Label } from "../../ui";
+import { FieldInfo } from "./FieldInfo";
 import { useColorScheme } from "@/lib/useColorScheme";
 
 type Props = {
@@ -14,24 +13,27 @@ type Props = {
   field: AnyFieldApi;
   icon?: string;
   className?: string;
+  placeholderColor?: string;
 } & TextInputProps;
 
-const InputField = ({
+export const InputField = ({
   label,
   type = "text",
   value,
   field,
   icon,
+  placeholderColor,
   className,
   ...props
 }: Props) => {
   const { isDarkColorScheme } = useColorScheme();
   const [show, setShow] = useState(false);
   const isPassword = type === "password";
+
   return (
     <View className="gap-2">
-      <Label>{label}</Label>
-      <View className="border border-input h-16 py-1 justify-center rounded-xl overflow-hidden">
+      <Label htmlFor={field.name}>{label}</Label>
+      <View className="gap-2">
         {icon && (
           <Icon
             color={isDarkColorScheme ? "#71717a" : "#a1a1aa"}
@@ -40,19 +42,17 @@ const InputField = ({
           />
         )}
         <Input
-          className={cn(
-            "text-foreground text-xl flex-1 border-0 h-full",
-            { "pl-12": icon },
-            className,
-          )}
+          className={cn("h-12 rounded-xl", className)}
           value={String(field.state.value)}
           secureTextEntry={isPassword && !show}
+          autoCapitalize="none"
           onChangeText={field.handleChange}
+          placeholderTextColor={placeholderColor}
           {...props}
         />
         {isPassword && (
           <Icon
-            name={show ? "eye-off" : "eye"}
+            name={show ? "EyeOff" : "Eye"}
             color={isDarkColorScheme ? "#71717a" : "#a1a1aa"}
             className="absolute right-3 top-1/2 -translate-y-1/2"
             onPress={() => setShow(!show)}
@@ -63,4 +63,3 @@ const InputField = ({
     </View>
   );
 };
-export default InputField;

@@ -13,7 +13,7 @@ import {
 import Toast from "react-native-toast-message";
 
 // Local Imports
-import { Button, Label } from "@/components/ui";
+import { Button, Icon, Label } from "@/components/ui";
 import {
   AlertDialog,
   InputField,
@@ -26,21 +26,17 @@ import {
   useDeleteExpense,
   useUpdateExpense,
 } from "@/hooks/expense";
-import { iconsRecord } from "@/lib/config";
-import { Icon } from "@/components/ui";
+import { iconsRecord } from "@/constants";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { cn } from "@/lib/utils";
-import {
-  Account,
-  BottomSheetType,
-  Category,
-  Expense,
-  ExpenseType,
-} from "@/types";
+import { Account, Category, Expense, ExpenseType } from "@/types";
+import { formattedBalance } from "@/utils";
 
 // store imports
 import { NAV_THEME } from "@/lib/theme";
 import { useAuthStore, useBottomSheetStore, useModalStore } from "@/store";
+import AccountSelection from "./AccountSelection";
+import { AmountKeypad } from "./AmountKeypad";
 import CategorySelection from "./CategorySelection";
 
 type Props = {
@@ -50,7 +46,7 @@ type Props = {
 export const ExpenseForm = ({ expense }: Props) => {
   const { user } = useAuthStore();
   const { onClose } = useModalStore();
-  const { onOpen: onOpenBS } = useBottomSheetStore();
+  const { onOpen: onOpenBS, onClose: onCloseBS } = useBottomSheetStore();
   const { isDarkColorScheme } = useColorScheme();
 
   // Fetch accounts and categories
@@ -99,30 +95,40 @@ export const ExpenseForm = ({ expense }: Props) => {
     }
   };
 
-  const openBottomSheet = (type: BottomSheetType, target?: "from" | "to") => {
-    const isAccountType = type === BottomSheetType.ACCOUNT;
-    const data = isAccountType ? (accounts ?? []) : (filteredCategories ?? []);
-    const title = isAccountType ? "Select Account" : "Select Category";
+  const handleOpenCategory = () => {
+    const data = filteredCategories ?? [];
+    const title = "Select Category";
 
     onOpenBS(
       <CategorySelection
         title={title}
         data={data}
-        isAccountType={isAccountType}
+        selectedCategory={selectedCategory}
+        onSelect={(item) => {
+          setSelectedCategory(item as Category);
+          onCloseBS();
+        }}
+      />,
+    );
+  };
+
+  const handleOpenAccount = (target: "from" | "to") => {
+    const data = accounts ?? [];
+    const title = target === "to" ? "Select To Account" : "Select From Account";
+    onOpenBS(
+      <AccountSelection
+        title={title}
+        data={data}
         selectedAccount={selectedAccount}
         selectedToAccount={selectedToAccount}
-        selectedCategory={selectedCategory}
         target={target}
         onSelect={(item) => {
-          if (isAccountType) {
-            if (target === "from") {
-              setSelectedAccount(item as Account);
-            } else {
-              setSelectedToAccount(item as Account);
-            }
+          if (target === "to") {
+            setSelectedToAccount(item as Account);
           } else {
-            setSelectedCategory(item as Category);
+            setSelectedAccount(item as Account);
           }
+          onCloseBS();
         }}
       />,
     );
@@ -141,7 +147,9 @@ export const ExpenseForm = ({ expense }: Props) => {
       category: expense?.category || selectedCategory || undefined,
       fromAccount: expense?.fromAccount || selectedAccount || undefined,
       toAccount: expense?.toAccount || selectedToAccount || undefined,
-      amount: expense?.amount || "",
+      amount: expense?.amount
+        ? Math.abs(Number(expense.amount)).toString()
+        : "",
       description: expense?.description || "",
       updatedAt: expense?.updatedAt || new Date(),
     },
@@ -268,7 +276,7 @@ export const ExpenseForm = ({ expense }: Props) => {
               {isTransfer ? "From Account" : "Account"}
             </Label>
             <Pressable
-              onPress={() => openBottomSheet(BottomSheetType.ACCOUNT, "from")}
+              onPress={() => handleOpenAccount("from")}
               className="bg-primary/10 border border-border rounded-xl p-4 flex-row items-center justify-between"
             >
               <View className="flex-row items-center gap-3">
@@ -292,7 +300,7 @@ export const ExpenseForm = ({ expense }: Props) => {
             <View>
               <Label className="mb-2 text-sm font-medium">Category</Label>
               <Pressable
-                onPress={() => openBottomSheet(BottomSheetType.CATEGORY, "to")}
+                onPress={() => handleOpenCategory()}
                 className="bg-primary/10 border border-border rounded-xl p-4 flex-row items-center justify-between"
               >
                 <View className="flex-row items-center gap-3">
@@ -314,7 +322,7 @@ export const ExpenseForm = ({ expense }: Props) => {
             <View>
               <Label className="mb-2 text-sm font-medium">To Account</Label>
               <Pressable
-                onPress={() => openBottomSheet(BottomSheetType.ACCOUNT, "to")}
+                onPress={() => handleOpenAccount("to")}
                 className="bg-primary/10 border border-border rounded-xl p-4 flex-row items-center justify-between"
               >
                 <View className="flex-row items-center gap-3">
@@ -340,13 +348,48 @@ export const ExpenseForm = ({ expense }: Props) => {
         <form.Field
           name="amount"
           children={(field) => (
-            <InputField
-              type="number"
-              label="Amount"
-              field={field}
-              placeholder="Enter amount"
-              keyboardType="numeric"
-            />
+            <View className="gap-2 mb-6">
+              <Label className="mb-2 text-sm font-medium">Amount</Label>
+              <Pressable
+                onPress={() =>
+                  onOpenBS(
+                    <AmountKeypad
+                      initialValue={field.state.value.toString()}
+                      onConfirm={(val) => field.handleChange(val)}
+                    />,
+                  )
+                }
+                className="flex-row items-center justify-between bg-card border border-border rounded-xl p-4 h-14"
+              >
+                <View className="flex-row items-center gap-2">
+                  <Text
+                    className={cn(
+                      "text-xl font-semibold",
+                      selectedExpenseType === ExpenseType.EXPENSE
+                        ? "text-red-500"
+                        : selectedExpenseType === ExpenseType.INCOME
+                          ? "text-green-600"
+                          : "text-teal-500",
+                    )}
+                  >
+                    {formattedBalance(
+                      field.state.value
+                        ? selectedExpenseType === ExpenseType.EXPENSE
+                          ? -Math.abs(Number(field.state.value))
+                          : Math.abs(Number(field.state.value))
+                        : 0,
+                      user?.currency,
+                    )}
+                  </Text>
+                </View>
+                <Icon name="Calculator" size={20} color="#9ca3af" />
+              </Pressable>
+              {field.state.meta.errors && (
+                <Text className="text-destructive text-xs mt-1">
+                  {field.state.meta.errors.join(", ")}
+                </Text>
+              )}
+            </View>
           )}
         />
 
@@ -431,6 +474,7 @@ export const ExpenseForm = ({ expense }: Props) => {
                   mode={mode}
                   is24Hour={false}
                   themeVariant={isDarkColorScheme ? "dark" : "light"}
+                  accentColor="#0D9488"
                   display="default"
                   onChange={(event, selectedDate) => {
                     setShowDatePicker(false);

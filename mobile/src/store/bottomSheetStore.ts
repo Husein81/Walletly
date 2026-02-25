@@ -10,7 +10,10 @@ interface BottomSheetStore {
 export const useBottomSheetStore = create<BottomSheetStore>((set) => ({
   body: null,
   onClose: () => {
-    set({ body: undefined });
+    router.back();
+    setTimeout(() => {
+      set({ body: null });
+    }, 200);
   },
   onOpen: (body) => {
     set({ body });

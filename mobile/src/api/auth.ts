@@ -14,79 +14,143 @@ const generateOtp = () =>
 
 const generateToken = () => generateUUID();
 
-export const authApi = {
-  sendOtp: async (phone: string): Promise<string> => {
-    const code = generateOtp();
-    // 5 minutes from now in unixepoch (matching other times)
-    const expiresAt = Math.floor((Date.now() + 300 * 1000) / 1000);
+const seedUserData = async (userId: string) => {
+  // Default Categories
+  const categories = [
+    { name: "Food", imageUrl: "food", type: "EXPENSE" },
+    { name: "Shopping", imageUrl: "shopping", type: "EXPENSE" },
+    { name: "Transportation", imageUrl: "transportation", type: "EXPENSE" },
+    { name: "Health", imageUrl: "health", type: "EXPENSE" },
+    { name: "Entertainment", imageUrl: "entertainment", type: "EXPENSE" },
+    { name: "Salary", imageUrl: "handCoins", type: "INCOME" },
+    { name: "Other", imageUrl: "other", type: "EXPENSE" },
+  ];
 
-    // Invalidate old OTPs for this phone
-    await db.runAsync("DELETE FROM otps WHERE phone = ?", [phone]);
-
-    // Insert new OTP
+  for (const cat of categories) {
     await db.runAsync(
-      `INSERT INTO otps (id, phone, code, verified, expiresAt, createdAt) 
-       VALUES (?, ?, ?, 0, ?, unixepoch())`,
-      [generateUUID(), phone, code, expiresAt],
+      `INSERT INTO categories (id, name, imageUrl, type, userId, createdAt, updatedAt) 
+       VALUES (?, ?, ?, ?, ?, unixepoch(), unixepoch())`,
+      [generateUUID(), cat.name, cat.imageUrl, cat.type, userId],
     );
+  }
 
-    return code;
+  // Default Accounts
+  const accounts = [
+    { name: "Cash", balance: 0, imageUrl: "money" },
+    { name: "Bank Account", balance: 0, imageUrl: "bank" },
+  ];
+
+  for (const acc of accounts) {
+    await db.runAsync(
+      `INSERT INTO accounts (id, name, balance, imageUrl, userId, createdAt, updatedAt) 
+       VALUES (?, ?, ?, ?, ?, unixepoch(), unixepoch())`,
+      [generateUUID(), acc.name, acc.balance, acc.imageUrl, userId],
+    );
+  }
+};
+
+const parseUser = (user: any): User => {
+  let currency = { code: "USD", symbol: "$", label: "US Dollar" };
+
+  if (user.currency) {
+    try {
+      currency =
+        typeof user.currency === "string"
+          ? JSON.parse(user.currency)
+          : user.currency;
+
+      // Handle the case where the parsed result is still just a symbol string (legacy)
+      if (typeof currency === "string") {
+        currency = { code: "USD", symbol: currency, label: "US Dollar" };
+      }
+    } catch (e) {
+      // If it fails to parse (e.g. legacy '$' value), use default
+      if (typeof user.currency === "string" && !user.currency.startsWith("{")) {
+        currency = { code: "USD", symbol: user.currency, label: "US Dollar" };
+      }
+    }
+  }
+
+  return {
+    ...user,
+    currency,
+  };
+};
+
+export const authApi = {
+  checkUsername: async (username: string): Promise<{ exists: boolean }> => {
+    const result = await db.getAllAsync<any>(
+      "SELECT id FROM users WHERE username = ? LIMIT 1",
+      [username],
+    );
+    return { exists: result.length > 0 };
   },
 
-  verifyOtp: async ({
-    phone,
-    code,
+  register: async ({
+    username,
+    password,
   }: {
-    phone: string;
-    code: string;
+    username: string;
+    password: string;
   }): Promise<{ user: User; token: string }> => {
-    // Find the OTP
-    const result = await db.getAllAsync<{ id: string; expiresAt: number }>(
-      "SELECT * FROM otps WHERE phone = ? AND code = ? LIMIT 1",
-      [phone, code],
+    // Check if user already exists
+    const existing = await authApi.checkUsername(username);
+    if (existing.exists) throw new Error("Username already taken");
+
+    const userId = generateUUID();
+    await db.runAsync(
+      `INSERT INTO users (id, username, password, phone, phoneVerified, role, createdAt, updatedAt) 
+       VALUES (?, ?, ?, '', 0, 'USER', unixepoch(), unixepoch())`,
+      [userId, username, password],
     );
-    const otp = result[0];
 
-    if (!otp) throw new Error("Invalid OTP");
+    // Seed default data for new user
+    await seedUserData(userId);
 
-    // Check expiration (compare with current unix timestamp)
-    if (otp.expiresAt < Math.floor(Date.now() / 1000)) {
-      throw new Error("OTP expired");
-    }
+    const userResult = await db.getAllAsync<any>(
+      "SELECT * FROM users WHERE id = ?",
+      [userId],
+    );
+    const user = parseUser(userResult[0]);
+    if (!user) throw new Error("Failed to create user");
 
+    const token = generateToken();
+    await db.runAsync(
+      "INSERT INTO sessions (id, userId, createdAt) VALUES (?, ?, unixepoch())",
+      [token, user.id!],
+    );
+
+    return { user, token };
+  },
+
+  login: async ({
+    username,
+    password,
+  }: {
+    username: string;
+    password: string;
+  }): Promise<{ user: User; token: string }> => {
     // Find the user
-    let userResult = await db.getAllAsync<User>(
-      "SELECT * FROM users WHERE phone = ? LIMIT 1",
-      [phone],
+    let userResult = await db.getAllAsync<any>(
+      "SELECT * FROM users WHERE username = ? LIMIT 1",
+      [username],
     );
-    let user = userResult[0];
+    let user = userResult[0] ? parseUser(userResult[0]) : null;
 
     if (!user) {
-      // Create new user
-      const newUserId = generateUUID();
-      await db.runAsync(
-        `INSERT INTO users (id, phone, phoneVerified, role, createdAt, updatedAt) 
-         VALUES (?, ?, 1, 'USER', unixepoch(), unixepoch())`,
-        [newUserId, phone],
-      );
-
-      const newUserResult = await db.getAllAsync<User>(
-        "SELECT * FROM users WHERE id = ?",
-        [newUserId],
-      );
-      user = newUserResult[0];
-
-      if (!user) throw new Error("Failed to create user");
+      throw new Error("User not found");
     }
 
-    // Mark OTP as verified
-    await db.runAsync("UPDATE otps SET verified = 1 WHERE id = ?", [otp.id]);
+    // Check password
+    if (userResult[0].password !== password) {
+      throw new Error("Invalid password");
+    }
 
     // Create session
     const token = generateToken();
     await db.runAsync(
       "INSERT INTO sessions (id, userId, createdAt) VALUES (?, ?, unixepoch())",
-      [token, user.id],
+      [token, user.id!],
     );
 
     return { user, token };
@@ -112,7 +176,7 @@ export const authApi = {
       "SELECT * FROM users WHERE id = ?",
       [userId],
     );
-    const updated = updatedRes[0];
+    const updated = parseUser(updatedRes[0]);
 
     if (!updated) throw new Error("User not found after update");
     return updated;
@@ -122,10 +186,14 @@ export const authApi = {
     userId,
     name,
     email,
+    username,
+    currency,
   }: {
     userId: string;
     name?: string;
     email?: string;
+    username?: string;
+    currency?: User["currency"];
   }) => {
     const updates: string[] = [];
     const params: any[] = [];
@@ -138,6 +206,14 @@ export const authApi = {
       updates.push("email = ?");
       params.push(email);
     }
+    if (username !== undefined) {
+      updates.push("username = ?");
+      params.push(username);
+    }
+    if (currency !== undefined) {
+      updates.push("currency = ?");
+      params.push(JSON.stringify(currency));
+    }
 
     if (updates.length > 0) {
       updates.push("updatedAt = unixepoch()");
@@ -149,11 +225,11 @@ export const authApi = {
       );
     }
 
-    const updatedRes = await db.getAllAsync<User>(
+    const updatedRes = await db.getAllAsync<any>(
       "SELECT * FROM users WHERE id = ?",
       [userId],
     );
-    const updated = updatedRes[0];
+    const updated = parseUser(updatedRes[0]);
 
     if (!updated) throw new Error("User not found after update");
     return updated as User;

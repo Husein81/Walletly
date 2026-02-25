@@ -47,6 +47,8 @@ const TabsLayout = () => {
             paddingVertical: 8,
             height: Platform.OS === "ios" ? 70 : 65,
             borderTopWidth: 0,
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
             elevation: 10,
             shadowColor: "#000",
             shadowOpacity: 0.08,

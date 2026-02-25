@@ -13,13 +13,13 @@ const Auth = () => {
       className="flex-1 bg-background p-8"
     >
       <View className="flex items-center flex-1">
-        <Text className="text-6xl text-center font-bold text-primary mt-4 mb-2">
-          Welcome to My Money Tracker!
+        <Text className="text-5xl text-center font-bold text-primary mt-4 mb-2">
+          Welcome to Walletly!
         </Text>
         <View className="flex-1 justify-center items-center">
           <Image
-            source={require("../../../assets/images/homeScreen.png")}
-            className="h-full w-96 mb-4"
+            source={require("../../../assets/images/wallet.png")}
+            className="h-full w-72 mb-4"
             resizeMode="contain"
           />
         </View>
@@ -27,8 +27,10 @@ const Auth = () => {
           Please login to continue
         </Text>
       </View>
-      <Button size={"lg"} onPress={() => router.push("/auth/phone")}>
-        <Text className="text-background">Continue with Phone</Text>
+      <Button size={"lg"} onPress={() => router.push("/auth/login")}>
+        <Text className="text-background text-lg font-bold">
+          Continue with Username
+        </Text>
       </Button>
     </SafeAreaView>
   );

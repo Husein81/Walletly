@@ -19,6 +19,7 @@ const MIGRATIONS: string[] = [
     createdAt integer DEFAULT (unixepoch()) NOT NULL,
     updatedAt integer DEFAULT (unixepoch()) NOT NULL
   );`,
+  `ALTER TABLE users ADD COLUMN currency text DEFAULT '$' NOT NULL;`,
   `CREATE UNIQUE INDEX IF NOT EXISTS users_phone_unique ON users (phone);`,
   `CREATE UNIQUE INDEX IF NOT EXISTS users_email_unique ON users (email);`,
 
@@ -79,6 +80,25 @@ const MIGRATIONS: string[] = [
 
   // 0002_broad_deathstrike (DROP INDEX otp_phone_code_idx)
   `DROP INDEX IF EXISTS otp_phone_code_idx;`,
+
+  // 0004_switch_to_email_auth
+  `ALTER TABLE users ADD COLUMN emailVerified integer DEFAULT 0 NOT NULL;`,
+  `ALTER TABLE otps ADD COLUMN email text;`,
+  `UPDATE otps SET email = phone;`, // Migration for existing data if any
+  `CREATE INDEX IF NOT EXISTS otp_email_code_idx ON otps (email,code);`,
+
+  // 0005_email_password_auth
+  `ALTER TABLE users ADD COLUMN password text;`,
+
+  // 0006_fix_currency_json
+  `UPDATE users SET currency = '{"code":"USD","symbol":"$","label":"US Dollar"}' WHERE currency = '$';`,
+
+  // 0007_username_auth
+  `ALTER TABLE users ADD COLUMN username text;`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS users_username_unique ON users (username);`,
+
+  // 0008_remove_phone_unique
+  `DROP INDEX IF EXISTS users_phone_unique;`,
 ];
 
 export const runMigrations = async (db: SQLiteDatabase) => {
@@ -112,6 +132,18 @@ export const runMigrations = async (db: SQLiteDatabase) => {
         console.log(`Executed: ${query.substring(0, 50)}...`);
       }
     }
+
+    // --- DEBUG LOGGING ---
+    const users = await db.getAllAsync("SELECT id, username, email FROM users");
+    console.log("📊 CURRENT USERS IN DB:", JSON.stringify(users, null, 2));
+
+    const tableCounts = await db.getAllAsync(`
+      SELECT 'accounts' as name, count(*) as count FROM accounts
+      UNION ALL SELECT 'categories', count(*) FROM categories
+      UNION ALL SELECT 'expenses', count(*) FROM expenses
+    `);
+    console.table(tableCounts);
+    // -----------------------
 
     console.log("Migrations completed.");
   } catch (error) {

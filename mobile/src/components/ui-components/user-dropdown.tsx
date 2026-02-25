@@ -32,7 +32,7 @@ const UserDropdown = () => {
     <Rn.DropdownMenu>
       <Rn.DropdownMenuTrigger>
         <View>
-          <Avatar fallback={getInitials(user?.name)} />
+          <Avatar fallback={getInitials(user?.username)} />
         </View>
       </Rn.DropdownMenuTrigger>
       <Rn.DropdownMenuContent
@@ -42,10 +42,10 @@ const UserDropdown = () => {
         {/* User Info Header */}
         <View className="px-2 py-3 border-b border-border/50">
           <Text className="text-foreground font-bold text-base capitalize">
-            {user?.name || "User"}
+            {user?.username || "User"}
           </Text>
           <Text className="text-muted-foreground text-sm mt-0.5">
-            {user?.phone}
+            {user?.email}
           </Text>
         </View>
 

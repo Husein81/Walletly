@@ -1,7 +1,6 @@
 import { useForm } from "@tanstack/react-form";
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import Toast from "react-native-toast-message";
-import { z } from "zod";
 
 // Local Imports
 import {
@@ -20,19 +19,11 @@ import {
 } from "../ui-components";
 
 // Store Imports
-import { Icon } from "@/components/ui";
 import { useAuthStore, useModalStore } from "@/store";
 
 type Props = {
   account?: Account;
 };
-
-const accountSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  balance: z
-    .union([z.number(), z.string()])
-    .pipe(z.coerce.number().positive("Balance must be positive")),
-});
 
 const AccountForm = ({ account }: Props) => {
   const { onClose } = useModalStore();

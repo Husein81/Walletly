@@ -7,30 +7,12 @@ import { useAuthStore } from "@/store/authStore";
 import { authApi } from "@/api/auth";
 import { User } from "@/types";
 
-const useSendOtp = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (phone: string) => authApi.sendOtp(phone),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user"] });
-    },
-    onError: (error: Error) => {
-      Toast.show({
-        type: "error",
-        text1: "Error sending OTP",
-        text2: error.message,
-      });
-    },
-  });
-};
-
-const useVerifyOtp = () => {
+const useLogin = () => {
   const queryClient = useQueryClient();
   const { setAuth } = useAuthStore();
+
   return useMutation({
-    mutationFn: ({ phone, code }: { phone: string; code: string }) =>
-      authApi.verifyOtp({ phone, code }),
+    mutationFn: authApi.login,
     onSuccess: (data) => {
       setAuth(data);
       queryClient.invalidateQueries({ queryKey: ["user"] });
@@ -38,7 +20,27 @@ const useVerifyOtp = () => {
     onError: (error: Error) => {
       Toast.show({
         type: "error",
-        text1: "Error verifying OTP",
+        text1: "Login failed",
+        text2: error.message,
+      });
+    },
+  });
+};
+
+const useRegister = () => {
+  const queryClient = useQueryClient();
+  const { setAuth } = useAuthStore();
+
+  return useMutation({
+    mutationFn: authApi.register,
+    onSuccess: (data) => {
+      setAuth(data);
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+    },
+    onError: (error: Error) => {
+      Toast.show({
+        type: "error",
+        text1: "Registration failed",
         text2: error.message,
       });
     },
@@ -85,4 +87,4 @@ const useUpdateProfile = () => {
   });
 };
 
-export { useSendOtp, useVerifyOtp, useCompleteRegistration, useUpdateProfile };
+export { useLogin, useRegister, useCompleteRegistration, useUpdateProfile };

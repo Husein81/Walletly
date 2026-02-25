@@ -3,7 +3,7 @@ import { Pressable, Text, View } from "react-native";
 
 // local imports
 import { formatSmartDateTime, formattedBalance } from "@/utils";
-import { iconsRecord } from "@/lib/config";
+import { iconsRecord } from "@/constants";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { Expense } from "@/types";
@@ -12,7 +12,7 @@ import { ExpenseForm } from "./ExpenseForm";
 // Store imports
 import { NAV_THEME } from "@/lib/theme";
 import { useColorScheme } from "@/lib/useColorScheme";
-import { useModalStore } from "@/store/modalStore";
+import { useAuthStore, useModalStore } from "@/store";
 
 type Props = {
   expense: Expense;
@@ -21,6 +21,7 @@ type Props = {
 export const ExpenseCard = ({ expense }: Props) => {
   const { isDarkColorScheme } = useColorScheme();
   const { onOpen } = useModalStore();
+  const { user } = useAuthStore();
 
   const handleOpen = (expense: Expense) =>
     onOpen(<ExpenseForm expense={expense} />, "Edit Expense");
@@ -79,7 +80,7 @@ export const ExpenseCard = ({ expense }: Props) => {
               expense.type === "TRANSFER" && "text-teal-500",
             )}
           >
-            {formattedBalance(expense.amount)}
+            {formattedBalance(expense.amount, user?.currency.symbol)}
           </Text>
           <Text className="text-xs text-muted-foreground">
             {formatSmartDateTime(new Date(expense.updatedAt ?? new Date()))}

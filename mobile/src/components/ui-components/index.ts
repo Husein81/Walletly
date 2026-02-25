@@ -10,4 +10,5 @@ export { default as UserDropdown } from "./user-dropdown";
 export { default as StatsCard } from "./stats-card";
 export { default as ToggleGroup } from "./toggle-group";
 export { default as AlertDialog } from "./alert-dialog";
+export { Keypad } from "./Keypad";
 export * from "./forms";

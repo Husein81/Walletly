@@ -133,12 +133,12 @@ const Analysis = () => {
 
   // Generate line chart data based on selected option
   const expenseLineChartData = useMemo(() => {
-    return transformExpensesToChartData(expenseData || []);
-  }, [expenseData]);
+    return transformExpensesToChartData(expenseData || [], selectedDate);
+  }, [expenseData, selectedDate]);
 
   const incomeLineChartData = useMemo(() => {
-    return transformExpensesToChartData(incomeData || []);
-  }, [incomeData]);
+    return transformExpensesToChartData(incomeData || [], selectedDate);
+  }, [incomeData, selectedDate]);
 
   const lineChartData = useMemo(() => {
     if (selectedOption?.value === ExpenseState.ExpenseFlow) {
@@ -206,7 +206,7 @@ const Analysis = () => {
     return incomeData?.reduce((sum, inc) => sum + Number(inc.amount), 0) || 0;
   }, [incomeData]);
 
-  const netBalance = totalIncome - Math.abs(totalExpense);
+  const netBalance = totalIncome + totalExpense;
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-background">

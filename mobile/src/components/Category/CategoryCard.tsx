@@ -1,7 +1,7 @@
 import { Pressable, Text, View } from "react-native";
 
 // Local imports
-import { iconsRecord } from "@/lib/config";
+import { iconsRecord } from "@/constants";
 import { Icon } from "@/components/ui";
 import { Category } from "@/types";
 import CategoryForm from "./CategoryForm";

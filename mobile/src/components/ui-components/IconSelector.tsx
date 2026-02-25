@@ -3,7 +3,7 @@ import { Pressable, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 
 // Local imports
-import { iconsRecord } from "@/lib/config";
+import { iconsRecord } from "@/constants";
 import { getColorByIndex } from "@/utils";
 import { Icon } from "@/components/ui";
 import { useColorScheme } from "@/lib/useColorScheme";

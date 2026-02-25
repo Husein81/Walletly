@@ -20,12 +20,13 @@ export const useModalStore = create<ModalStore>((set) => ({
   title: undefined,
   transparent: false,
   onClose: () => {
-    set({ open: false, body: null, title: undefined });
+    set({ open: false });
     if (router.canGoBack()) {
       router.back();
-    } else {
-      router.push("/");
     }
+    setTimeout(() => {
+      set({ body: null, title: undefined });
+    }, 400);
   },
   onOpen: (body, title, transparent = false) => {
     set({ open: true, body, title, transparent });

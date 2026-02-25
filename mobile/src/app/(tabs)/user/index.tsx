@@ -35,9 +35,9 @@ const User = () => {
       onPress: () => router.push("/user/edit-profile"),
     },
     {
-      title: "Phone Number",
-      subTitle: user?.phone || "Not provided",
-      icon: "Phone",
+      title: "Email Address",
+      subTitle: user?.email || "Not provided",
+      icon: "Mail",
     },
     {
       title: "Email Address",
@@ -53,6 +53,12 @@ const User = () => {
       icon: "FolderOpen",
       onPress: () => router.push("/user/categories"),
     },
+    {
+      title: "Currency",
+      subTitle: user?.currency.symbol || "$",
+      icon: "CircleDollarSign",
+      onPress: () => router.push("/user/currency-sign"),
+    },
   ];
 
   const preferences = [
@@ -62,6 +68,7 @@ const User = () => {
       icon: isDarkColorScheme ? "Moon" : "Sun",
       onPress: toggleColorScheme,
     },
+
     {
       title: "Notifications",
       subTitle: "Manage notification settings",
@@ -93,6 +100,12 @@ const User = () => {
       icon: "Info",
     },
   ];
+
+  const fallback =
+    user?.name?.slice(0, 2).toUpperCase() ??
+    user?.username.slice(0, 2).toUpperCase() ??
+    "U";
+
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-background">
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
@@ -101,10 +114,7 @@ const User = () => {
           <Rn.Card className="p-4 rounded-2xl overflow-hidden">
             <View className="flex-row items-center gap-4">
               {/* Avatar */}
-              <Avatar
-                fallback={user?.name?.slice(0, 2).toUpperCase()}
-                size={64}
-              />
+              <Avatar fallback={fallback} size={64} />
 
               {/* User Info */}
               <View>
@@ -112,54 +122,16 @@ const User = () => {
                   style={{ color: isDarkColorScheme ? "#ffffff" : "#18181b" }}
                   className="text-2xl font-bold mb-1 capitalize"
                 >
-                  {user?.name || "User"}
+                  {user?.username ?? "User"}
                 </Text>
-                <Text
-                  style={{ color: isDarkColorScheme ? "#a1a1aa" : "#52525b" }}
-                  className="text-sm mb-4"
-                >
-                  {user?.phone}
-                </Text>
-
-                {/* Stats Row */}
-                <View className="flex-row gap-4">
-                  <View
-                    style={{
-                      backgroundColor: isDarkColorScheme
-                        ? "rgba(63, 63, 70, 0.5)"
-                        : "rgba(228, 228, 231, 0.8)",
-                      borderWidth: 1,
-                      borderColor: isDarkColorScheme
-                        ? "rgba(82, 82, 91, 0.3)"
-                        : "rgba(212, 212, 216, 0.8)",
-                    }}
-                    className="px-4 py-1 rounded-full"
+                {user?.email && (
+                  <Text
+                    style={{ color: isDarkColorScheme ? "#a1a1aa" : "#52525b" }}
+                    className="text-sm mb-4"
                   >
-                    <Text
-                      style={{
-                        color: isDarkColorScheme ? "#e4e4e7" : "#3f3f46",
-                      }}
-                      className="text-xs font-semibold"
-                    >
-                      {user?.role || "USER"}
-                    </Text>
-                  </View>
-                  {user?.phoneVerified && (
-                    <View
-                      style={{
-                        backgroundColor: "rgba(20, 184, 166, 0.15)",
-                        borderWidth: 1,
-                        borderColor: "rgba(20, 184, 166, 0.3)",
-                      }}
-                      className="px-4 py-1 rounded-full flex-row items-center gap-2"
-                    >
-                      <Icon name="CircleCheck" size={14} color="#14B8A6" />
-                      <Text className="text-primary text-xs font-semibold">
-                        Verified
-                      </Text>
-                    </View>
-                  )}
-                </View>
+                    {user?.email}
+                  </Text>
+                )}
               </View>
             </View>
           </Rn.Card>

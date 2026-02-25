@@ -3,7 +3,7 @@ import { Pressable, Text, View } from "react-native";
 
 // Local imports
 import { Icon } from "@/components/ui";
-import { iconsRecord } from "@/lib/config";
+import { iconsRecord } from "@/constants";
 import { cn } from "@/lib/utils";
 import { Account } from "@/types";
 import { formattedBalance } from "@/utils";

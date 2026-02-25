@@ -14,11 +14,18 @@ const Icon = ({ name, color, size, className, onPress }: IconProps) => {
       `Icon "${name}" does not exist in lucide-react-native library.`,
     );
   }
-  return (
-    <Pressable className={className} onPress={onPress}>
-      <LucideIcon color={color} size={size} />
-    </Pressable>
-  );
+
+  const iconElement = <LucideIcon color={color} size={size} />;
+
+  if (onPress) {
+    return (
+      <Pressable className={className} onPress={onPress}>
+        {iconElement}
+      </Pressable>
+    );
+  }
+
+  return iconElement;
 };
 
 export { Icon };

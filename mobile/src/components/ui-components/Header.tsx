@@ -1,4 +1,4 @@
-import { Pressable, View } from "react-native";
+import { Pressable, TouchableOpacity, View } from "react-native";
 
 // Local imports
 import { Text } from "../ui/text";
@@ -32,22 +32,16 @@ export const Header = ({
             <Icon name={icon} size={14} color="#fbbf24" />
           </View>
         )}
-        {canGoBack && (
-          <View className="flex-row items-center pl-4">
-            <Icon
-              name="ChevronLeft"
-              size={24}
-              color="#14B8A6"
-              onPress={() => router.canGoBack() && router.back()}
-              className="mr-4"
-            />
-            <Text className="text-foreground capitalize text-3xl font-bold tracking-tight">
-              {title}
-            </Text>
+        {canGoBack ? (
+          <View className="flex-row items-center justify-between px-4 pb-4 border-b border-border">
+            <TouchableOpacity onPress={() => router.back()} className="p-2">
+              <Icon name="ChevronLeft" size={24} color="#9ca3af" />
+            </TouchableOpacity>
+            <Text className="text-xl font-bold text-foreground">{title}</Text>
+            <View className="w-10" />
           </View>
-        )}
-        {!canGoBack && (
-          <Text className="text-foreground capitalize text-3xl font-bold tracking-tight">
+        ) : (
+          <Text className="text-foreground capitalize text-2xl font-bold tracking-tight">
             {title}
           </Text>
         )}

@@ -1,5 +1,5 @@
 import { Icon } from "@/components/ui";
-import { iconsRecord } from "@/lib/config";
+import { iconsRecord } from "@/constants";
 import { Account, Expense } from "@/types";
 import { formattedBalance, getGroupedBarChartData } from "@/utils";
 import { useCallback } from "react";

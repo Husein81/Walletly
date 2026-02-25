@@ -1,4 +1,4 @@
-import { COLOR_PALETTE } from "@/lib/config";
+import { COLOR_PALETTE } from "@/constants";
 import { DateRangeType } from "@/store";
 import { Expense } from "@/types";
 import {
@@ -13,10 +13,15 @@ import {
 } from "date-fns";
 import { SvgData } from "react-native-svg-charts";
 
-const formattedBalance = (balance: number, currency = "$") =>
-  balance >= 0
-    ? `${currency}${Number(balance ?? 0).toFixed(2)}`
-    : `-${currency}${Math.abs(balance).toFixed(2)}`;
+const formattedBalance = (
+  balance: number,
+  currency: string | { symbol: string } = "$",
+) => {
+  const symbol = typeof currency === "string" ? currency : currency.symbol;
+  return balance >= 0
+    ? `${symbol}${Number(balance ?? 0).toFixed(2)}`
+    : `-${symbol}${Math.abs(balance).toFixed(2)}`;
+};
 
 const getColorByIndex = (str: string): string => {
   let hash = 0;

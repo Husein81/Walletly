@@ -30,7 +30,6 @@ const EditProfile = () => {
   const form = useForm({
     defaultValues: {
       name: user?.name || "",
-      email: user?.email || "",
     },
     onSubmit: async ({ value }) => {
       try {
@@ -51,10 +50,7 @@ const EditProfile = () => {
   });
 
   const handleCancel = () => {
-    if (
-      form.getFieldValue("name") !== user?.name ||
-      form.getFieldValue("email") !== user?.email
-    ) {
+    if (form.getFieldValue("name") !== user?.name) {
       Alert.alert(
         "Unsaved Changes",
         "You have unsaved changes. Are you sure you want to go back?",
@@ -157,49 +153,32 @@ const EditProfile = () => {
             )}
           </form.Field>
 
-          {/* Email Field */}
-          <form.Field name="email">
-            {(field) => (
-              <InputField
-                placeholder="Enter your email"
-                label="Email Address"
-                icon="Mail"
-                field={field}
-              />
-            )}
-          </form.Field>
-
-          {/* Phone Field (Read-only) */}
+          {/* Username Field (Read-only for identifier) */}
           <View className="gap-2">
             <Text className="text-foreground text-sm font-semibold">
-              Phone Number
+              Username
             </Text>
-            <View className="bg-muted/55  rounded-2xl border border-border overflow-hidden">
+            <View className="bg-muted/55 rounded-2xl border border-border overflow-hidden">
               <View className="flex-row items-center px-4">
                 <Icon
-                  name="Phone"
+                  name="User"
                   size={20}
                   color={isDarkColorScheme ? "#71717a" : "#a1a1aa"}
                   className="text-muted-foreground"
                 />
                 <TextInput
-                  value={user?.phone}
-                  placeholder="Phone number"
+                  value={user?.username}
+                  placeholder="Username"
                   placeholderTextColor={
                     isDarkColorScheme ? "#71717a" : "#a1a1aa"
                   }
                   className="flex-1 px-3 py-4 text-muted-foreground text-base"
                   editable={false}
                 />
-                <View className="bg-muted px-2 py-1 rounded-full">
-                  <Text className="text-muted-foreground text-xs font-medium">
-                    Verified
-                  </Text>
-                </View>
               </View>
             </View>
             <Text className="text-muted-foreground text-xs">
-              Phone number cannot be changed
+              Username cannot be changed
             </Text>
           </View>
 

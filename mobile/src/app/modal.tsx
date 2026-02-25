@@ -2,6 +2,7 @@ import { router } from "expo-router";
 import { useEffect } from "react";
 import { Pressable, ScrollView, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
 // local imports
 import { Text } from "@/components/ui";
@@ -41,25 +42,32 @@ export default function ModalScreen() {
           : "bg-background",
       )}
     >
-      <SafeAreaView
+      <Animated.View
+        entering={transparent ? FadeIn.duration(300) : FadeIn.duration(300)}
+        exiting={transparent ? FadeOut.duration(300) : FadeOut.duration(300)}
         className={cn(
           transparent ? "bg-card rounded-xl w-[90%] max-h-[80%] p-4" : "flex-1",
           "gap-4",
         )}
       >
-        {title && (
-          <View className="w-full flex-row items-center justify-center">
-            <TouchableOpacity onPress={handleClose} className="absolute left-0">
-              <Text className="text-muted-foreground text-sm">Cancel</Text>
-            </TouchableOpacity>
+        <SafeAreaView className="flex-1 gap-4">
+          {title && (
+            <View className="w-full flex-row items-center justify-center">
+              <TouchableOpacity
+                onPress={handleClose}
+                className="absolute left-0"
+              >
+                <Text className="text-muted-foreground text-sm">Cancel</Text>
+              </TouchableOpacity>
 
-            <Text className="text-2xl font-semibold ">{title}</Text>
-          </View>
-        )}
-        <ScrollView className="w-full" showsVerticalScrollIndicator={false}>
-          {body}
-        </ScrollView>
-      </SafeAreaView>
+              <Text className="text-2xl font-semibold ">{title}</Text>
+            </View>
+          )}
+          <ScrollView className="w-full" showsVerticalScrollIndicator={false}>
+            {body}
+          </ScrollView>
+        </SafeAreaView>
+      </Animated.View>
     </Container>
   );
 }

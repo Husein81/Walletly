@@ -7,9 +7,10 @@ import {
   XAxis,
   YAxis,
 } from "react-native-svg-charts";
-import { COLOR_PALETTE, SCREEN_WIDTH } from "@/lib/config";
+import { COLOR_PALETTE, SCREEN_WIDTH } from "@/constants";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { NAV_THEME } from "@/lib/theme";
+import { useAuthStore } from "@/store";
 
 type Props = {
   data: {
@@ -25,6 +26,7 @@ type Props = {
 const LineChart = ({ data, color, yAxisLabel }: Props) => {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const { isDarkColorScheme } = useColorScheme();
+  const { user } = useAuthStore();
 
   const lineData = data.datasets[0].data;
   const DotDecorator = ({
@@ -109,7 +111,9 @@ const LineChart = ({ data, color, yAxisLabel }: Props) => {
           contentInset={{ top: 20, bottom: 30 }}
           svg={{ fontSize: 12, fill: NAV_THEME.dark.colors.card }}
           numberOfTicks={5}
-          formatLabel={(value) => `${yAxisLabel}${value}`}
+          formatLabel={(value) =>
+            `${user?.currency?.symbol || yAxisLabel}${value}`
+          }
         />
 
         {/* Chart Area */}

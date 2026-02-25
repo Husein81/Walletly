@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { View } from "react-native";
 import { PieChart, SvgData } from "react-native-svg-charts";
 import { getColorByIndex } from "@/utils";
-import { iconsRecord, SCREEN_WIDTH } from "@/lib/config";
+import { iconsRecord, SCREEN_WIDTH } from "@/constants";
 import { Icon } from "@/components/ui";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { Progress, Separator, Text } from "../ui";
@@ -92,7 +92,7 @@ const Overview = ({ pieChartData, progressData }: Props) => {
               >
                 <Icon
                   name={iconsRecord[item.category?.imageUrl || "other"]}
-                  color={isDarkColorScheme ? "#fff" : "#000"}
+                  color={"#fff"}
                 />
               </View>
               <View className="flex-1">

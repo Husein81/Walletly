@@ -160,38 +160,19 @@ const Home = () => {
         scrollEventThrottle={16}
       >
         <Header
-          title={user?.name}
-          subtitle={user?.phone}
+          title={user?.username ? `Hello, ${user.username}!` : "Hello!"}
+          subtitle={user?.email}
           action={<UserDropdown />}
           hasGreeting
         />
 
         <DateFilter />
 
-        {/* <TransactionsCard
-          total={totalBalance ?? 0}
-          income={totalIncome ?? 0}
-          expense={totalExpense ?? 0}
-        /> */}
-
-        <View className="flex-row gap-4 mb-4">
-          <View className="bg-card rounded-xl p-4 mb-6 flex-1">
-            <Text className="text-foreground text-sm font-bold mb-2">
-              Balance
-            </Text>
-            <Text className="text-2xl font-extrabold text-muted-foreground">
-              ${totalIncome.toFixed(2)}
-            </Text>
-          </View>
-          <View className="bg-card rounded-xl p-4 mb-6 flex-1">
-            <Text className="text-foreground text-sm font-bold mb-2">
-              Expenses
-            </Text>
-            <Text className="text-2xl font-extrabold text-red-500">
-              ${totalExpense.toFixed(2)}
-            </Text>
-          </View>
-        </View>
+        <TransactionsCard
+          total={totalBalance}
+          income={totalIncome}
+          expense={totalExpense}
+        />
 
         {isLoading ? (
           <ListSkeleton />
