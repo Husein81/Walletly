@@ -3,7 +3,7 @@ import { View, Pressable } from "react-native";
 import { format, isBefore } from "date-fns";
 import { Calendar, DateData } from "react-native-calendars";
 import { Text } from "../ui/text";
-import { useColorScheme } from "@/lib/useColorScheme";
+import { useThemeStore } from "@/store/themStore";
 import { useDateStore, useModalStore } from "@/store";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NAV_THEME } from "@/lib/theme";
@@ -17,7 +17,7 @@ type MarkedDates = {
 
 const CustomDateRangePicker = () => {
   const { onClose } = useModalStore();
-  const { isDarkColorScheme } = useColorScheme();
+  const { isDark } = useThemeStore();
   const {
     customStartDate,
     customEndDate,
@@ -148,26 +148,26 @@ const CustomDateRangePicker = () => {
             markedDates={getMarkedDates()}
             markingType="period"
             theme={{
-              backgroundColor: isDarkColorScheme
+              backgroundColor: isDark
                 ? NAV_THEME.dark.colors.card
                 : NAV_THEME.light.colors.card,
-              calendarBackground: isDarkColorScheme
+              calendarBackground: isDark
                 ? NAV_THEME.dark.colors.card
                 : NAV_THEME.light.colors.card,
-              textSectionTitleColor: isDarkColorScheme ? "#9ca3af" : "#4b5563",
+              textSectionTitleColor: isDark ? "#9ca3af" : "#4b5563",
               selectedDayBackgroundColor: "#14B8A6",
               selectedDayTextColor: "#ffffff",
               todayTextColor: NAV_THEME.light.colors.text,
-              todayBackgroundColor: isDarkColorScheme
+              todayBackgroundColor: isDark
                 ? NAV_THEME.dark.colors.primary
                 : NAV_THEME.light.colors.primary,
-              dayTextColor: isDarkColorScheme
+              dayTextColor: isDark
                 ? NAV_THEME.dark.colors.text
                 : NAV_THEME.light.colors.text,
-              textDisabledColor: isDarkColorScheme ? "#4b5563" : "#d9e1e8",
+              textDisabledColor: isDark ? "#4b5563" : "#d9e1e8",
               dotColor: "#14B8A6",
               selectedDotColor: "#ffffff",
-              monthTextColor: isDarkColorScheme ? "#e5e7eb" : "#2c3e50",
+              monthTextColor: isDark ? "#e5e7eb" : "#2c3e50",
               arrowColor: "#14B8A6",
             }}
           />

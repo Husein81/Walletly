@@ -14,12 +14,6 @@ import { useModalStore } from "@/store";
 export default function ModalScreen() {
   const { title, body, transparent, onClose } = useModalStore();
 
-  useEffect(() => {
-    return () => {
-      onClose();
-    };
-  }, []);
-
   const handleClose = () => {
     router.back();
   };
@@ -53,12 +47,14 @@ export default function ModalScreen() {
         <SafeAreaView className="flex-1 gap-4">
           {title && (
             <View className="w-full flex-row items-center justify-center">
-              <TouchableOpacity
-                onPress={handleClose}
-                className="absolute left-0"
-              >
-                <Text className="text-muted-foreground text-sm">Cancel</Text>
-              </TouchableOpacity>
+              {router.canGoBack() && (
+                <TouchableOpacity
+                  onPress={handleClose}
+                  className="absolute left-0"
+                >
+                  <Text className="text-muted-foreground text-sm">Cancel</Text>
+                </TouchableOpacity>
+              )}
 
               <Text className="text-2xl font-semibold ">{title}</Text>
             </View>

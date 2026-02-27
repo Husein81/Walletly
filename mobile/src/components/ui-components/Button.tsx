@@ -2,7 +2,7 @@ import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
 // local imports
 import { Icon } from "@/components/ui";
-import { useColorScheme } from "@/lib/useColorScheme";
+import { useThemeStore } from "@/store/themStore";
 import { cn } from "@/lib/utils";
 import { buttonVariants, Button as SButton } from "../ui/button";
 import { VariantProps } from "class-variance-authority";
@@ -47,7 +47,7 @@ export const Button = ({
   className,
   children,
 }: ButtonProps & Props) => {
-  const { isDarkColorScheme } = useColorScheme();
+  const { isDark } = useThemeStore();
 
   return (
     <SButton
@@ -60,7 +60,7 @@ export const Button = ({
       {isSubmitting ? (
         <ActivityIndicator
           color={
-            isDarkColorScheme
+            isDark
               ? NAV_THEME.dark.colors.background
               : NAV_THEME.light.colors.background
           }
@@ -73,7 +73,7 @@ export const Button = ({
               name={iconName ?? "default-icon"}
               size={iconSize}
               color={
-                isDarkColorScheme
+                isDark
                   ? NAV_THEME.dark.colors.text
                   : NAV_THEME.light.colors.text
               }
@@ -86,7 +86,7 @@ export const Button = ({
               onPress={onPress}
               name={rightIconName}
               color={
-                isDarkColorScheme
+                isDark
                   ? NAV_THEME.dark.colors.text
                   : NAV_THEME.light.colors.text
               }

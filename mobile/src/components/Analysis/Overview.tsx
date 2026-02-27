@@ -4,7 +4,7 @@ import { PieChart, SvgData } from "react-native-svg-charts";
 import { getColorByIndex } from "@/utils";
 import { iconsRecord, SCREEN_WIDTH } from "@/constants";
 import { Icon } from "@/components/ui";
-import { useColorScheme } from "@/lib/useColorScheme";
+import { useThemeStore } from "@/store/themStore";
 import { Progress, Separator, Text } from "../ui";
 import { Text as TextSVG } from "react-native-svg";
 import { Expense } from "@/types";
@@ -21,7 +21,7 @@ type Props = {
 };
 
 const Overview = ({ pieChartData, progressData }: Props) => {
-  const { isDarkColorScheme } = useColorScheme();
+  const { isDark } = useThemeStore();
 
   const totalExpense = useMemo(
     () => (progressData ?? []).reduce((sum, item) => sum + item.amount, 0),

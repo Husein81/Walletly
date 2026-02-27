@@ -7,7 +7,7 @@ import { View } from "react-native";
 
 // Local Imports
 import { Icon } from "@/components/ui";
-import { useColorScheme } from "@/lib/useColorScheme";
+import { useThemeStore } from "@/store/themStore";
 import { useAuthStore } from "@/store/authStore";
 import { Switch } from "../ui/switch";
 import { useEffect, useRef } from "react";
@@ -16,7 +16,7 @@ import { NAV_THEME } from "@/lib/theme";
 export const CustomDrawer = (props: any) => {
   const { clearAuth } = useAuthStore();
 
-  const { isDarkColorScheme, toggleColorScheme } = useColorScheme();
+  const { isDark, toggleColorScheme } = useThemeStore();
 
   const isMounted = useRef(false);
 
@@ -42,14 +42,11 @@ export const CustomDrawer = (props: any) => {
     <DrawerContentScrollView {...props}>
       <View className="px-4 pt-4">
         <View className="flex-row-reverse items-center justify-between w-full  mb-4 gap-4">
-          <Switch
-            checked={isDarkColorScheme}
-            onCheckedChange={toggleColorScheme}
-          />
+          <Switch checked={isDark} onCheckedChange={toggleColorScheme} />
           <Icon
-            name={isDarkColorScheme ? "Moon" : "Sun"}
+            name={isDark ? "Moon" : "Sun"}
             color={
-              isDarkColorScheme
+              isDark
                 ? NAV_THEME.dark.colors.primary
                 : NAV_THEME.light.colors.primary
             }
@@ -62,7 +59,7 @@ export const CustomDrawer = (props: any) => {
           icon={() => (
             <Icon
               color={
-                isDarkColorScheme
+                isDark
                   ? NAV_THEME.dark.colors.primary
                   : NAV_THEME.light.colors.primary
               }

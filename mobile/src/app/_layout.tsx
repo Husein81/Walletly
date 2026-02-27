@@ -5,7 +5,9 @@ import "react-native-gesture-handler";
 import Providers from "@/components/providers";
 import { useAuthStore } from "@/store/authStore";
 import { PortalHost } from "@rn-primitives/portal";
-import "../../global.css";
+import "../global.css";
+import { THEME } from "@/lib/theme";
+import { useThemeStore } from "@/store/themStore";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -15,6 +17,8 @@ export {
 const MainLayout = () => {
   const { user, token } = useAuthStore();
   const isAuthenticated = Boolean(user && token);
+  const { theme } = useThemeStore();
+  const isDark = theme === "dark";
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
@@ -34,8 +38,14 @@ const MainLayout = () => {
             presentation: "formSheet",
             headerShown: false,
             sheetAllowedDetents: [0.45, 0.75, 0.95],
+            sheetInitialDetentIndex: 1,
             statusBarStyle: "auto",
-            sheetInitialDetentIndex: 0,
+            contentStyle: {
+              flex: 1,
+              backgroundColor: isDark
+                ? THEME.dark.background
+                : THEME.light.background,
+            },
             sheetGrabberVisible: true,
             sheetCornerRadius: 24,
           }}

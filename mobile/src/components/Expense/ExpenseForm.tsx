@@ -27,7 +27,7 @@ import {
   useUpdateExpense,
 } from "@/hooks/expense";
 import { iconsRecord } from "@/constants";
-import { useColorScheme } from "@/lib/useColorScheme";
+import { useThemeStore } from "@/store/themStore";
 import { cn } from "@/lib/utils";
 import { Account, Category, Expense, ExpenseType } from "@/types";
 import { formattedBalance } from "@/utils";
@@ -47,7 +47,7 @@ export const ExpenseForm = ({ expense }: Props) => {
   const { user } = useAuthStore();
   const { onClose } = useModalStore();
   const { onOpen: onOpenBS, onClose: onCloseBS } = useBottomSheetStore();
-  const { isDarkColorScheme } = useColorScheme();
+  const { isDark } = useThemeStore();
 
   // Fetch accounts and categories
   const { data: accounts } = useGetAccounts(user?.id || "");
@@ -473,7 +473,7 @@ export const ExpenseForm = ({ expense }: Props) => {
                   value={new Date(field.state.value || new Date())}
                   mode={mode}
                   is24Hour={false}
-                  themeVariant={isDarkColorScheme ? "dark" : "light"}
+                  themeVariant={isDark ? "dark" : "light"}
                   accentColor="#0D9488"
                   display="default"
                   onChange={(event, selectedDate) => {
@@ -526,7 +526,7 @@ export const ExpenseForm = ({ expense }: Props) => {
                 {isSubmitting ? (
                   <ActivityIndicator
                     color={
-                      isDarkColorScheme
+                      isDark
                         ? NAV_THEME.dark.colors.background
                         : NAV_THEME.light.colors.background
                     }

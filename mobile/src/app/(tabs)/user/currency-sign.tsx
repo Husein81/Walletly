@@ -1,16 +1,19 @@
-import React from "react";
-import { View, Text, TouchableOpacity, FlatList } from "react-native";
-import { router } from "expo-router";
-import { useAuthStore } from "@/store";
-import { useUpdateProfile } from "@/hooks/auth";
 import { Icon } from "@/components/ui";
-import { cn } from "@/lib/utils";
 import { CURRENCIES } from "@/constants";
+import { useUpdateProfile } from "@/hooks/auth";
+import { THEME } from "@/lib/theme";
+import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/store";
+import { useThemeStore } from "@/store/themStore";
+import { router } from "expo-router";
+import React from "react";
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function CurrencySignScreen() {
   const { user } = useAuthStore();
   const updateProfile = useUpdateProfile();
+  const { isDark } = useThemeStore();
 
   const handleSelect = async (code: string) => {
     if (!user?.id) return;
@@ -28,8 +31,12 @@ export default function CurrencySignScreen() {
     }
   };
 
+  const backgroundColor = isDark
+    ? THEME.dark.background
+    : THEME.light.background;
+
   return (
-    <SafeAreaView edges={["top"]} className="flex-1 bg-background">
+    <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor }}>
       <View className="flex-row items-center justify-between px-4 py-4 border-b border-border">
         <TouchableOpacity onPress={() => router.back()} className="p-2">
           <Icon name="ChevronLeft" size={24} color="#9ca3af" />

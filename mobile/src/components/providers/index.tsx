@@ -1,5 +1,5 @@
-import { NAV_THEME } from "@/lib/theme";
-import { useColorScheme } from "@/lib/useColorScheme";
+import { NAV_THEME, THEME } from "@/lib/theme";
+import { useThemeStore } from "@/store/themStore";
 import { ThemeProvider } from "@react-navigation/native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SQLiteProvider } from "expo-sqlite";
@@ -15,8 +15,6 @@ type Props = {
   children: React.ReactNode;
 };
 
-// Re-export the db instance for other components to use
-// although prefer using db from @/db/client directly
 export { db };
 
 const Providers = ({ children }: Props) => {
@@ -32,7 +30,6 @@ const Providers = ({ children }: Props) => {
         setDbReady(true);
       } catch (error) {
         console.error("❌ Database initialization failed:", error);
-        // Still set ready to true so app doesn't hang, but functionality will be broken
         setDbReady(true);
       }
     };
@@ -41,7 +38,7 @@ const Providers = ({ children }: Props) => {
     setMounted(true);
   }, []);
 
-  const { colorScheme } = useColorScheme();
+  const { theme } = useThemeStore();
   const queryClient = new QueryClient();
 
   if (!mounted || !dbReady) {
@@ -61,11 +58,13 @@ const Providers = ({ children }: Props) => {
           useSuspense
         >
           <QueryClientProvider client={queryClient}>
-            <ThemeProvider value={NAV_THEME[colorScheme]}>
+            <ThemeProvider value={NAV_THEME[theme]}>
               <SafeAreaProvider>
-                {children}
-                <StatusBar style={"auto"} />
-                <Toast />
+                <View style={{ flex: 1 }}>
+                  {children}
+                  <Toast />
+                  <StatusBar style={"auto"} />
+                </View>
               </SafeAreaProvider>
             </ThemeProvider>
           </QueryClientProvider>
@@ -74,4 +73,5 @@ const Providers = ({ children }: Props) => {
     </GestureHandlerRootView>
   );
 };
+
 export default Providers;

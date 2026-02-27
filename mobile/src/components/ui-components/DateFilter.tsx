@@ -4,7 +4,7 @@ import { Pressable, ScrollView, View } from "react-native";
 
 // Local imports
 import { Icon } from "@/components/ui";
-import { useColorScheme } from "@/lib/useColorScheme";
+import { useThemeStore } from "@/store/themStore";
 import { cn } from "@/lib/utils";
 import { useModalStore } from "@/store";
 import { DateRangeType, useDateStore } from "@/store/dateStore";
@@ -13,7 +13,7 @@ import { Text } from "../ui/text";
 import CustomDateRangePicker from "./CustomDateRangePicker";
 
 const DateFilter = () => {
-  const { isDarkColorScheme } = useColorScheme();
+  const { isDark } = useThemeStore();
   const {
     dateRangeType,
     setDateRangeType,
@@ -105,7 +105,7 @@ const DateFilter = () => {
                   color={
                     selectedRange === filter.value
                       ? "#ffffff"
-                      : isDarkColorScheme
+                      : isDark
                         ? "#e4e4e7"
                         : "#3f3f46"
                   }
@@ -117,7 +117,7 @@ const DateFilter = () => {
                     color:
                       selectedRange === filter.value
                         ? "#ffffff"
-                        : isDarkColorScheme
+                        : isDark
                           ? "#e4e4e7"
                           : "#3f3f46",
                   }}

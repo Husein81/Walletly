@@ -15,16 +15,17 @@ import { router } from "expo-router";
 // Local imports
 import { Text } from "@/components/ui";
 import { Icon } from "@/components/ui";
-import { useColorScheme } from "@/lib/useColorScheme";
+import { useThemeStore } from "@/store/themStore";
 import { useAuthStore } from "@/store";
 import { useUpdateProfile } from "@/hooks/auth";
 import Toast from "react-native-toast-message";
 import { useForm } from "@tanstack/react-form";
 import { InputField } from "@/components/ui-components";
+import { THEME } from "@/lib/theme";
 
 const EditProfile = () => {
   const { user } = useAuthStore();
-  const { isDarkColorScheme } = useColorScheme();
+  const { isDark } = useThemeStore();
   const updateProfile = useUpdateProfile();
 
   const form = useForm({
@@ -72,14 +73,18 @@ const EditProfile = () => {
     form.handleSubmit();
   };
 
+  const backgroundColor = isDark
+    ? THEME.dark.background
+    : THEME.light.background;
+
   return (
-    <SafeAreaView edges={["top"]} className="flex-1 bg-background">
+    <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor }}>
       {/* Header */}
       <View className="px-5 pt-4 pb-2 flex-row items-center justify-between">
         <View className="bg-card rounded-full p-2 border border-border">
           <Icon
             name="ChevronLeft"
-            color={isDarkColorScheme ? "#71717a" : "#a1a1aa"}
+            color={isDark ? "#71717a" : "#a1a1aa"}
             size={24}
             onPress={handleCancel}
             className="text-foreground"
@@ -100,7 +105,7 @@ const EditProfile = () => {
         <View className="px-5 pt-6 pb-4 items-center">
           <View className="relative">
             <LinearGradient
-              colors={["#3b82f6", "#2563eb"]}
+              colors={["#14B8A6", "#14B8A6"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={{
@@ -109,7 +114,7 @@ const EditProfile = () => {
                 borderRadius: 60,
                 justifyContent: "center",
                 alignItems: "center",
-                shadowColor: "#3b82f6",
+                shadowColor: "#14B8A6",
                 shadowOffset: { width: 0, height: 8 },
                 shadowOpacity: 0.3,
                 shadowRadius: 16,
@@ -117,7 +122,9 @@ const EditProfile = () => {
               }}
             >
               <Text className="text-white text-5xl font-bold">
-                {form.getFieldValue("name").charAt(0).toUpperCase() || "U"}
+                {form.getFieldValue("name")?.charAt(0).toUpperCase() ||
+                  user?.username.slice(0, 2).toUpperCase() ||
+                  "U"}
               </Text>
             </LinearGradient>
             <Pressable
@@ -163,15 +170,13 @@ const EditProfile = () => {
                 <Icon
                   name="User"
                   size={20}
-                  color={isDarkColorScheme ? "#71717a" : "#a1a1aa"}
+                  color={isDark ? "#71717a" : "#a1a1aa"}
                   className="text-muted-foreground"
                 />
                 <TextInput
                   value={user?.username}
                   placeholder="Username"
-                  placeholderTextColor={
-                    isDarkColorScheme ? "#71717a" : "#a1a1aa"
-                  }
+                  placeholderTextColor={isDark ? "#71717a" : "#a1a1aa"}
                   className="flex-1 px-3 py-4 text-muted-foreground text-base"
                   editable={false}
                 />
@@ -183,19 +188,19 @@ const EditProfile = () => {
           </View>
 
           {/* Info Card */}
-          <View className="bg-blue-500/10 rounded-2xl p-4 border border-blue-500/20">
+          <View className="bg-green-500/10 rounded-2xl p-4 border border-green-500/20">
             <View className="flex-row items-start gap-3">
               <Icon
                 name="Info"
-                color={isDarkColorScheme ? "#60a5fa" : "#3b82f6"}
+                color={isDark ? "#14B8A6" : "#14B8A6"}
                 size={20}
-                className="text-blue-500"
+                className="text-green-500"
               />
               <View className="flex-1">
-                <Text className="text-blue-500 text-sm font-semibold mb-1">
+                <Text className="text-green-500 text-sm font-semibold mb-1">
                   Profile Information
                 </Text>
-                <Text className="text-blue-500/80 text-xs">
+                <Text className="text-green-500/80 text-xs">
                   Your profile information is used to personalize your
                   experience. Only your name will be visible to others.
                 </Text>
@@ -225,7 +230,7 @@ const EditProfile = () => {
               className="flex-1 active:scale-95"
             >
               <LinearGradient
-                colors={["#3b82f6", "#2563eb"]}
+                colors={["#14B8A6", "#14B8A6"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={{

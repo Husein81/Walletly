@@ -6,7 +6,7 @@ import { FlatList } from "react-native-gesture-handler";
 import { iconsRecord } from "@/constants";
 import { getColorByIndex } from "@/utils";
 import { Icon } from "@/components/ui";
-import { useColorScheme } from "@/lib/useColorScheme";
+import { useThemeStore } from "@/store/themStore";
 import { cn } from "@/lib/utils";
 import { NAV_THEME } from "@/lib/theme";
 
@@ -16,10 +16,10 @@ type Props = {
 };
 
 export const IconSelector = ({ selectedIcon, setSelectedIcon }: Props) => {
-  const { isDarkColorScheme } = useColorScheme();
+  const { isDark } = useThemeStore();
 
   return (
-    <View className="bg-card shadow-lg border-2 border-border p-3 rounded-2xl">
+    <View className="bg-card border-2 border-border p-3 rounded-2xl">
       <FlatList
         data={Object.entries(iconsRecord)}
         keyExtractor={([key]) => key}
@@ -37,7 +37,7 @@ export const IconSelector = ({ selectedIcon, setSelectedIcon }: Props) => {
                 onPress={() => setSelectedIcon(key)}
                 name={value}
                 color={
-                  isDarkColorScheme
+                  isDark
                     ? NAV_THEME.dark.colors.primary
                     : NAV_THEME.light.colors.primary
                 }

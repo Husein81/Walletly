@@ -43,6 +43,7 @@ export const iconsRecord: Record<string, string> = {
   shopping: "ShoppingCart",
   sport: "Dumbbell",
   tag: "Tag",
+  trendingUp: "TrendingUp",
   transportation: "BusFront",
   travel: "Plane",
   wallet: "Wallet",

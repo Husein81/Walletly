@@ -69,7 +69,7 @@ export function GridSelector<T extends BaseItem>({
 
                 <Text
                   numberOfLines={1}
-                  className="text-sm font-semibold text-foreground capitalize text-center"
+                  className="text-xs font-semibold text-foreground capitalize text-center"
                 >
                   {item.name}
                 </Text>

@@ -8,13 +8,15 @@ import { router } from "expo-router";
 import { Rn, Text } from "@/components/ui";
 import UserSection from "@/components/User/user-section";
 import { Icon } from "@/components/ui";
-import { useColorScheme } from "@/lib/useColorScheme";
+import { useThemeStore } from "@/store/themStore";
 import { useAuthStore } from "@/store";
 import Avatar from "@/components/ui-components/Avatar";
+import { THEME } from "@/lib/theme";
 
 const User = () => {
   const { user, clearAuth } = useAuthStore();
-  const { isDarkColorScheme, toggleColorScheme } = useColorScheme();
+  const { theme, toggleTheme } = useThemeStore();
+  const isDark = theme === "dark";
 
   const handleLogout = () => {
     Alert.alert("Logout", "Are you sure you want to logout?", [
@@ -33,16 +35,6 @@ const User = () => {
       subTitle: "Update your personal information",
       icon: "User",
       onPress: () => router.push("/user/edit-profile"),
-    },
-    {
-      title: "Email Address",
-      subTitle: user?.email || "Not provided",
-      icon: "Mail",
-    },
-    {
-      title: "Email Address",
-      subTitle: user?.email || "Not provided",
-      icon: "Mail",
     },
   ];
 
@@ -64,9 +56,9 @@ const User = () => {
   const preferences = [
     {
       title: "Appearance",
-      subTitle: isDarkColorScheme ? "Dark Mode" : "Light Mode",
-      icon: isDarkColorScheme ? "Moon" : "Sun",
-      onPress: toggleColorScheme,
+      subTitle: isDark ? "Dark Mode" : "Light Mode",
+      icon: isDark ? "Moon" : "Sun",
+      onPress: toggleTheme,
     },
 
     {
@@ -106,9 +98,16 @@ const User = () => {
     user?.username.slice(0, 2).toUpperCase() ??
     "U";
 
+  const backgroundColor = isDark
+    ? THEME.dark.background
+    : THEME.light.background;
+
   return (
-    <SafeAreaView edges={["top"]} className="flex-1 bg-background">
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+    <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor }}>
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        showsVerticalScrollIndicator={false}
+      >
         {/* Profile Header with Vercel Gradient */}
         <View className="px-5 pt-6 pb-8">
           <Rn.Card className="p-4 rounded-2xl overflow-hidden">
@@ -119,14 +118,14 @@ const User = () => {
               {/* User Info */}
               <View>
                 <Text
-                  style={{ color: isDarkColorScheme ? "#ffffff" : "#18181b" }}
+                  style={{ color: isDark ? "#ffffff" : "#18181b" }}
                   className="text-2xl font-bold mb-1 capitalize"
                 >
                   {user?.username ?? "User"}
                 </Text>
                 {user?.email && (
                   <Text
-                    style={{ color: isDarkColorScheme ? "#a1a1aa" : "#52525b" }}
+                    style={{ color: isDark ? "#a1a1aa" : "#52525b" }}
                     className="text-sm mb-4"
                   >
                     {user?.email}

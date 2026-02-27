@@ -32,14 +32,14 @@ import { useMemo, useState } from "react";
 //store imports
 import AccountAnalysis from "@/components/Analysis/AccountAnalysis";
 import { useGetAccounts } from "@/hooks/accounts";
-import { useColorScheme } from "@/lib/useColorScheme";
+import { useThemeStore } from "@/store/themStore";
 import { useAuthStore, useDateStore } from "@/store";
 import { EXPENSE_STATES, ExpenseState } from "@/components/Analysis/config";
 import { ToggleOption } from "@/components/ui-components/toggle-group";
 
 const Analysis = () => {
   const { user } = useAuthStore();
-  const { isDarkColorScheme } = useColorScheme();
+  const { isDark } = useThemeStore();
 
   const [selectedOption, setSelectedOption] = useState<ToggleOption>(
     EXPENSE_STATES[0],
@@ -177,7 +177,7 @@ const Analysis = () => {
       },
       label,
     }));
-  }, [chartData, isDarkColorScheme]);
+  }, [chartData, isDark]);
 
   // Prepare progress data for the selected option
   const expenseProgressData = useMemo(() => {
@@ -209,51 +209,47 @@ const Analysis = () => {
   const netBalance = totalIncome + totalExpense;
 
   return (
-    <SafeAreaView edges={["top"]} className="flex-1 bg-background">
+    <SafeAreaView edges={["top"]} style={{ flex: 1 }} className="bg-background">
       <ScrollView
-        className="flex-1"
+        className="bg-background px-5"
+        contentInsetAdjustmentBehavior="automatic"
         contentContainerStyle={{
           paddingBottom: Platform.OS === "ios" ? 80 : 70,
         }}
         showsVerticalScrollIndicator={false}
       >
-        <View className="px-5 pt-4">
-          <Header title="Stats" subtitle={formattedBalance(netBalance)} />
-        </View>
+        <Header title="Stats" subtitle={formattedBalance(netBalance)} />
 
         {/* Date Filter Selection */}
-        <View className="px-5 pt-4 pb-2">
-          <DateFilter />
-        </View>
+
+        <DateFilter />
 
         {/* Analysis Type Selection */}
-        <View className="px-5 pt-4 pb-2 mb-4">
-          <Text className="text-foreground text-lg font-bold mb-3">
-            Analysis Type
-          </Text>
-          <ScrollView
-            className="pt-2 gap-2"
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          >
-            <View className=" ">
-              <ToggleGroup
-                type="single"
-                options={EXPENSE_STATES}
-                value={selectedOption?.value}
-                onChange={(value) =>
-                  setSelectedOption(
-                    EXPENSE_STATES.find((opt) => opt.value === value) ||
-                      EXPENSE_STATES[0],
-                  )
-                }
-              />
-            </View>
-          </ScrollView>
-        </View>
+        <Text className="text-foreground text-lg font-bold mb-3">
+          Analysis Type
+        </Text>
+        <ScrollView
+          className="pt-2 gap-2"
+          horizontal
+          showsHorizontalScrollIndicator={false}
+        >
+          <View className="">
+            <ToggleGroup
+              type="single"
+              options={EXPENSE_STATES}
+              value={selectedOption?.value}
+              onChange={(value) =>
+                setSelectedOption(
+                  EXPENSE_STATES.find((opt) => opt.value === value) ||
+                    EXPENSE_STATES[0],
+                )
+              }
+            />
+          </View>
+        </ScrollView>
 
         {/* Content Area */}
-        <View className="bg-card rounded-2xl p-4 mx-2 border border-border mb-6">
+        <View className="bg-card rounded-2xl p-4  border border-border my-6">
           {/* Expense overview */}
           {selectedOption?.value === ExpenseState.ExpenseOverview && (
             <View>

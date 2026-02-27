@@ -72,7 +72,7 @@ const AccountForm = ({ account }: Props) => {
   });
 
   return (
-    <View className="gap-4 flex">
+    <View className="gap-4 flex pt-8">
       <form.Field
         name="name"
         children={(field) => (

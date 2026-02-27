@@ -15,16 +15,19 @@ import { useGetAccounts } from "@/hooks/accounts";
 import { useAuthStore, useModalStore } from "@/store";
 import AccountCard from "@/components/Account/AccountCard";
 import { Header } from "@/components/ui-components/Header";
+import { THEME } from "@/lib/theme";
+import { useThemeStore } from "@/store/themStore";
 
 const Accounts = () => {
   const { user } = useAuthStore();
   const { onOpen } = useModalStore();
+  const { isDark } = useThemeStore();
 
-  const {
-    data: accounts = [],
-    refetch,
-    isLoading,
-  } = useGetAccounts(user?.id ?? "");
+  const backgroundColor = isDark
+    ? THEME.dark.background
+    : THEME.light.background;
+
+  const { data: accounts = [], isLoading } = useGetAccounts(user?.id ?? "");
 
   // Total balance
   const totalBalance = useMemo(
@@ -47,18 +50,18 @@ const Accounts = () => {
     );
   }, [accounts]);
 
-  const openAddAccount = () => onOpen(<AccountForm />, "Add account");
+  const openAddAccount = () => onOpen(<AccountForm />, "Add Wallet");
 
   return (
-    <SafeAreaView className="flex-1 bg-background">
+    <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor }}>
       <ScrollView
-        className="flex-1 px-5"
+        className="px-5 bg-background"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 32 }}
       >
         {/* HEADER */}
         <Header
-          title="Accounts"
+          title="My Wallets"
           subtitle="Manage your cash, cards, and savings"
         />
 

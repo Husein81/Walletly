@@ -5,7 +5,7 @@ import { TextInputProps } from "react-native/Libraries/Components/TextInput/Text
 import { cn } from "@/lib/utils";
 import { Icon, Input, Label } from "../../ui";
 import { FieldInfo } from "./FieldInfo";
-import { useColorScheme } from "@/lib/useColorScheme";
+import { useThemeStore } from "@/store/themStore";
 
 type Props = {
   label: string;
@@ -26,24 +26,29 @@ export const InputField = ({
   className,
   ...props
 }: Props) => {
-  const { isDarkColorScheme } = useColorScheme();
+  const { isDark } = useThemeStore();
   const [show, setShow] = useState(false);
   const isPassword = type === "password";
 
   return (
     <View className="gap-2">
       <Label htmlFor={field.name}>{label}</Label>
-      <View className="gap-2">
+      <View className="gap-2 relative">
         {icon && (
           <Icon
-            color={isDarkColorScheme ? "#71717a" : "#a1a1aa"}
-            className="z-50 absolute left-3 top-[56%] -translate-y-1/2"
+            onPress={() => {}}
+            color={isDark ? "#71717a" : "#a1a1aa"}
+            className="z-50 absolute left-3 top-1/2 -translate-y-1/2"
             name={icon}
           />
         )}
         <Input
-          className={cn("h-12 rounded-xl", className)}
-          value={String(field.state.value)}
+          className={cn("h-12 rounded-xl", icon ? "pl-10" : "pl-4", className)}
+          value={String(
+            typeof field.state.value === "number"
+              ? Number(Math.round(field.state.value))
+              : field.state.value || "",
+          )}
           secureTextEntry={isPassword && !show}
           autoCapitalize="none"
           onChangeText={field.handleChange}
@@ -53,7 +58,7 @@ export const InputField = ({
         {isPassword && (
           <Icon
             name={show ? "EyeOff" : "Eye"}
-            color={isDarkColorScheme ? "#71717a" : "#a1a1aa"}
+            color={isDark ? "#71717a" : "#a1a1aa"}
             className="absolute right-3 top-1/2 -translate-y-1/2"
             onPress={() => setShow(!show)}
           />

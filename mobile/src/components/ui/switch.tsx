@@ -7,7 +7,7 @@ import Animated, {
   useDerivedValue,
   withTiming,
 } from "react-native-reanimated";
-import { useColorScheme } from "@/lib/useColorScheme";
+import { useThemeStore } from "@/store/themStore";
 import { cn } from "@/lib/utils";
 
 const SwitchWeb = React.forwardRef<
@@ -19,7 +19,7 @@ const SwitchWeb = React.forwardRef<
       "peer flex-row h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed",
       props.checked ? "bg-primary" : "bg-input",
       props.disabled && "opacity-50",
-      className
+      className,
     )}
     {...props}
     ref={ref}
@@ -27,7 +27,7 @@ const SwitchWeb = React.forwardRef<
     <SwitchPrimitives.Thumb
       className={cn(
         "pointer-events-none block h-5 w-5 rounded-full bg-background shadow-md shadow-foreground/5 ring-0 transition-transform",
-        props.checked ? "translate-x-5" : "translate-x-0"
+        props.checked ? "translate-x-5" : "translate-x-0",
       )}
     />
   </SwitchPrimitives.Root>
@@ -50,14 +50,14 @@ const SwitchNative = React.forwardRef<
   SwitchPrimitives.RootRef,
   SwitchPrimitives.RootProps
 >(({ className, ...props }, ref) => {
-  const { colorScheme } = useColorScheme();
+  const { colorScheme } = useThemeStore();
   const translateX = useDerivedValue(() => (props.checked ? 18 : 0));
   const animatedRootStyle = useAnimatedStyle(() => {
     return {
       backgroundColor: interpolateColor(
         translateX.value,
         [0, 18],
-        [RGB_COLORS[colorScheme].input, RGB_COLORS[colorScheme].primary]
+        [RGB_COLORS[colorScheme].input, RGB_COLORS[colorScheme].primary],
       ),
     };
   });
@@ -71,14 +71,14 @@ const SwitchNative = React.forwardRef<
       style={animatedRootStyle}
       className={cn(
         "h-8 w-[46px] rounded-full",
-        props.disabled && "opacity-50"
+        props.disabled && "opacity-50",
       )}
     >
       <SwitchPrimitives.Root
         className={cn(
           "flex-row h-8 w-[46px] shrink-0 items-center rounded-full border-2 border-transparent",
           props.checked ? "bg-primary" : "bg-input",
-          className
+          className,
         )}
         {...props}
         ref={ref}

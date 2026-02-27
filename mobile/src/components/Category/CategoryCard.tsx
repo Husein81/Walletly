@@ -9,7 +9,7 @@ import { Rn } from "../ui";
 
 // Store imports
 import { useModalStore } from "@/store";
-import { useColorScheme } from "@/lib/useColorScheme";
+import { useThemeStore } from "@/store/themStore";
 
 type Props = {
   category: Category;
@@ -17,7 +17,7 @@ type Props = {
 
 const CategoryCard = ({ category }: Props) => {
   const { onOpen } = useModalStore();
-  const { isDarkColorScheme } = useColorScheme();
+  const { isDark } = useThemeStore();
 
   const handleEdit = () =>
     onOpen(<CategoryForm category={category} />, "Edit Category");

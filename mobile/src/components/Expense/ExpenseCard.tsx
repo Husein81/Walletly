@@ -11,7 +11,7 @@ import { ExpenseForm } from "./ExpenseForm";
 
 // Store imports
 import { NAV_THEME } from "@/lib/theme";
-import { useColorScheme } from "@/lib/useColorScheme";
+import { useThemeStore } from "@/store/themStore";
 import { useAuthStore, useModalStore } from "@/store";
 
 type Props = {
@@ -19,7 +19,7 @@ type Props = {
 };
 
 export const ExpenseCard = ({ expense }: Props) => {
-  const { isDarkColorScheme } = useColorScheme();
+  const { isDark } = useThemeStore();
   const { onOpen } = useModalStore();
   const { user } = useAuthStore();
 
@@ -38,7 +38,7 @@ export const ExpenseCard = ({ expense }: Props) => {
                   : iconsRecord[expense?.category?.imageUrl || "other"]
               }
               color={
-                isDarkColorScheme
+                isDark
                   ? NAV_THEME.dark.colors.primary
                   : NAV_THEME.light.colors.primary
               }
@@ -59,7 +59,7 @@ export const ExpenseCard = ({ expense }: Props) => {
                     name="ArrowRight"
                     size={16}
                     color={
-                      isDarkColorScheme
+                      isDark
                         ? NAV_THEME.dark.colors.primary
                         : NAV_THEME.light.colors.primary
                     }

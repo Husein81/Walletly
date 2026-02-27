@@ -8,7 +8,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import CategoryForm from "@/components/Category/CategoryForm";
 import CategorySectionList from "@/components/Category/CategorySectionList";
 import { Text } from "@/components/ui";
-import { ListSkeleton, StatsCard } from "@/components/ui-components";
+import { ListSkeleton } from "@/components/ui-components";
 
 // Local imports
 import { useCategories } from "@/hooks/categories";
@@ -16,12 +16,15 @@ import { ExpenseType } from "@/types";
 
 // store imports
 import { Icon } from "@/components/ui";
-import { useAuthStore, useModalStore } from "@/store";
 import { Header } from "@/components/ui-components/Header";
+import { THEME } from "@/lib/theme";
+import { useAuthStore, useModalStore } from "@/store";
+import { useThemeStore } from "@/store/themStore";
 
 const Categories = () => {
   const { user } = useAuthStore();
   const { onOpen } = useModalStore();
+  const { isDark } = useThemeStore();
 
   const { data: categories, refetch } = useCategories(user?.id || "");
 
@@ -56,8 +59,12 @@ const Categories = () => {
 
   const handleOpenCategory = () => onOpen(<CategoryForm />, "Add new Category");
 
+  const backgroundColor = isDark
+    ? THEME.dark.background
+    : THEME.light.background;
+
   return (
-    <SafeAreaView edges={["top"]} className="flex-1 bg-background">
+    <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor }}>
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         {/* Categories Section */}
         <View className="px-5 mt-4">

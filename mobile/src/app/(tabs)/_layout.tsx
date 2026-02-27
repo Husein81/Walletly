@@ -1,66 +1,81 @@
 // Global Imports
 import { Tabs } from "expo-router";
 import { Platform, TouchableOpacity, View } from "react-native";
+import { BlurView } from "expo-blur";
 
 // Local Imports
 import { ExpenseForm } from "@/components/Expense";
 import { Icon } from "@/components/ui";
 import { useModalStore } from "@/store";
-import { useColorScheme } from "@/lib/useColorScheme";
+import { useThemeStore } from "@/store/themStore";
 import { NAV_THEME } from "@/lib/theme";
 
 const TabsLayout = () => {
   const { onOpen } = useModalStore();
-  const { isDarkColorScheme } = useColorScheme();
+  const { isDark } = useThemeStore();
 
-  const activeColor = isDarkColorScheme
-    ? NAV_THEME.dark.colors.primary
-    : NAV_THEME.light.colors.primary;
-  const inactiveColor = isDarkColorScheme
-    ? NAV_THEME.dark.colors.mutedForeground
-    : NAV_THEME.light.colors.mutedForeground;
+  const theme = isDark ? NAV_THEME.dark.colors : NAV_THEME.light.colors;
+
+  const activeColor = theme.primary;
+  const inactiveColor = theme.mutedForeground;
+
+  const openExpense = () => onOpen(<ExpenseForm />, "New Expense");
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarBackground: () => (
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: isDarkColorScheme
-                ? NAV_THEME.dark.colors.background
-                : NAV_THEME.light.colors.background,
-              borderTopLeftRadius: 20,
-              borderTopRightRadius: 20,
-            }}
-          />
-        ),
-        tabBarShowLabel: true,
         tabBarActiveTintColor: activeColor,
         tabBarInactiveTintColor: inactiveColor,
+        tabBarShowLabel: true,
+
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: "600",
+          marginTop: 2,
+        },
+
+        // iOS Glass Background
+        tabBarBackground: () =>
+          Platform.OS === "ios" ? (
+            <BlurView
+              intensity={80}
+              tint={isDark ? "dark" : "light"}
+              style={{
+                flex: 1,
+                borderRadius: 28,
+                overflow: "hidden",
+              }}
+            />
+          ) : (
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: theme.background,
+                borderRadius: 28,
+              }}
+            />
+          ),
+
         tabBarStyle: {
-          borderTopWidth: 1,
-          borderStartWidth: 1,
-          borderEndWidth: 1,
-          borderColor: isDarkColorScheme ? "#333333" : "#e1e1e1",
-          borderTopLeftRadius: 20,
-          borderTopRightRadius: 20,
           position: "absolute",
           left: 16,
           right: 16,
-          paddingVertical: 8,
-          height: Platform.OS === "ios" ? 70 : 65,
+          bottom: Platform.OS === "ios" ? 20 : 12,
+          height: Platform.OS === "ios" ? 72 : 65,
+          paddingTop: 10,
+          paddingBottom: Platform.OS === "ios" ? 18 : 12,
+
+          borderRadius: 28,
+          backgroundColor: "transparent",
+          borderWidth: Platform.OS === "ios" ? 0.5 : 1,
+          borderColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)",
+
           elevation: 10,
           shadowColor: "#000",
-          shadowOpacity: 0.08,
-          shadowRadius: 12,
-          shadowOffset: { width: 0, height: 4 },
-        },
-        tabBarLabelStyle: {
-          fontSize: 12,
-          marginBottom: 6,
-          fontWeight: "500",
+          shadowOpacity: isDark ? 0.35 : 0.15,
+          shadowRadius: 24,
+          shadowOffset: { width: 0, height: 10 },
         },
       }}
     >
@@ -70,7 +85,7 @@ const TabsLayout = () => {
         options={{
           title: "Home",
           tabBarIcon: ({ color }) => (
-            <Icon name="House" size={24} color={color} />
+            <Icon name="House" size={22} color={color} />
           ),
         }}
       />
@@ -81,7 +96,7 @@ const TabsLayout = () => {
         options={{
           title: "Stats",
           tabBarIcon: ({ color }) => (
-            <Icon name="ChartPie" size={24} color={color} />
+            <Icon name="ChartPie" size={22} color={color} />
           ),
         }}
       />
@@ -105,7 +120,7 @@ const TabsLayout = () => {
                   backgroundColor: activeColor,
                   marginBottom: Platform.OS === "ios" ? 24 : 20,
                   shadowColor: activeColor,
-                  shadowOpacity: isDarkColorScheme ? 0.4 : 0.35,
+                  shadowOpacity: isDark ? 0.4 : 0.35,
                   shadowRadius: 10,
                   shadowOffset: { width: 0, height: 6 },
                   elevation: 8,
@@ -125,11 +140,11 @@ const TabsLayout = () => {
 
       {/* Wallet */}
       <Tabs.Screen
-        name="accounts"
+        name="wallets"
         options={{
           title: "Wallet",
           tabBarIcon: ({ color }) => (
-            <Icon name="Wallet" size={24} color={color} />
+            <Icon name="Wallet" size={22} color={color} />
           ),
         }}
       />
@@ -140,7 +155,7 @@ const TabsLayout = () => {
         options={{
           title: "Profile",
           tabBarIcon: ({ color }) => (
-            <Icon name="User" size={24} color={color} />
+            <Icon name="User" size={22} color={color} />
           ),
         }}
       />

@@ -23,7 +23,7 @@ export const Header = ({
 }: Props) => {
   const { greeting, icon } = getGreeting();
   return (
-    <View className=" pt-4 pb-3 flex-row justify-between items-center">
+    <View className="pt-4 pb-3 flex-row justify-between items-center">
       {/* User Info with Gradient Accent */}
       <View className="flex-1">
         {hasGreeting && (

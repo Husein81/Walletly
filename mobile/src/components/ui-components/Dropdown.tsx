@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Icon } from "@/components/ui";
-import { useColorScheme } from "@/lib/useColorScheme";
+import { useThemeStore } from "@/store/themStore";
 import { Button } from "@/components/ui";
 import { useState } from "react";
 
@@ -28,7 +28,7 @@ type Props = {
 };
 
 export const Dropdown = ({ title, icon, options }: Props) => {
-  const { isDarkColorScheme } = useColorScheme();
+  const { isDark } = useThemeStore();
   const [open, setOpen] = useState(false);
   return (
     <DropdownMenu onOpenChange={(open) => setOpen(!open)} className="relative">
@@ -39,7 +39,7 @@ export const Dropdown = ({ title, icon, options }: Props) => {
             <Icon
               onPress={() => setOpen(!open)}
               name={icon}
-              color={isDarkColorScheme ? "white" : "black"}
+              color={isDark ? "white" : "black"}
             />
           )}
         </Button>

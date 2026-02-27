@@ -8,7 +8,7 @@ import {
   YAxis,
 } from "react-native-svg-charts";
 import { COLOR_PALETTE, SCREEN_WIDTH } from "@/constants";
-import { useColorScheme } from "@/lib/useColorScheme";
+import { useThemeStore } from "@/store/themStore";
 import { NAV_THEME } from "@/lib/theme";
 import { useAuthStore } from "@/store";
 
@@ -25,7 +25,7 @@ type Props = {
 
 const LineChart = ({ data, color, yAxisLabel }: Props) => {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const { isDarkColorScheme } = useColorScheme();
+  const { isDark } = useThemeStore();
   const { user } = useAuthStore();
 
   const lineData = data.datasets[0].data;
@@ -46,7 +46,7 @@ const LineChart = ({ data, color, yAxisLabel }: Props) => {
         r={3}
         stroke={color}
         fill={
-          isDarkColorScheme
+          isDark
             ? NAV_THEME.dark.colors.background
             : NAV_THEME.light.colors.background
         }

@@ -5,7 +5,6 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
   Platform,
-  Pressable,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -13,8 +12,8 @@ import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // Local imports
-import { ExpenseForm, ExpensesList, Search } from "@/components/Expense";
-import { Text } from "@/components/ui";
+import { ExpensesList, Search } from "@/components/Expense";
+import { Icon, Text } from "@/components/ui";
 import {
   ListSkeleton,
   TransactionsCard,
@@ -22,7 +21,6 @@ import {
 } from "@/components/ui-components";
 import { Header } from "@/components/ui-components/Header";
 import { useGetExpenses } from "@/hooks/expense";
-import { Icon } from "@/components/ui";
 
 //store imports
 import DateFilter from "@/components/ui-components/DateFilter";
@@ -37,12 +35,15 @@ import {
   startOfWeek,
   startOfYear,
 } from "date-fns";
+import { THEME } from "@/lib/theme";
+import { useThemeStore } from "@/store/themStore";
 
 const Home = () => {
   const { user } = useAuthStore();
   const { onOpen } = useModalStore();
   const { selectedDate, dateRangeType, customStartDate, customEndDate } =
     useDateStore();
+  const { isDark } = useThemeStore();
 
   const [prevScrollPos, setPrevScrollPos] = useState(0);
 
@@ -123,8 +124,6 @@ const Home = () => {
 
   const { data: expenses, isLoading } = useGetExpenses(user?.id!, dateParams);
 
-  const handleOpenForm = () => onOpen(<ExpenseForm />, "Add Expense");
-
   const totalBalance = useMemo(() => {
     if (!expenses?.length) return 0;
     return expenses
@@ -148,10 +147,25 @@ const Home = () => {
 
   const handleOpenSearch = () => onOpen(<Search />, "Search");
 
+  const backgroundColor = isDark
+    ? THEME.dark.background
+    : THEME.light.background;
+
+  const recentTransactionsSubtitle = `${
+    dateRangeType === "today"
+      ? "Today"
+      : dateRangeType === "week"
+        ? "This week"
+        : dateRangeType === "year"
+          ? "This year"
+          : "This month"
+  } ${expenses?.length} transaction${expenses?.length !== 1 ? "'s" : ""}`;
+
   return (
-    <SafeAreaView edges={["top", "bottom"]} className="flex-1 bg-background">
+    <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor }}>
       <ScrollView
-        className="flex-1 px-5"
+        className="px-5 bg-background"
+        contentInsetAdjustmentBehavior="automatic"
         contentContainerStyle={{
           paddingBottom: Platform.OS === "ios" ? 80 : 70,
         }}
@@ -185,15 +199,7 @@ const Home = () => {
                   Recent Transactions
                 </Text>
                 <Text className="text-muted-foreground text-sm mt-1">
-                  {expenses.length} transaction
-                  {expenses.length !== 1 ? "s" : ""}{" "}
-                  {dateRangeType === "today"
-                    ? "today"
-                    : dateRangeType === "week"
-                      ? "this week"
-                      : dateRangeType === "year"
-                        ? "this year"
-                        : "this month"}
+                  {recentTransactionsSubtitle}
                 </Text>
               </View>
               <TouchableOpacity onPress={handleOpenSearch}>

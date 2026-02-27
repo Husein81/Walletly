@@ -3,12 +3,13 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button, Rn, Separator, Text } from "../ui";
 import { useAuthStore } from "@/store";
 import { Icon } from "@/components/ui";
-import { useColorScheme } from "@/lib/useColorScheme";
+import { useThemeStore } from "@/store/themStore";
 import { router } from "expo-router";
 import Avatar from "./Avatar";
 
 const UserDropdown = () => {
-  const { isDarkColorScheme, toggleColorScheme } = useColorScheme();
+  const { theme, toggleTheme } = useThemeStore();
+  const isDark = theme === "dark";
   const { user, clearAuth } = useAuthStore();
   const insets = useSafeAreaInsets();
 
@@ -44,9 +45,11 @@ const UserDropdown = () => {
           <Text className="text-foreground font-bold text-base capitalize">
             {user?.username || "User"}
           </Text>
-          <Text className="text-muted-foreground text-sm mt-0.5">
-            {user?.email}
-          </Text>
+          {user?.email && (
+            <Text className="text-muted-foreground text-sm mt-0.5">
+              {user?.email}
+            </Text>
+          )}
         </View>
 
         {/* Profile Menu Item */}
@@ -60,17 +63,13 @@ const UserDropdown = () => {
         </Rn.DropdownMenuItem>
 
         {/* Theme Toggle */}
-        <Rn.DropdownMenuItem onPress={toggleColorScheme}>
+        <Rn.DropdownMenuItem onPress={toggleTheme}>
           <View className="flex-row items-center gap-3 py-1">
             <View className="bg-primary/10 p-2 rounded-lg">
-              <Icon
-                name={isDarkColorScheme ? "Moon" : "Sun"}
-                size={16}
-                color="#14B8A6"
-              />
+              <Icon name={isDark ? "Moon" : "Sun"} size={16} color="#14B8A6" />
             </View>
             <Text className="text-foreground font-medium">
-              {isDarkColorScheme ? "Dark Mode" : "Light Mode"}
+              {isDark ? "Dark Mode" : "Light Mode"}
             </Text>
           </View>
         </Rn.DropdownMenuItem>

@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import { Icon } from "@/components/ui";
-import { useColorScheme } from "@/lib/useColorScheme";
+import { useThemeStore } from "@/store/themStore";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -11,15 +11,11 @@ type Props = {
 };
 
 export const Empty = ({ title, description, icon, className }: Props) => {
-  const { isDarkColorScheme } = useColorScheme();
+  const { isDark } = useThemeStore();
   return (
     <View className={cn("flex-1 items-center justify-center gap-4", className)}>
       {icon && (
-        <Icon
-          name={icon}
-          size={32}
-          color={isDarkColorScheme ? "white" : "black"}
-        />
+        <Icon name={icon} size={32} color={isDark ? "white" : "black"} />
       )}
       <Text className="text-lg font-semibold text-primary">
         {title || "No Title"}

@@ -6,14 +6,19 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Text } from "@/components/ui";
 import { Header } from "@/components/ui-components/Header";
 import { Icon } from "@/components/ui";
-import { useColorScheme } from "@/lib/useColorScheme";
+import { useThemeStore } from "@/store/themStore";
 import { PRIVACY_POLICY_SECTIONS } from "@/utils/config";
+import { THEME } from "@/lib/theme";
 
 const PrivacyPolicy = () => {
-  const { isDarkColorScheme } = useColorScheme();
+  const { isDark } = useThemeStore();
+
+  const backgroundColor = isDark
+    ? THEME.dark.background
+    : THEME.light.background;
 
   return (
-    <SafeAreaView edges={["top"]} className="flex-1 bg-background">
+    <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor }}>
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ paddingBottom: 40 }}
@@ -52,11 +57,11 @@ const PrivacyPolicy = () => {
                     <View
                       key={subIndex}
                       style={{
-                        backgroundColor: isDarkColorScheme
+                        backgroundColor: isDark
                           ? "rgba(63, 63, 70, 0.3)"
                           : "rgba(228, 228, 231, 0.3)",
                         borderWidth: 1,
-                        borderColor: isDarkColorScheme
+                        borderColor: isDark
                           ? "rgba(82, 82, 91, 0.2)"
                           : "rgba(212, 212, 216, 0.3)",
                       }}
@@ -78,11 +83,11 @@ const PrivacyPolicy = () => {
           {/* Info Box */}
           <View
             style={{
-              backgroundColor: isDarkColorScheme
+              backgroundColor: isDark
                 ? "rgba(20, 184, 166, 0.05)"
                 : "rgba(20, 184, 166, 0.02)",
               borderWidth: 1,
-              borderColor: isDarkColorScheme
+              borderColor: isDark
                 ? "rgba(20, 184, 166, 0.15)"
                 : "rgba(20, 184, 166, 0.1)",
             }}

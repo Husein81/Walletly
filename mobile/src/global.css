@@ -1,0 +1,103 @@
+@config '../tailwind.config.js';
+@import 'tailwindcss';
+@import "uniwind";
+
+@layer theme {
+  :root {   
+    @variant dark {
+      
+      /* Backgrounds */
+      --background: rgba(8, 15, 28, 1);      /* near-black */
+      --foreground: rgba(248, 250, 252, 1);  /* slate-50 */
+
+      --card: rgba(15, 23, 42, 1);
+      --card-foreground: rgba(248, 250, 252, 1);
+
+      --popover: rgba(15, 23, 42, 1);
+      --popover-foreground: rgba(248, 250, 252, 1);
+
+      /* Primary – Teal */
+      --primary: rgba(45, 212, 191, 1);      /* teal-400 */
+      --primary-foreground: rgba(255, 255, 255, 1);
+
+      /* Secondary / Muted */
+      --secondary: rgba(39, 39, 42, 1);      /* zinc-800 */
+      --secondary-foreground: rgba(248, 250, 252, 1);
+
+      --muted: rgba(39, 39, 42, 1);
+      --muted-foreground: rgba(148, 163, 184, 1); /* slate-400 */
+
+      --accent: rgba(19, 78, 74, 1);         /* dark teal */
+      --accent-foreground: rgba(204, 251, 241, 1);
+
+      /* States */
+      --destructive: rgba(239, 68, 68, 1);
+      --destructive-foreground: rgba(255, 255, 255, 1);
+
+      --success: rgba(34, 197, 94, 1);
+
+      /* Borders & Inputs */
+      --border: rgba(39, 39, 42, 1);
+      --input: rgba(39, 39, 42, 1);
+      --ring: rgba(45, 212, 191, 1);
+
+      /* Sidebar */
+      --sidebar-background: rgba(8, 15, 28, 1);
+      --sidebar-foreground: rgba(248, 250, 252, 1);
+      --sidebar-primary: rgba(45, 212, 191, 1);
+      --sidebar-primary-foreground: rgba(0, 0, 0, 1);
+      --sidebar-accent: rgba(39, 39, 42, 1);
+      --sidebar-accent-foreground: rgba(248, 250, 252, 1);
+      --sidebar-border: rgba(39, 39, 42, 1);
+      --sidebar-ring: rgba(45, 212, 191, 1);
+    }
+
+       @variant light {
+
+      /* Backgrounds */
+      --background: rgba(248, 250, 252, 1); /* slate-50 */
+      --foreground: rgba(15, 23, 42, 1);    /* slate-900 */
+
+      --card: rgba(255, 255, 255, 1);
+      --card-foreground: rgba(15, 23, 42, 1);
+
+      --popover: rgba(255, 255, 255, 1);
+      --popover-foreground: rgba(15, 23, 42, 1);
+
+      /* Primary – Teal */
+      --primary: rgba(20, 184, 166, 1);     /* teal-500 */
+      --primary-foreground: rgba(255, 255, 255, 1);
+
+      /* Secondary / Muted */
+      --secondary: rgba(241, 245, 249, 1);  /* slate-100 */
+      --secondary-foreground: rgba(15, 23, 42, 1);
+
+      --muted: rgba(241, 245, 249, 1);
+      --muted-foreground: rgba(100, 116, 139, 1); /* slate-500 */
+
+      --accent: rgba(204, 251, 241, 1);     /* soft teal */
+      --accent-foreground: rgba(13, 148, 136, 1);
+
+      /* States */
+      --destructive: rgba(239, 68, 68, 1);  /* red-500 */
+      --destructive-foreground: rgba(255, 255, 255, 1);
+
+      --success: rgba(34, 197, 94, 1);      /* green-500 */
+
+      /* Borders & Inputs */
+      --border: rgba(226, 232, 240, 1);     /* slate-200 */
+      --input: rgba(226, 232, 240, 1);
+      --ring: rgba(20, 184, 166, 1);
+
+      /* Sidebar */
+      --sidebar-background: rgba(248, 250, 252, 1);
+      --sidebar-foreground: rgba(15, 23, 42, 1);
+      --sidebar-primary: rgba(20, 184, 166, 1);
+      --sidebar-primary-foreground: rgba(255, 255, 255, 1);
+      --sidebar-accent: rgba(241, 245, 249, 1);
+      --sidebar-accent-foreground: rgba(15, 23, 42, 1);
+      --sidebar-border: rgba(226, 232, 240, 1);
+      --sidebar-ring: rgba(20, 184, 166, 1);
+    }
+  }
+}
