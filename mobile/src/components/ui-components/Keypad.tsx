@@ -45,7 +45,7 @@ export const Keypad = ({
         onLongPress={() => isDelete && onClear && onClear()}
         activeOpacity={0.8}
         className={cn(
-          "h-[64px] items-center justify-center m-1 rounded-xl flex-1",
+          "h-16 items-center justify-center m-1 rounded-xl flex-1",
           isEqual
             ? "bg-primary"
             : isOperator
@@ -53,14 +53,14 @@ export const Keypad = ({
               : isDelete
                 ? "bg-destructive/10 border border-destructive/20"
                 : isClear
-                  ? "bg-muted"
+                  ? "bg-muted dark:bg-muted-foreground"
                   : "bg-card border border-border",
         )}
       >
         {isDelete ? (
           <Icon name="Delete" size={22} color="#ef4444" />
         ) : isClear ? (
-          <Text className="text-lg font-semibold text-muted-foreground">
+          <Text className="text-lg font-semibold text-muted-foreground dark:text-muted">
             AC
           </Text>
         ) : (
@@ -91,7 +91,7 @@ export const Keypad = ({
   const operatorKeys = ["/", "*", "-", "+", "="];
 
   return (
-    <View className={cn("w-full px-3 pb-4 flex-row", className)}>
+    <View className={cn("w-full pb-4 flex-row", className)}>
       {/* LEFT SIDE — Numbers */}
       <View className="flex-1">
         {/* Top row (AC + Delete) */}
@@ -108,7 +108,7 @@ export const Keypad = ({
       </View>
 
       {/* RIGHT SIDE — Operators */}
-      <View className="w-[72px] ml-2 justify-between">
+      <View className="w-18 ml-2 justify-between">
         {operatorKeys.map((key) =>
           renderKey(key, key === "=" ? "equal" : "operator"),
         )}

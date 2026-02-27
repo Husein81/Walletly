@@ -225,9 +225,7 @@ export const ExpenseForm = ({ expense }: Props) => {
   return (
     <View className="flex-1 mt-4">
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        className="flex-1"
-        keyboardVerticalOffset={100}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
         {/* Expense Type Selection - Modern Toggle Pills */}
@@ -394,7 +392,8 @@ export const ExpenseForm = ({ expense }: Props) => {
         />
 
         {/* Description */}
-        <form.Field
+        {/* TODO:Restore when keyboard height is fixed */}
+        {/* <form.Field
           name="description"
           children={(field) => (
             <TextareaField
@@ -404,7 +403,7 @@ export const ExpenseForm = ({ expense }: Props) => {
               autoCapitalize="none"
             />
           )}
-        />
+        /> */}
 
         <form.Field
           name="updatedAt"

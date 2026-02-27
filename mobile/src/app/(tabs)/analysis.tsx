@@ -36,6 +36,7 @@ import { useThemeStore } from "@/store/themStore";
 import { useAuthStore, useDateStore } from "@/store";
 import { EXPENSE_STATES, ExpenseState } from "@/components/Analysis/config";
 import { ToggleOption } from "@/components/ui-components/toggle-group";
+import { THEME } from "@/lib/theme";
 
 const Analysis = () => {
   const { user } = useAuthStore();
@@ -208,8 +209,12 @@ const Analysis = () => {
 
   const netBalance = totalIncome + totalExpense;
 
+  const backgroundColor = isDark
+    ? THEME.dark.background
+    : THEME.light.background;
+
   return (
-    <SafeAreaView edges={["top"]} style={{ flex: 1 }} className="bg-background">
+    <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor }}>
       <ScrollView
         className="bg-background px-5"
         contentInsetAdjustmentBehavior="automatic"

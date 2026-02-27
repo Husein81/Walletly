@@ -130,7 +130,7 @@ export const AmountKeypad = ({
       <Text className="text-center text-muted-foreground text-xl font-medium mb-1">
         Amount
       </Text>
-      <View className="items-center justify-center py-4 mb-4 bg-muted/30 rounded-3xl border border-border h-32">
+      <View className="items-center justify-center mb-4 bg-muted/30 rounded-3xl border border-border h-32">
         <View className="absolute top-4 right-6">
           <Text className="text-muted-foreground text-lg font-medium text-right">
             {history || " "}

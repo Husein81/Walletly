@@ -15,7 +15,7 @@ const TextareaField = ({ label, field, ...props }: Props) => {
     <View className="gap-2 w-full">
       <Label>{label}</Label>
       <Textarea
-        className="rounded-xl text-foreground text-xl flex-1"
+        className="rounded-xl text-foreground placeholder:text-foreground text-xl flex-1"
         placeholder={props.placeholder}
         value={field.state.value}
         onChangeText={field.handleChange}
