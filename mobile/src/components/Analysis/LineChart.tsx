@@ -100,7 +100,8 @@ const LineChart = ({ data, color, yAxisLabel }: Props) => {
     <View
       style={{
         height: 250,
-        width: SCREEN_WIDTH - 32,
+        width: SCREEN_WIDTH - 60,
+        alignItems: "center",
         padding: 10,
       }}
     >

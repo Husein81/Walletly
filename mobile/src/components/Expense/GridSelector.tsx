@@ -2,6 +2,7 @@ import { iconsRecord } from "@/constants";
 import { Icon } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { FlatList, Pressable, Text, View } from "react-native";
+import { Button } from "../ui-components";
 
 type BaseItem = {
   id?: string | number;
@@ -14,6 +15,7 @@ type Props<T extends BaseItem> = {
   data: T[];
   numColumns?: number;
   selectedId?: string | number;
+  action?: React.ReactNode;
   onSelect: (item: T) => void;
   renderSubtitle?: (item: T) => string | null;
 };
@@ -23,6 +25,7 @@ export function GridSelector<T extends BaseItem>({
   data,
   numColumns = 3,
   selectedId,
+  action,
   onSelect,
   renderSubtitle,
 }: Props<T>) {
@@ -92,6 +95,7 @@ export function GridSelector<T extends BaseItem>({
             </View>
           );
         }}
+        ListFooterComponent={<View className="pt-4">{action}</View>}
       />
     </View>
   );

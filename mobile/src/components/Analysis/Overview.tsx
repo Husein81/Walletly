@@ -71,7 +71,7 @@ const Overview = ({ pieChartData, progressData }: Props) => {
   return (
     <View>
       <PieChart
-        style={{ height: 220, width: SCREEN_WIDTH - 20 }}
+        style={{ height: 220, width: SCREEN_WIDTH - 40, alignSelf: "center" }}
         data={pieChartData}
         valueAccessor={({ item }) => item.value}
         outerRadius={"80%"}

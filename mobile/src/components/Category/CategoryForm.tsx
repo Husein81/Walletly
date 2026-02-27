@@ -113,7 +113,7 @@ const CategoryForm = ({ category }: Props) => {
   });
 
   return (
-    <View className="gap-4 flex">
+    <View className="gap-4 flex pt-4">
       {/* Type Selection - Modern Toggle */}
       <form.Field
         name="type"
