@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* Backgrounds */
+    --background: 248 250 252;
+    --foreground: 15 23 42;
+
+    --card: 255 255 255;
+    --card-foreground: 15 23 42;
+
+    --popover: 255 255 255;
+    --popover-foreground: 15 23 42;
+
+    /* Primary - Updated to Teal from Walletly Branding */
+    --primary: 20 184 166;
+    --primary-foreground: 255 255 255;
+    --primary-hover: 13 148 136;
+    --primary-soft: 204 251 241;
+
+    /* Secondary */
+    --secondary: 241 245 249;
+    --secondary-foreground: 15 23 42;
+
+    --muted: 241 245 249;
+    --muted-foreground: 100 116 139;
+
+    --accent: 204 251 241;
+    --accent-foreground: 13 148 136;
+
+    /* States */
+    --destructive: 239 68 68;
+    --destructive-foreground: 255 255 255;
+
+    --success: 34 197 94;
+
+    /* Borders */
+    --border: 226 232 240;
+    --input: 226 232 240;
+    --ring: 20 184 166;
+
+    /* Sidebar */
+    --sidebar-background: 248 250 252;
+    --sidebar-foreground: 15 23 42;
+    --sidebar-primary: 20 184 166;
+    --sidebar-primary-foreground: 255 255 255;
+    --sidebar-accent: 241 245 249;
+    --sidebar-accent-foreground: 15 23 42;
+    --sidebar-border: 226 232 240;
+    --sidebar-ring: 20 184 166;
+  }
+
+  .dark {
+    --background: 8 15 28;
+    --foreground: 248 250 252;
+
+    --card: 15 23 42;
+    --card-foreground: 248 250 252;
+
+    --popover: 15 23 42;
+    --popover-foreground: 248 250 252;
+
+    --primary: 45 212 191;
+    --primary-foreground: 255 255 255;
+
+    --secondary: 39 39 42;
+    --secondary-foreground: 248 250 252;
+
+    --muted: 39 39 42;
+    --muted-foreground: 148 163 184;
+
+    --accent: 19 78 74;
+    --accent-foreground: 204 251 241;
+
+    --destructive: 239 68 68;
+    --destructive-foreground: 255 255 255;
+
+    --success: 34 197 94;
+
+    --border: 39 39 42;
+    --input: 39 39 42;
+    --ring: 45 212 191;
+
+    --sidebar-background: 8 15 28;
+    --sidebar-foreground: 248 250 252;
+    --sidebar-primary: 45 212 191;
+    --sidebar-primary-foreground: 0 0 0;
+    --sidebar-accent: 39 39 42;
+    --sidebar-accent-foreground: 248 250 252;
+    --sidebar-border: 39 39 42;
+    --sidebar-ring: 45 212 191;
+  }
+}
