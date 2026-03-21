@@ -15,8 +15,15 @@ import { THEME } from "@/lib/theme";
 
 const User = () => {
   const { user, clearAuth } = useAuthStore();
-  const { theme, toggleTheme } = useThemeStore();
+  const { mode, theme, toggleTheme } = useThemeStore();
   const isDark = theme === "dark";
+  const themeLabel =
+    mode === "system"
+      ? `System (${isDark ? "Dark" : "Light"})`
+      : isDark
+        ? "Dark Mode"
+        : "Light Mode";
+  const themeIcon = mode === "system" ? "Monitor" : isDark ? "Moon" : "Sun";
 
   const handleLogout = () => {
     Alert.alert("Logout", "Are you sure you want to logout?", [
@@ -56,8 +63,8 @@ const User = () => {
   const preferences = [
     {
       title: "Appearance",
-      subTitle: isDark ? "Dark Mode" : "Light Mode",
-      icon: isDark ? "Moon" : "Sun",
+      subTitle: themeLabel,
+      icon: themeIcon,
       onPress: toggleTheme,
     },
 

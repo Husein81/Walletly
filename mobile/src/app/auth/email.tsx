@@ -12,6 +12,8 @@ import { z } from "zod";
 // local imports
 import { Button, InputField } from "@/components/ui-components";
 import { useLogin } from "@/hooks/auth";
+import { THEME } from "@/lib/theme";
+import { useThemeStore } from "@/store/themStore";
 
 const Login = () => {
   const { mutateAsync } = useLogin();
@@ -29,9 +31,17 @@ const Login = () => {
       }
     },
   });
+  const { isDark } = useThemeStore();
+
+  const backgroundColor = isDark
+    ? THEME.dark.background
+    : THEME.light.background;
 
   return (
-    <SafeAreaView edges={["top"]} className="bg-background flex-1 px-6 py-8">
+    <SafeAreaView
+      edges={["top"]}
+      style={{ flex: 1, padding: 24, backgroundColor }}
+    >
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 0}

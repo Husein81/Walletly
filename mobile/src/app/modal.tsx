@@ -1,59 +1,91 @@
 import { router } from "expo-router";
 import { useEffect } from "react";
-import { Pressable, ScrollView, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import { Platform, Pressable, ScrollView, View } from "react-native";
+import Animated, {
+  Easing,
+  FadeIn,
+  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 
 // local imports
-import { Text } from "@/components/ui";
+import { Icon, Text } from "@/components/ui";
 import { cn } from "@/lib/utils";
 
 // store imports
 import { useModalStore } from "@/store";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+const OPEN_DURATION = 260;
+const CLOSE_DURATION = 260;
 
 export default function ModalScreen() {
-  const { title, body, transparent, onClose } = useModalStore();
+  const { title, body, closing, onClose, finalizeClose, resetModal } =
+    useModalStore();
+  const progress = useSharedValue(1);
 
-  const handleClose = () => {
-    router.back();
-  };
+  useEffect(() => {
+    progress.value = withTiming(0, {
+      duration: OPEN_DURATION,
+      easing: Easing.out(Easing.cubic),
+    });
+  }, [progress]);
 
-  const Container = transparent ? Pressable : View;
+  useEffect(() => {
+    if (!closing) return;
 
-  const containerProps = transparent
-    ? { onPress: handleClose }
-    : ({} as Record<string, unknown>);
+    progress.value = withTiming(
+      1,
+      {
+        duration: CLOSE_DURATION,
+        easing: Easing.in(Easing.cubic),
+      },
+      (finished) => {
+        if (finished) {
+          runOnJS(finalizeClose)();
+        }
+      },
+    );
+  }, [closing, finalizeClose, progress]);
+
+  useEffect(() => {
+    return () => {
+      resetModal();
+    };
+  }, [resetModal]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: 1 - progress.value * 0.2,
+    transform: [{ translateY: progress.value * 36 }],
+  }));
 
   if (!body) return null;
 
   return (
-    <Container
-      {...containerProps}
-      className={cn(
-        "flex-1 p-6",
-        transparent
-          ? "bg-black/65 backdrop-blur justify-center items-center"
-          : "bg-background",
-      )}
+    <Animated.View
+      entering={FadeIn.duration(OPEN_DURATION)}
+      className={cn("flex-1 bg-background")}
     >
       <Animated.View
-        entering={transparent ? FadeIn.duration(300) : FadeIn.duration(300)}
-        exiting={transparent ? FadeOut.duration(300) : FadeOut.duration(300)}
-        className={cn(
-          transparent ? "bg-card rounded-xl w-[90%] max-h-[80%] p-4" : "flex-1",
-          "gap-4",
-        )}
+        style={animatedStyle}
+        pointerEvents={closing ? "none" : "auto"}
+        className={cn("flex-1 p-6 bg-background")}
       >
-        <SafeAreaView className="flex-1 gap-4">
+        <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
           {title && (
             <View className="w-full flex-row items-center justify-center">
               {router.canGoBack() && (
-                <TouchableOpacity
-                  onPress={handleClose}
-                  className="absolute left-0"
-                >
-                  <Text className="text-muted-foreground text-sm">Cancel</Text>
-                </TouchableOpacity>
+                <Pressable onPress={onClose} className="absolute left-0">
+                  {Platform.OS === "ios" ? (
+                    <View className="bg-black/10 border border-border p-2 rounded-full">
+                      <Icon name="ChevronLeft" size={20} color="#666" />
+                    </View>
+                  ) : (
+                    <Text className="text-muted-foreground text-sm">Cancel</Text>
+                  )}
+                </Pressable>
               )}
 
               <Text className="text-2xl font-semibold ">{title}</Text>
@@ -64,6 +96,6 @@ export default function ModalScreen() {
           </ScrollView>
         </SafeAreaView>
       </Animated.View>
-    </Container>
+    </Animated.View>
   );
 }

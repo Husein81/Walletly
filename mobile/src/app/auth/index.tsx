@@ -5,12 +5,20 @@ import { SafeAreaView } from "react-native-safe-area-context";
 // Local Imports
 import { Text } from "@/components/ui";
 import { Button } from "@/components/ui-components";
+import { useThemeStore } from "@/store/themStore";
+import { THEME } from "@/lib/theme";
 
 const Auth = () => {
+  const { isDark } = useThemeStore();
+
+  const backgroundColor = isDark
+    ? THEME.dark.background
+    : THEME.light.background;
+
   return (
     <SafeAreaView
-      edges={["top", "left", "right", "bottom"]}
-      className="flex-1 bg-background p-8"
+      edges={["top"]}
+      style={{ flex: 1, padding: 24, backgroundColor }}
     >
       <View className="flex items-center flex-1">
         <Text className="text-5xl text-center font-bold text-primary mt-4 mb-2">

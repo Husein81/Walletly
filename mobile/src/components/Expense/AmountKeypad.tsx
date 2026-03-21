@@ -125,12 +125,43 @@ export const AmountKeypad = ({
     }
   };
 
+  const formatValue = (val: string): string => {
+    if (!val) return "0";
+
+    const [numericVal, operationPart] = val.split(/([\+\-\*\/].*)/);
+    const [integerPart, decimalPart] = numericVal.split(/\./);
+
+    const parts: string[] = [];
+    let count: number = 0;
+
+    for (let i: number = integerPart.length - 1; i >= 0; i--) {
+      parts.unshift(integerPart[i]);
+      count++;
+      if (count === 3 && i !== 0) {
+        parts.unshift(",");
+        count = 0;
+      }
+    }
+
+    if (decimalPart !== undefined) {
+      parts.push("." + decimalPart);
+    }
+
+    if (operationPart) {
+      parts.push(operationPart);
+    }
+
+    return parts.join("");
+  };
+
+  const amount = formatValue(value);
+
   return (
     <View className="flex-1 p-4 bg-background">
       <Text className="text-center text-muted-foreground text-xl font-medium mb-1">
         Amount
       </Text>
-      <View className="items-center justify-center mb-4 bg-muted/30 rounded-3xl border border-border h-32">
+      <View className="items-center justify-center mb-4 bg-card/30 rounded-3xl dark:border-0 border border-border h-32">
         <View className="absolute top-4 right-6">
           <Text className="text-muted-foreground text-lg font-medium text-right">
             {history || " "}
@@ -145,7 +176,7 @@ export const AmountKeypad = ({
             numberOfLines={1}
             adjustsFontSizeToFit
           >
-            {value || "0"}
+            {amount}
           </Text>
         </View>
       </View>

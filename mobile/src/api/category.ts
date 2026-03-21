@@ -1,57 +1,68 @@
-import { db } from "@/db/client";
+import { drizzleDb } from "@/db/client";
+import { categories } from "@/db/schema";
 import { generateUUID } from "@/db/uuid";
 import { Category } from "@/types";
+import { desc, eq } from "drizzle-orm";
 
 export const categoryApi = {
   getCategories: async (userId: string): Promise<Category[]> => {
-    return await db.getAllAsync<Category>(
-      "SELECT * FROM categories WHERE userId = ? ORDER BY createdAt DESC",
-      [userId],
-    );
+    return (await drizzleDb
+      .select()
+      .from(categories)
+      .where(eq(categories.userId, userId))
+      .orderBy(desc(categories.createdAt))) as Category[];
   },
   getCategory: async (categoryId: string): Promise<Category> => {
-    const category = await db.getFirstAsync<Category>(
-      "SELECT * FROM categories WHERE id = ?",
-      [categoryId],
-    );
+    const [category] = await drizzleDb
+      .select()
+      .from(categories)
+      .where(eq(categories.id, categoryId))
+      .limit(1);
     if (!category) throw new Error("Category not found");
-    return category;
+    return category as Category;
   },
   createCategory: async (category: Omit<Category, "id">) => {
     const id = generateUUID();
     const imageUrl = category.imageUrl || "";
 
-    await db.runAsync(
-      `INSERT INTO categories (id, name, imageUrl, type, userId, createdAt, updatedAt) 
-       VALUES (?, ?, ?, ?, ?, unixepoch(), unixepoch())`,
-      [id, category.name, imageUrl, category.type, category.userId!],
-    );
+    await drizzleDb.insert(categories).values({
+      id,
+      name: category.name,
+      imageUrl,
+      type: category.type,
+      userId: category.userId!,
+    });
 
-    const created = await db.getFirstAsync<Category>(
-      "SELECT * FROM categories WHERE id = ?",
-      [id],
-    );
+    const [created] = await drizzleDb
+      .select()
+      .from(categories)
+      .where(eq(categories.id, id))
+      .limit(1);
     if (!created) throw new Error("Failed to create category");
-    return created;
+    return created as Category;
   },
   updateCategory: async (category: Category) => {
     if (!category.id) throw new Error("Category ID required");
 
-    await db.runAsync(
-      `UPDATE categories 
-       SET name = ?, imageUrl = ?, type = ?, updatedAt = unixepoch() 
-       WHERE id = ?`,
-      [category.name, category.imageUrl || "", category.type, category.id],
-    );
+    await drizzleDb
+      .update(categories)
+      .set({
+        name: category.name,
+        imageUrl: category.imageUrl || "",
+        type: category.type,
+        updatedAt: new Date(),
+      })
+      .where(eq(categories.id, category.id));
 
-    const updated = await db.getFirstAsync<Category>(
-      "SELECT * FROM categories WHERE id = ?",
-      [category.id],
-    );
+    const [updated] = await drizzleDb
+      .select()
+      .from(categories)
+      .where(eq(categories.id, category.id))
+      .limit(1);
     if (!updated) throw new Error("Category not found after update");
-    return updated;
+    return updated as Category;
   },
   deleteCategory: async (categoryId: string) => {
-    await db.runAsync("DELETE FROM categories WHERE id = ?", [categoryId]);
+    await drizzleDb.delete(categories).where(eq(categories.id, categoryId));
   },
 };

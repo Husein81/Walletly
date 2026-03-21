@@ -1,11 +1,17 @@
+import { drizzle } from "drizzle-orm/expo-sqlite";
 import { openDatabaseSync } from "expo-sqlite";
 import { type SQLiteDatabase } from "expo-sqlite";
+import { schema } from "./schema";
 
 export const DATABASE_NAME = "walletly_db";
 export const db = openDatabaseSync(DATABASE_NAME);
+export const drizzleDb = drizzle(db, { schema });
 
 export const getDb = () => db;
+export const getDrizzleDb = () => drizzleDb;
 
+// Keep the existing SQL migration runner as the active source of truth
+// until the app is explicitly moved over to generated Drizzle migrations.
 // SQL statements for table creation (consolidated final schema)
 const MIGRATIONS: string[] = [
   // users should be first for foreign key compliance

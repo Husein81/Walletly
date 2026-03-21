@@ -16,6 +16,8 @@ import { Icon, Input, Label } from "@/components/ui";
 import { Button, FieldInfo, InputField } from "@/components/ui-components";
 import { useLogin, useRegister } from "@/hooks/auth";
 import { authApi } from "@/api/auth";
+import { useThemeStore } from "@/store/themStore";
+import { THEME } from "@/lib/theme";
 
 const Login = () => {
   const [step, setStep] = useState<"username" | "password">("username");
@@ -52,8 +54,17 @@ const Login = () => {
     },
   });
 
+  const { isDark } = useThemeStore();
+
+  const backgroundColor = isDark
+    ? THEME.dark.background
+    : THEME.light.background;
+
   return (
-    <SafeAreaView edges={["top"]} className="bg-background flex-1 px-6 py-8">
+    <SafeAreaView
+      edges={["top"]}
+      style={{ flex: 1, padding: 24, backgroundColor }}
+    >
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 0}
@@ -108,6 +119,7 @@ const Login = () => {
                       label="Username"
                       placeholder="Enter your username"
                       field={field}
+                      className="bg-input"
                       autoCapitalize="none"
                     />
                   )}

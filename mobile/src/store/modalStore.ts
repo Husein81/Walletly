@@ -3,33 +3,37 @@ import { create } from "zustand";
 
 interface ModalStore {
   open: boolean;
+  closing: boolean;
   body: React.ReactNode | null;
   title?: string;
-  transparent?: boolean;
   onClose: () => void;
-  onOpen: (
-    body: React.ReactNode,
-    title?: string,
-    transparent?: boolean,
-  ) => void;
+  finalizeClose: () => void;
+  resetModal: () => void;
+  onOpen: (body: React.ReactNode, title?: string) => void;
 }
 
 export const useModalStore = create<ModalStore>((set) => ({
   open: false,
+  closing: false,
   body: null,
   title: undefined,
-  transparent: false,
   onClose: () => {
-    set({ open: false });
-    if (router.canGoBack()) {
+    set({ open: false, closing: true });
+  },
+  finalizeClose: () => {
+    if (router.canDismiss()) {
+      router.dismiss();
+    } else if (router.canGoBack()) {
       router.back();
     }
-    setTimeout(() => {
-      set({ body: null, title: undefined });
-    }, 400);
+
+    set({ open: false, closing: false, body: null, title: undefined });
   },
-  onOpen: (body, title, transparent = false) => {
-    set({ open: true, body, title, transparent });
+  resetModal: () => {
+    set({ open: false, closing: false, body: null, title: undefined });
+  },
+  onOpen: (body, title) => {
+    set({ open: true, closing: false, body, title });
     router.push("/modal");
   },
 }));

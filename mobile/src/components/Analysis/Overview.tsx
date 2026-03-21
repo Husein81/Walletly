@@ -100,7 +100,7 @@ const Overview = ({ pieChartData, progressData }: Props) => {
                   {item.name}
                 </Text>
                 <Progress
-                  className=" rounded-md"
+                  className="rounded-md"
                   indicatorColor={getColorByIndex(index.toString())}
                   value={(item.amount * 100) / totalExpense}
                 />

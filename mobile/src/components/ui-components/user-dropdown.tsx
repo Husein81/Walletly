@@ -8,8 +8,15 @@ import { router } from "expo-router";
 import Avatar from "./Avatar";
 
 const UserDropdown = () => {
-  const { theme, toggleTheme } = useThemeStore();
+  const { mode, theme, toggleTheme } = useThemeStore();
   const isDark = theme === "dark";
+  const themeLabel =
+    mode === "system"
+      ? `System (${isDark ? "Dark" : "Light"})`
+      : isDark
+        ? "Dark Mode"
+        : "Light Mode";
+  const themeIcon = mode === "system" ? "Monitor" : isDark ? "Moon" : "Sun";
   const { user, clearAuth } = useAuthStore();
   const insets = useSafeAreaInsets();
 
@@ -66,11 +73,9 @@ const UserDropdown = () => {
         <Rn.DropdownMenuItem onPress={toggleTheme}>
           <View className="flex-row items-center gap-3 py-1">
             <View className="bg-primary/10 p-2 rounded-lg">
-              <Icon name={isDark ? "Moon" : "Sun"} size={16} color="#14B8A6" />
+              <Icon name={themeIcon} size={16} color="#14B8A6" />
             </View>
-            <Text className="text-foreground font-medium">
-              {isDark ? "Dark Mode" : "Light Mode"}
-            </Text>
+            <Text className="text-foreground font-medium">{themeLabel}</Text>
           </View>
         </Rn.DropdownMenuItem>
 

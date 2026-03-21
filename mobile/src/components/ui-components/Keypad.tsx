@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Pressable } from "react-native";
 import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 
@@ -37,13 +37,12 @@ export const Keypad = ({
               : "=";
 
     return (
-      <TouchableOpacity
+      <Pressable
         key={key}
         onPress={() =>
           isDelete ? onDelete() : isClear ? onClear && onClear() : onPress(key)
         }
         onLongPress={() => isDelete && onClear && onClear()}
-        activeOpacity={0.8}
         className={cn(
           "h-16 items-center justify-center m-1 rounded-xl flex-1",
           isEqual
@@ -54,7 +53,7 @@ export const Keypad = ({
                 ? "bg-destructive/10 border border-destructive/20"
                 : isClear
                   ? "bg-muted dark:bg-muted-foreground"
-                  : "bg-card border border-border",
+                  : "bg-card border border-border dark:border-0",
         )}
       >
         {isDelete ? (
@@ -77,7 +76,7 @@ export const Keypad = ({
             {isOperator || isEqual ? opText : key}
           </Text>
         )}
-      </TouchableOpacity>
+      </Pressable>
     );
   };
 

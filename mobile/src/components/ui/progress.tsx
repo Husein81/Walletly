@@ -17,8 +17,8 @@ function Progress({
   return (
     <ProgressPrimitive.Root
       className={cn(
-        "relative h-4 w-full overflow-hidden rounded-full bg-secondary",
-        className
+        "relative h-2 w-full overflow-hidden rounded-full bg-secondary",
+        className,
       )}
       {...props}
     >
@@ -64,7 +64,7 @@ function Indicator({
       <View
         className={cn(
           "h-full w-full flex-1 bg-primary web:transition-all",
-          className
+          className,
         )}
         style={{ transform: `translateX(-${100 - (value ?? 0)}%)` }}
       >

@@ -30,6 +30,10 @@ const MainLayout = () => {
             presentation: "modal",
             headerShown: false,
             animation: "slide_from_bottom",
+            gestureDirection: "vertical",
+            animationMatchesGesture: true,
+            animationDuration: 250,
+            fullScreenGestureEnabled: true,
           }}
         />
         <Stack.Screen
@@ -37,7 +41,7 @@ const MainLayout = () => {
           options={{
             presentation: "formSheet",
             headerShown: false,
-            sheetAllowedDetents: [0.45, 0.75, 0.95],
+            sheetAllowedDetents: [0.45, 0.8, 0.95],
             sheetInitialDetentIndex: 1,
             statusBarStyle: "auto",
             contentStyle: {
